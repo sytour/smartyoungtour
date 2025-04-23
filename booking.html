@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>예약하기 - 스마트영투어</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #fff8f2; margin: 0; padding: 0; }
+    header { background: #ffa94d; color: white; padding: 1rem; text-align: center; font-weight: bold; font-size: 1.5rem; }
+    form { max-width: 600px; margin: 2rem auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 1rem; font-weight: bold; }
+    input, select, textarea {
+      width: 100%; padding: 0.75rem; margin-top: 0.25rem; border: 1px solid #ccc;
+      border-radius: 6px; font-size: 1rem;
+    }
+    button {
+      margin-top: 2rem; width: 100%; background: #ffa94d; color: white;
+      padding: 1rem; border: none; border-radius: 6px; font-size: 1.2rem; cursor: pointer;
+    }
+    button:hover { background: #f58f1f; }
+  </style>
+</head>
+<body>
+
+  <header>예약하기 - SMARTYOUNG TOUR</header>
+
+  <form>
+    <label>상품명</label>
+    <input type="text" value="루앙프라방 3박 4일" readonly />
+
+    <label>예약자 이름</label>
+    <input type="text" placeholder="홍길동" required />
+
+    <label>연락처</label>
+    <input type="tel" placeholder="010-1234-5678" required />
+
+    <label>이메일</label>
+    <input type="email" placeholder="example@email.com" required />
+
+    <label>출발일</label>
+    <input type="date" required />
+
+    <label>성인 인원 수</label>
+    <select required>
+      <option value="">선택</option>
+      <option>1명</option>
+      <option>2명</option>
+      <option>3명</option>
+      <option>4명 이상</option>
+    </select>
+
+    <label>아동 인원 수</label>
+    <select required>
+      <option value="">선택</option>
+      <option>0명</option>
+      <option>1명</option>
+      <option>2명 이상</option>
+    </select>
+
+    <label>요청사항</label>
+    <textarea placeholder="특별 요청 사항이 있다면 입력하세요." rows="4"></textarea>
+
+    <label>결제 방식</label>
+    <select required>
+      <option value="">선택</option>
+      <option value="card">카드결제</option>
+      <option value="bank">계좌이체</option>
+    </select>
+
+    <button type="submit">예약 완료</button>
+  </form>
+
+</body>
+</html>

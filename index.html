@@ -4,35 +4,104 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SMARTYOUNG TOUR</title>
+  <title>스마트영투어 - 스마트한 여행의 시작</title>
   <style>
-    body { background: #fff8f2; color: #333; font-family: sans-serif; }
-    header { background: #ffa94d; padding: 1rem; color: white; font-weight: bold; }
-    footer { background: #fff3e0; text-align: center; padding: 1rem; font-size: 0.9rem; }
-    .product { border: 1px solid #f0c28d; margin: 1rem 0; padding: 1rem; border-radius: 8px; background: white; }
-    .quote-button { position: fixed; bottom: 20px; right: 20px; background: #ffa94d; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 999px; font-weight: bold; }
+    body { margin: 0; font-family: 'Arial', sans-serif; background: #fff8f2; color: #333; }
+    header { background: #ffa94d; color: white; padding: 1rem; text-align: center; font-size: 1.4rem; font-weight: bold; }
+    nav { display: flex; justify-content: center; gap: 1.5rem; padding: 1rem 0; background: #fff3e0; flex-wrap: wrap; }
+    nav a { text-decoration: none; color: #e87118; font-weight: bold; }
+
+    .banner { width: 100%; height: 200px; background: url('https://source.unsplash.com/featured/?travel') no-repeat center/cover; }
+    .section { padding: 1.5rem; }
+    .section h2 { color: #e87118; }
+
+    .products { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; }
+    .card {
+      background: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 300px; padding: 1rem; text-align: center;
+    }
+    .card img { width: 100%; height: 180px; object-fit: cover; border-radius: 6px; }
+    .card h3 { margin-top: 0.5rem; }
+
+    footer {
+      background: #fff3e0;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+
+    .b2b-button {
+      position: fixed; bottom: 20px; right: 20px;
+      background: #ffa94d; color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      border: none;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+
+    .customer-box {
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      background: #fff3e0;
+      border: 1px solid #ffd9a0;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 200px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .products { flex-direction: column; align-items: center; }
+      .customer-box { display: none; }
+    }
   </style>
 </head>
 <body>
   <header>SMARTYOUNG TOUR</header>
+  <nav>
+    <a href="#">패키지여행</a>
+    <a href="#">자유여행</a>
+    <a href="#">테마여행</a>
+    <a href="#">예약확인</a>
+    <a href="#">고객센터</a>
+  </nav>
 
-  <main style="padding: 1rem;">
-    <h2>베트남 & 라오스 특가 상품</h2>
-    <div class="product">
-      <h3>하노이 4박 5일</h3>
-      <p>₩799,000부터</p>
+  <div class="banner"></div>
+
+  <div class="section">
+    <h2>🔥 베트남 & 라오스 추천 상품</h2>
+    <div class="products">
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?vietnam" alt="베트남">
+        <h3>하노이 4박 5일</h3>
+        <p>₩799,000부터</p>
+        <a href="hanoi.html">상세보기</a>
+      </div>
+      <div class="card">
+        <img src="https://source.unsplash.com/featured/?laos" alt="라오스">
+        <h3>루앙프라방 3박 4일</h3>
+        <p>₩699,000부터</p>
+        <a href="luangprabang.html">상세보기</a>
+      </div>
     </div>
-    <div class="product">
-      <h3>루앙프라방 3박 4일</h3>
-      <p>₩699,000부터</p>
-    </div>
-  </main>
+  </div>
+
+  <div class="customer-box">
+    <strong>📞 고객센터</strong><br/>
+    운영시간: 09:00~18:00<br/>
+    카카오톡: <strong>@sytour</strong><br/>
+    <small>대표번호는 추후 등록 예정</small>
+  </div>
 
   <footer>
-    카카오톡 문의: @sytour | 대표번호는 추후 등록 예정<br />
     &copy; 2025 SMARTYOUNG TOUR
   </footer>
 
-  <button class="quote-button" onclick="alert('비밀번호 입력 후 견적 기능 준비 중')">대리점 전용 견적</button>
+  <button class="b2b-button" onclick="alert('B2B 견적 시스템은 준비중입니다')">대리점 견적</button>
 </body>
 </html>
