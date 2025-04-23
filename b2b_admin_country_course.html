@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 - 국가 및 코스 관리</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 2rem; }
+    h1 { text-align: center; color: #e87118; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { font-weight: bold; display: block; margin-top: 1.5rem; }
+    input, select, button {
+      width: 100%; padding: 0.75rem; margin-top: 0.5rem;
+      border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;
+    }
+    .list { margin-top: 2rem; }
+    .list h3 { margin-bottom: 0.5rem; }
+    ul { list-style: none; padding-left: 0; }
+    li { background: #fef3c7; margin-bottom: 0.5rem; padding: 0.5rem 1rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .delete-btn { background: #ef4444; color: white; border: none; padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>관리자 - 국가 및 코스 관리</h1>
+  <div class="container">
+    <label>국가 추가</label>
+    <input type="text" id="countryInput" placeholder="예: 태국" />
+    <button onclick="addCountry()">국가 추가</button>
+
+    <label>여행 코스 추가</label>
+    <select id="countrySelect"></select>
+    <input type="text" id="courseInput" placeholder="예: 방콕 자유여행" />
+    <button onclick="addCourse()">코스 추가</button>
+
+    <div class="list">
+      <h3>등록된 국가 및 코스 목록</h3>
+      <ul id="courseList"></ul>
+    </div>
+  </div>
+
+  <script>
+    let countryData = {
+      "라오스": ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프 + 방비엥(1일) 일반"],
+      "베트남": ["푸꾸옥", "다낭", "나트랑", "달랏"]
+    };
+
+    function updateCountrySelect() {
+      const countrySelect = document.getElementById("countrySelect");
+      countrySelect.innerHTML = "";
+      Object.keys(countryData).forEach(country => {
+        const opt = document.createElement("option");
+        opt.value = country;
+        opt.textContent = country;
+        countrySelect.appendChild(opt);
+      });
+    }
+
+    function updateCourseList() {
+      const list = document.getElementById("courseList");
+      list.innerHTML = "";
+      for (const country in countryData) {
+        countryData[country].forEach((course, idx) => {
+          const li = document.createElement("li");
+          li.textContent = `${country} → ${course}`;
+          const btn = document.createElement("button");
+          btn.className = "delete-btn";
+          btn.textContent = "삭제";
+          btn.onclick = () => {
+            countryData[country].splice(idx, 1);
+            if (countryData[country].length === 0) delete countryData[country];
+            updateCountrySelect();
+            updateCourseList();
+          };
+          li.appendChild(btn);
+          list.appendChild(li);
+        });
+      }
+    }
+
+    function addCountry() {
+      const input = document.getElementById("countryInput");
+      const name = input.value.trim();
+      if (name && !countryData[name]) {
+        countryData[name] = [];
+        input.value = "";
+        updateCountrySelect();
+        updateCourseList();
+      }
+    }
+
+    function addCourse() {
+      const country = document.getElementById("countrySelect").value;
+      const input = document.getElementById("courseInput");
+      const course = input.value.trim();
+      if (country && course) {
+        countryData[country].push(course);
+        input.value = "";
+        updateCourseList();
+      }
+    }
+
+    // 초기화
+    updateCountrySelect();
+    updateCourseList();
+  </script>
+</body>
+</html>

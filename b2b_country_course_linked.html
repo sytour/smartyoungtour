@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>여행 코스 선택</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f4f6; padding: 2rem; }
+    h1 { text-align: center; color: #e87118; }
+    form { max-width: 800px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    label { font-weight: bold; display: block; margin-top: 1.5rem; }
+    select, textarea {
+      width: 100%; padding: 0.75rem; margin-top: 0.25rem;
+      border-radius: 6px; border: 1px solid #ccc; font-size: 1rem;
+    }
+    textarea {
+      background: #fff7ed; font-size: 0.95rem;
+    }
+    button {
+      margin-top: 2rem; background: #ffa94d; color: white; border: none;
+      padding: 1rem; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
+    }
+    button:hover { background: #f58f1f; }
+  </style>
+  <script>
+    const courseData = {
+      "라오스": {
+        "방비엥 일반": "1일차: 비엔티안 도착 → 방비엥 이동 → 블루라군\n2일차: 탐남동굴 → 송강 투어\n3일차: 비엔티안 복귀 및 시내관광\n4일차: 귀국",
+        "루앙프라방 일반": "1일차: 루앙프라방 도착 → 시내 관광\n2일차: 꽝시폭포 → 야시장\n3일차: 탁발 체험 → 블루라군\n4일차: 귀국",
+        "비엔티안 골프": "1일차: 비엔티안 도착 → 골프 라운딩\n2일차: 골프 18홀 + 마사지\n3일차: 관광 or 자유일정\n4일차: 귀국",
+        "비엔티안 골프 + 방비엥(1일) 일반": "1일차: 비엔티안 도착 → 골프 라운딩\n2일차: 방비엥 당일 관광 (블루라군)\n3일차: 골프 + 비엔티안 관광\n4일차: 귀국"
+      },
+      "베트남": {
+        "": "※ 추후 업데이트 예정입니다."
+      }
+    };
+
+    function updateCourseSelect() {
+      const country = document.getElementById("country").value;
+      const courseSelect = document.getElementById("course");
+      const itineraryBox = document.getElementById("itinerary");
+      courseSelect.innerHTML = "";
+      itineraryBox.value = "";
+
+      if (country && courseData[country]) {
+        for (const course in courseData[country]) {
+          const opt = document.createElement("option");
+          opt.value = course;
+          opt.textContent = course || "※ 준비중";
+          courseSelect.appendChild(opt);
+        }
+      }
+    }
+
+    function updateItinerary() {
+      const country = document.getElementById("country").value;
+      const course = document.getElementById("course").value;
+      const itineraryBox = document.getElementById("itinerary");
+
+      if (courseData[country] && courseData[country][course]) {
+        itineraryBox.value = courseData[country][course];
+      } else {
+        itineraryBox.value = "";
+      }
+    }
+
+    function continueEstimate(e) {
+      e.preventDefault();
+      const course = document.getElementById("course").value;
+      if (course) {
+        alert('"' + course + '" 코스 견적서 작성을 시작합니다.');
+        window.location.href = "b2b_estimate_example.html"; // 실제 견적 입력 파일로 연결
+      } else {
+        alert("여행 코스를 먼저 선택해주세요.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>여행 코스 선택 (B2B 견적용)</h1>
+  <form onsubmit="continueEstimate(event)">
+    <label>선택 1: 국가 선택</label>
+    <select id="country" onchange="updateCourseSelect()" required>
+      <option value="">국가를 선택하세요</option>
+      <option value="베트남">베트남</option>
+      <option value="라오스">라오스</option>
+    </select>
+
+    <label>선택 2: 여행 코스 선택</label>
+    <select id="course" onchange="updateItinerary()" required>
+      <option value="">먼저 국가를 선택하세요</option>
+    </select>
+
+    <label>자동 일정 표시</label>
+    <textarea id="itinerary" rows="6" readonly></textarea>
+
+    <button type="submit">견적 계속 진행</button>
+  </form>
+</body>
+</html>

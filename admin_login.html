@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>관리자 로그인</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f3f4f6; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+    .login-box {
+      background: white; padding: 2rem; border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; width: 100%;
+    }
+    h1 { text-align: center; color: #e87118; margin-bottom: 1rem; }
+    label { font-weight: bold; display: block; margin-top: 1rem; }
+    input {
+      width: 100%; padding: 0.75rem; margin-top: 0.25rem;
+      border: 1px solid #ccc; border-radius: 6px; font-size: 1rem;
+    }
+    button {
+      width: 100%; padding: 0.75rem; margin-top: 1.5rem;
+      background: #ffa94d; color: white; font-size: 1.1rem;
+      border: none; border-radius: 6px; cursor: pointer;
+    }
+    button:hover { background: #f58f1f; }
+    .error { color: red; margin-top: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h1>관리자 로그인</h1>
+    <label for="password">비밀번호 입력</label>
+    <input type="password" id="password" placeholder="비밀번호" />
+    <button onclick="login()">로그인</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    function login() {
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('errorMsg');
+      if (password === "admin1234") {
+        window.location.href = "b2b_admin_country_course.html";
+      } else {
+        errorMsg.textContent = "비밀번호가 올바르지 않습니다.";
+      }
+    }
+  </script>
+</body>
+</html>
