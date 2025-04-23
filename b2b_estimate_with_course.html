@@ -1,23 +1,91 @@
 
 <!DOCTYPE html>
 <html lang="ko">
-<head><meta charset="UTF-8"><title>견적 입력</title></head>
+<head>
+  <meta charset="UTF-8">
+  <title>견적 입력</title>
+  <style>
+    body { background: #fffdf9; font-family: sans-serif; margin: 0; padding: 2rem; }
+    .container { max-width: 800px; margin: auto; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    label { font-weight: bold; display: block; margin-top: 1rem; }
+    input, select, textarea {
+      width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px; margin-top: 0.3rem;
+    }
+    .half { width: 49%; display: inline-block; }
+    button {
+      margin-top: 2rem;
+      background: #ffa94d;
+      color: white;
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
 <body>
-<h2>B2B 견적 입력</h2>
-<script>
-  window.onload = () => {
-    const params = new URLSearchParams(window.location.search);
-    const course = params.get("course");
-    const itinerary = decodeURIComponent(params.get("itinerary"));
-    document.getElementById("courseName").value = course;
-    document.getElementById("itinerary").value = itinerary;
-  }
-</script>
-<form>
-  <label>코스명</label><input type="text" id="courseName" readonly><br><br>
-  <label>일정</label><textarea id="itinerary" rows="4" readonly></textarea><br><br>
-  <label>인원 수</label><input type="number"><br><br>
-  <button type="submit">견적서 생성</button>
-</form>
+  <div class="container">
+    <h2>B2B 견적 입력</h2>
+    <form>
+      <label>코스명</label>
+      <input type="text" id="courseName" readonly />
+
+      <label>일정</label>
+      <textarea id="itinerary" rows="4" readonly></textarea>
+
+      <label>호텔 등급</label>
+      <select>
+        <option value="4성급">4성급</option>
+        <option value="5성급">5성급</option>
+      </select>
+
+      <div id="generalMeal">
+        <label>식사 구성 (일반 투어)</label>
+        <input type="text" value="중식 포함 / 석식 포함" readonly />
+      </div>
+
+      <div id="golfMeal" class="hidden">
+        <label>중식 포함 여부 (골프 투어)</label>
+        <select><option>포함</option><option>불포함</option></select>
+        <label>석식 포함 여부 (골프 투어)</label>
+        <select><option>포함</option><option>불포함</option></select>
+      </div>
+
+      <label>행사 인원</label>
+      <input type="number" id="people" oninput="setVehicle()" />
+
+      <label>차량 자동선택</label>
+      <input type="text" id="vehicle" readonly />
+
+      <button type="submit">견적서 생성</button>
+    </form>
+  </div>
+
+  <script>
+    function setVehicle() {
+      const n = parseInt(document.getElementById("people").value);
+      const v = document.getElementById("vehicle");
+      if (n <= 6) v.value = "벤";
+      else if (n <= 11) v.value = "미니버스";
+      else v.value = "버스";
+    }
+
+    window.onload = () => {
+      const params = new URLSearchParams(window.location.search);
+      const course = params.get("course");
+      const itinerary = decodeURIComponent(params.get("itinerary") || "");
+      document.getElementById("courseName").value = course;
+      document.getElementById("itinerary").value = itinerary;
+      if (course.includes("골프")) {
+        document.getElementById("generalMeal").classList.add("hidden");
+        document.getElementById("golfMeal").classList.remove("hidden");
+      } else {
+        document.getElementById("generalMeal").classList.remove("hidden");
+        document.getElementById("golfMeal").classList.add("hidden");
+      }
+    }
+  </script>
 </body>
 </html>
