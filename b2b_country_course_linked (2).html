@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>국가 및 코스 선택</title>
+  <style>
+    body {
+      background-color: #fff8f2;
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff944d;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, textarea, button {
+      width: 100%;
+      margin: 0.5rem 0 1rem;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #ffa94d;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>국가 및 코스 선택</h2>
+    <form onsubmit="submitForm(event)">
+      <label for="country">국가</label>
+      <select id="country" onchange="loadCourses()">
+        <option value="라오스">라오스</option>
+        <option value="베트남">베트남</option>
+      </select>
+
+      <label for="course">코스</label>
+      <select id="course">
+        <option value="비엔티안 골프">비엔티안 골프</option>
+        <option value="방비엥 일반">방비엥 일반</option>
+      </select>
+
+      <label for="itinerary">일정</label>
+      <textarea id="itinerary" rows="3" readonly>자동 일정 표시</textarea>
+
+      <button type="submit">견적 계속 진행</button>
+    </form>
+  </div>
+
+  <script>
+    function submitForm(e) {
+      e.preventDefault();
+      const course = document.getElementById('course').value;
+      const itinerary = encodeURIComponent(document.getElementById('itinerary').value);
+      window.location.href = "b2b_estimate_with_course.html?course=" + course + "&itinerary=" + itinerary;
+    }
+  </script>
+</body>
+</html>
