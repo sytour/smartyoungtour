@@ -1,72 +1,23 @@
 
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>B2B 견적 입력</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 2rem; }
-    h1 { text-align: center; color: #e87118; }
-    form { max-width: 900px; margin: 0 auto; background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-
-    label { display: block; margin-top: 1.5rem; font-weight: bold; }
-    input, select, textarea {
-      width: 100%; padding: 0.75rem; margin-top: 0.25rem; border: 1px solid #ccc;
-      border-radius: 6px; font-size: 1rem;
-    }
-
-    textarea[readonly] {
-      background: #fff3e0;
-    }
-
-    button {
-      margin-top: 2rem; background: #ffa94d; color: white; border: none;
-      padding: 1rem; font-size: 1.1rem; border-radius: 6px; cursor: pointer;
-    }
-
-    button:hover { background: #f58f1f; }
-  </style>
-  <script>
-    function getParams() {
-      const params = new URLSearchParams(window.location.search);
-      const course = params.get("course");
-      const itinerary = params.get("itinerary");
-      if (course) document.getElementById("courseName").value = course;
-      if (itinerary) document.getElementById("coursePlan").value = decodeURIComponent(itinerary);
-    }
-
-    window.onload = getParams;
-  </script>
-</head>
+<head><meta charset="UTF-8"><title>견적 입력</title></head>
 <body>
-  <h1>B2B 견적 입력</h1>
-  <form>
-    <label>선택한 코스명</label>
-    <input type="text" id="courseName" readonly />
-
-    <label>선택한 일정</label>
-    <textarea id="coursePlan" rows="6" readonly></textarea>
-
-    <label>행사 인원 수 (성인 기준)</label>
-    <input type="number" placeholder="예: 10명" required />
-
-    <label>선택관광 포함 여부</label>
-    <select required>
-      <option value="">선택</option>
-      <option value="yes">포함</option>
-      <option value="no">불포함</option>
-    </select>
-
-    <label>쇼핑 횟수 선택</label>
-    <select required>
-      <option value="0">0회</option>
-      <option value="1">1회</option>
-      <option value="2">2회</option>
-      <option value="3">3회</option>
-    </select>
-
-    <button type="submit">견적서 생성</button>
-  </form>
+<h2>B2B 견적 입력</h2>
+<script>
+  window.onload = () => {
+    const params = new URLSearchParams(window.location.search);
+    const course = params.get("course");
+    const itinerary = decodeURIComponent(params.get("itinerary"));
+    document.getElementById("courseName").value = course;
+    document.getElementById("itinerary").value = itinerary;
+  }
+</script>
+<form>
+  <label>코스명</label><input type="text" id="courseName" readonly><br><br>
+  <label>일정</label><textarea id="itinerary" rows="4" readonly></textarea><br><br>
+  <label>인원 수</label><input type="number"><br><br>
+  <button type="submit">견적서 생성</button>
+</form>
 </body>
 </html>
