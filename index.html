@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <title>SMARTYOUNG TOUR</title>
   <style>
-    body { background: #fff8f2; color: #333; font-family: sans-serif; margin: 0; }
+    body { background: #fff8f2; color: #333; font-family: sans-serif; margin: 0; position: relative; }
     header { background: #ffa94d; padding: 1rem; color: white; font-weight: bold; text-align: center; }
     nav {
       background: #fff3dc;
@@ -51,6 +51,31 @@
       color: #880e4f;
       font-size: 0.9rem;
     }
+    .quote-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ffa94d;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .customer-box {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #fff7e6;
+      border: 1px solid #ffc078;
+      padding: 1rem;
+      font-size: 0.85rem;
+      color: #333;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
@@ -84,5 +109,16 @@
   <footer>
     © 2025 SMARTYOUNG TOUR
   </footer>
+
+  <div class="customer-box">
+    📞 고객센터<br>
+    운영시간: 09:00~18:00<br>
+    카카오톡: @sytour<br>
+    대표번호는 추후 등록 예정
+  </div>
+
+  <button class="quote-button" onclick="window.location.href='b2b_country_course_linked.html'">
+    대리점 견적
+  </button>
 </body>
 </html>
