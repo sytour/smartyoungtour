@@ -121,7 +121,7 @@
         localStorage.setItem('b2b_user_info', JSON.stringify(userInfo));
       }
 
-      window.location.href = "b2b_country_course_linked.html";
+      window.location.href = "b2b_estimate_with_course.html";
     }
 
     function restoreSavedData() {
@@ -146,6 +146,7 @@
       document.getElementById('phone').addEventListener('input', checkInputs);
       document.getElementById('province').addEventListener('change', checkInputs);
       document.getElementById('city').addEventListener('change', checkInputs);
+      checkInputs();
     };
   </script>
 </body>
