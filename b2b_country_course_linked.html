@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>국가 및 코스 선택</title>
+  <title>국가 및 여행 코스 선택</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f7f4ef;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       justify-content: center;
+      align-items: center;
       height: 100vh;
       margin: 0;
     }
@@ -104,12 +105,13 @@
     }
 
     function proceed() {
+      const country = document.getElementById("country").value;
       const course = document.getElementById("course").value;
-      if (!course) {
-        alert("코스를 선택해주세요.");
+      if (!course || !country) {
+        alert("국가와 코스를 선택해주세요.");
         return;
       }
-      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
       window.location.href = url;
     }
   </script>
