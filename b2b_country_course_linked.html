@@ -3,129 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2B 견적 입력</title>
+  <title>국가 및 코스 선택</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
+      background-color: #f7f4ef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #ffffff;
       padding: 40px;
-      line-height: 1.6;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .room-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      background: #f9f9f9;
-      padding: 20px;
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .room-container label {
-      font-weight: bold;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
       text-align: center;
+      width: 450px;
     }
-
-    .room-container input {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    .room-summary {
-      grid-column: span 6;
-      text-align: right;
-      font-weight: bold;
+    h2 {
+      margin-bottom: 24px;
+      font-size: 22px;
       color: #333;
+    }
+    select {
+      width: 48%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+    .select-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    button {
       margin-top: 10px;
-    }
-
-    .note {
-      font-size: 0.9em;
-      color: #777;
-      text-align: left;
-      grid-column: span 6;
-    }
-
-    .button-container {
-      text-align: center;
-      margin-top: 30px;
-    }
-
-    .button-container button {
-      background-color: #ff944d;
+      padding: 12px 20px;
+      background-color: #ff914d;
       color: white;
-      padding: 12px 24px;
       font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      width: 100%;
     }
-
-    .button-container button:hover {
-      background-color: #e67e22;
+    button:hover {
+      background-color: #e47b35;
     }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 입력</h2>
-
-  <div class="room-container">
-    <label for="single">싱글룸</label>
-    <label for="twin">트윈룸</label>
-    <label for="double">더블룸</label>
-    <label for="triple">트리플룸</label>
-    <label>총 객실 수</label>
-    <label>총 인원 수</label>
-
-    <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
-    <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
-    <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
-    <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
-    <input type="text" id="totalRooms" readonly />
-    <input type="text" id="totalPeople" readonly />
-
-    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
-  </div>
-
-  <div class="button-container">
-    <button onclick="submitForm()">견적서 생성</button>
+  <div class="container">
+    <h2>국가 및 여행 코스 선택</h2>
+    <div class="select-group">
+      <select id="country" onchange="updateCourses()">
+        <option value="">국가 선택</option>
+        <option value="laos">라오스</option>
+        <option value="vietnam">베트남</option>
+      </select>
+      <select id="course">
+        <option value="">코스 선택</option>
+      </select>
+    </div>
+    <button onclick="proceed()">견적 계속 진행</button>
   </div>
 
   <script>
-    function updateTotals() {
-      const single = parseInt(document.getElementById('single').value) || 0;
-      const twin = parseInt(document.getElementById('twin').value) || 0;
-      const double = parseInt(document.getElementById('double').value) || 0;
-      const triple = parseInt(document.getElementById('triple').value) || 0;
+    const courseOptions = {
+      laos: [
+        "방비엥 일반",
+        "루앙프라방 일반",
+        "비엔티안 골프",
+        "비엔티안 골프 및 방비엥(1일) 일반"
+      ],
+      vietnam: [
+        "하노이 일반",
+        "다낭 일반",
+        "푸꾸옥 일반",
+        "나트랑 일반"
+      ]
+    };
 
-      const totalRooms = single + twin + double + triple;
-      const totalPeople = single * 1 + twin * 2 + double * 2 + triple * 3;
+    function updateCourses() {
+      const country = document.getElementById("country").value;
+      const courseSelect = document.getElementById("course");
+      courseSelect.innerHTML = '<option value="">코스 선택</option>';
 
-      document.getElementById('totalRooms').value = totalRooms;
-      document.getElementById('totalPeople').value = totalPeople;
+      if (courseOptions[country]) {
+        courseOptions[country].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.text = course;
+          courseSelect.appendChild(option);
+        });
+      }
     }
 
-    function submitForm() {
-      const peopleInput = prompt("총 인원을 입력해주세요:");
-
-      const totalPeople = parseInt(document.getElementById('totalPeople').value);
-      const expectedPeople = parseInt(peopleInput);
-
-      if (totalPeople !== expectedPeople) {
-        alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
-      } else {
-        alert("견적서가 생성됩니다."); // 여기에 실제 견적서 생성 기능 연결 가능
+    function proceed() {
+      const course = document.getElementById("course").value;
+      if (!course) {
+        alert("코스를 선택해주세요.");
+        return;
       }
+      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+      window.location.href = url;
     }
   </script>
 </body>
