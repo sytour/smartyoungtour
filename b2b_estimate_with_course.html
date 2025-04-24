@@ -1,83 +1,113 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
   <style>
-    body { font-family: Arial; padding: 2em; }
-    label, input, select { display: block; margin: 10px 0; }
-    .warning { color: red; display: none; }
+    body {
+      font-family: sans-serif;
+      background-color: #fefaf6;
+      display: flex;
+      justify-content: center;
+      padding: 30px;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 25px;
+      padding: 10px;
+      width: 100%;
+      background-color: #ff914d;
+      color: white;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .note {
+      font-size: 0.9em;
+      color: gray;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 입력</h2>
+  <div class="container">
+    <h2>B2B 견적 입력</h2>
+    <label>코스명:</label>
+    <input type="text" value="방비엥 일반" />
 
-  <label>코스명: <input type="text" value="방비엥 일반" readonly></label>
-  <label>일정: <textarea readonly>자동 일정 표시</textarea></label>
+    <label>일정:</label>
+    <textarea>자동 일정 표시</textarea>
 
-  <label>호텔 등급:
+    <label>호텔 등급:</label>
     <select>
       <option>4성급</option>
       <option>5성급</option>
     </select>
-  </label>
 
-  <label>인원 수: <input type="number" id="peopleCount" oninput="validateRoomCount()"></label>
+    <label>인원 수:</label>
+    <input type="number" />
 
-  <fieldset>
-    <legend>방 유형 입력</legend>
-    <label>싱글룸 수: <input type="number" id="singleRoom" value="0" oninput="validateRoomCount()"></label>
-    <label>트윈룸 수: <input type="number" id="twinRoom" value="0" oninput="validateRoomCount()"></label>
-    <label>더블룸 수: <input type="number" id="doubleRoom" value="0" oninput="validateRoomCount()"></label>
-    <label>트리플룸 수: <input type="number" id="tripleRoom" value="0" oninput="validateRoomCount()"></label>
-    <p style="color: gray">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</p>
-  </fieldset>
+    <label>방 유형 입력</label>
+    <label>싱글룸 수:</label>
+    <input type="number" value="0" />
+    <label>트윈룸 수:</label>
+    <input type="number" value="0" />
+    <label>더블룸 수:</label>
+    <input type="number" value="0" />
+    <label>트리플룸 수:</label>
+    <input type="number" value="0" />
+    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
 
-  <p id="roomMismatchWarning" class="warning">입력하신 인원수와 방 배정 인원이 일치하지 않습니다.</p>
+    <label>차량 자동선택:</label>
+    <input type="text" value="자동 계산됨" />
 
-  <label>차량 자동선택: <input type="text" value="자동 계산됨" readonly></label>
-  <label>선택관광:
+    <label>선택관광:</label>
     <select>
       <option>있음</option>
       <option>없음</option>
     </select>
-  </label>
-  <label>쇼핑 횟수:
+
+    <label>쇼핑 횟수:</label>
     <select>
       <option>노쇼핑</option>
       <option>1회</option>
       <option>2회</option>
       <option>3회</option>
     </select>
-  </label>
 
-  <label>총 지상비 (전체): <input type="text"></label>
-  <label>성인 1인 지상비 (P/P): <input type="text"></label>
+    <label>총 지상비 (전체):</label>
+    <input type="text" />
 
-  <button id="generateBtn" onclick="alert('견적서 생성')">견적서 생성</button>
+    <label>성인 1인 지상비 (P/P):</label>
+    <input type="text" />
 
-  <script>
-    function validateRoomCount() {
-      const inputPeople = parseInt(document.getElementById("peopleCount").value || 0);
-      const single = parseInt(document.getElementById("singleRoom").value || 0);
-      const twin = parseInt(document.getElementById("twinRoom").value || 0);
-      const double = parseInt(document.getElementById("doubleRoom").value || 0);
-      const triple = parseInt(document.getElementById("tripleRoom").value || 0);
-
-      const total = single * 1 + twin * 2 + double * 2 + triple * 3;
-      const warning = document.getElementById("roomMismatchWarning");
-      const btn = document.getElementById("generateBtn");
-
-      if (inputPeople !== total) {
-        warning.style.display = "block";
-        btn.disabled = true;
-      } else {
-        warning.style.display = "none";
-        btn.disabled = false;
-      }
-    }
-  </script>
+    <button>견적서 생성</button>
+  </div>
 </body>
 </html>
