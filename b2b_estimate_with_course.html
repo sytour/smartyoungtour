@@ -7,18 +7,9 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f6f2eb;
+      background-color: #fdfdfd;
       padding: 40px;
-      margin: 0;
-    }
-
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      line-height: 1.6;
     }
 
     h2 {
@@ -26,33 +17,49 @@
       margin-bottom: 30px;
     }
 
-    .room-grid {
+    .info {
+      margin-bottom: 30px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .room-container {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 10px;
+      gap: 10px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    .room-grid label {
+    .room-container label {
       font-weight: bold;
+      text-align: center;
     }
 
-    .room-grid input {
-      padding: 10px;
-      font-size: 16px;
+    .room-container input {
       width: 100%;
+      padding: 8px;
       box-sizing: border-box;
       text-align: center;
     }
 
-    .note {
+    .room-summary {
       grid-column: span 6;
+      text-align: right;
+      font-weight: bold;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    .note {
       font-size: 0.9em;
       color: #777;
-      margin-top: 8px;
       text-align: left;
+      grid-column: span 6;
     }
 
     .button-container {
@@ -60,57 +67,49 @@
       margin-top: 30px;
     }
 
-    button {
+    .button-container button {
       background-color: #ff914d;
       color: white;
-      padding: 14px 28px;
+      padding: 12px 24px;
       font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
 
-    button:hover {
+    .button-container button:hover {
       background-color: #e67e22;
-    }
-
-    .info {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>B2B 견적 입력</h2>
+  <h2>B2B 견적 입력</h2>
 
-    <div class="info">
-      선택된 국가: <span id="selected-country">-</span> /
-      선택된 코스: <span id="selected-course">-</span>
-    </div>
+  <div class="info">
+    선택된 국가: <span id="selected-country">-</span> /
+    선택된 코스: <span id="selected-course">-</span>
+  </div>
 
-    <div class="room-grid">
-      <label>싱글룸</label>
-      <label>트윈룸</label>
-      <label>더블룸</label>
-      <label>트리플룸</label>
-      <label>총 객실 수</label>
-      <label>총 인원 수</label>
+  <div class="room-container">
+    <label>싱글룸</label>
+    <label>트윈룸</label>
+    <label>더블룸</label>
+    <label>트리플룸</label>
+    <label>총 객실 수</label>
+    <label>총 인원 수</label>
 
-      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
-      <input type="text" id="totalRooms" readonly />
-      <input type="text" id="totalPeople" readonly />
+    <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
+    <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
+    <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
+    <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
+    <input type="text" id="totalRooms" readonly />
+    <input type="text" id="totalPeople" readonly />
 
-      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
-    </div>
+    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
+  </div>
 
-    <div class="button-container">
-      <button onclick="submitForm()">견적서 생성</button>
-    </div>
+  <div class="button-container">
+    <button onclick="submitForm()">견적서 생성</button>
   </div>
 
   <script>
@@ -121,7 +120,7 @@
       const triple = parseInt(document.getElementById('triple').value) || 0;
 
       const totalRooms = single + twin + double + triple;
-      const totalPeople = (single * 1) + (twin * 2) + (double * 2) + (triple * 3);
+      const totalPeople = single * 1 + twin * 2 + double * 2 + triple * 3;
 
       document.getElementById('totalRooms').value = totalRooms;
       document.getElementById('totalPeople').value = totalPeople;
@@ -135,11 +134,10 @@
       if (totalPeople !== check) {
         alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
       } else {
-        alert("견적서가 생성됩니다. (실제 저장/출력 기능은 개발 필요)");
+        alert("견적서가 생성됩니다. (실제 견적서 생성 기능은 추가 개발 필요)");
       }
     }
 
-    // 쿼리에서 값 불러오기
     const params = new URLSearchParams(window.location.search);
     const course = params.get("course");
     const country = params.get("country");
