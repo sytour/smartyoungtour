@@ -5,24 +5,125 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
   <style>
-    /* 스타일 수정 없이 그대로 사용 */
+    /* 스타일 */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f4ef;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .select-group {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    select {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #777;
+      text-align: left;
+      margin-top: 10px;
+    }
+    .button-container {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .button-container button {
+      background-color: #ff944d;
+      color: white;
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .button-container button:hover {
+      background-color: #e67e22;
+    }
   </style>
 </head>
 <body>
   <h2>B2B 견적 입력</h2>
+
+  <div class="select-group">
+    <select id="country" onchange="updateCourses()">
+      <option value="">국가 선택</option>
+      <option value="laos">라오스</option>
+      <option value="vietnam">베트남</option>
+    </select>
+    <select id="course">
+      <option value="">코스 선택</option>
+    </select>
+  </div>
 
   <div>
     <p>선택된 국가: <span id="selectedCountry"></span></p>
     <p>선택된 코스: <span id="selectedCourse"></span></p>
   </div>
 
+  <div class="button-container">
+    <button onclick="submitForm()">견적서 생성</button>
+  </div>
+
   <script>
+    const courseOptions = {
+      laos: [
+        "방비엥 일반",
+        "루앙프라방 일반",
+        "비엔티안 골프",
+        "비엔티안 골프 및 방비엥(1일) 일반"
+      ],
+      vietnam: [
+        "하노이 일반",
+        "다낭 일반",
+        "푸꾸옥 일반",
+        "나트랑 일반"
+      ]
+    };
+
+    function updateCourses() {
+      const country = document.getElementById("country").value;
+      const courseSelect = document.getElementById("course");
+      courseSelect.innerHTML = '<option value="">코스 선택</option>';
+
+      if (courseOptions[country]) {
+        courseOptions[country].forEach(course => {
+          const option = document.createElement("option");
+          option.value = course;
+          option.text = course;
+          courseSelect.appendChild(option);
+        });
+      }
+    }
+
+    function submitForm() {
+      const country = document.getElementById("country").value;
+      const course = document.getElementById("course").value;
+      if (!course || !country) {
+        alert("국가와 코스를 선택해주세요.");
+        return;
+      }
+
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+      window.location.href = url;
+    }
+
+    // URL에서 파라미터를 읽어 선택된 값 표시
     const params = new URLSearchParams(window.location.search);
     const country = params.get('country');
     const course = params.get('course');
-
-    document.getElementById('selectedCountry').textContent = country;
-    document.getElementById('selectedCourse').textContent = course;
+    document.getElementById('selectedCountry').textContent = country || "선택 안됨";
+    document.getElementById('selectedCourse').textContent = course || "선택 안됨";
   </script>
 </body>
 </html>
