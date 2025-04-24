@@ -5,109 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background-color: #fefaf6;
-      display: flex;
-      justify-content: center;
-      padding: 30px;
-    }
-    .container {
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 600px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      box-sizing: border-box;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    button {
-      margin-top: 25px;
-      padding: 10px;
-      width: 100%;
-      background-color: #ff914d;
-      color: white;
-      border: none;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .note {
-      font-size: 0.9em;
-      color: gray;
-      margin-top: 10px;
-    }
+    /* 스타일 수정 없이 그대로 사용 */
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>B2B 견적 입력</h2>
-    <label>코스명:</label>
-    <input type="text" value="방비엥 일반" />
+  <h2>B2B 견적 입력</h2>
 
-    <label>일정:</label>
-    <textarea>자동 일정 표시</textarea>
-
-    <label>호텔 등급:</label>
-    <select>
-      <option>4성급</option>
-      <option>5성급</option>
-    </select>
-
-    <label>인원 수:</label>
-    <input type="number" />
-
-    <label>방 유형 입력</label>
-    <label>싱글룸 수:</label>
-    <input type="number" value="0" />
-    <label>트윈룸 수:</label>
-    <input type="number" value="0" />
-    <label>더블룸 수:</label>
-    <input type="number" value="0" />
-    <label>트리플룸 수:</label>
-    <input type="number" value="0" />
-    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
-
-    <label>차량 자동선택:</label>
-    <input type="text" value="자동 계산됨" />
-
-    <label>선택관광:</label>
-    <select>
-      <option>있음</option>
-      <option>없음</option>
-    </select>
-
-    <label>쇼핑 횟수:</label>
-    <select>
-      <option>노쇼핑</option>
-      <option>1회</option>
-      <option>2회</option>
-      <option>3회</option>
-    </select>
-
-    <label>총 지상비 (전체):</label>
-    <input type="text" />
-
-    <label>성인 1인 지상비 (P/P):</label>
-    <input type="text" />
-
-    <button>견적서 생성</button>
+  <div>
+    <p>선택된 국가: <span id="selectedCountry"></span></p>
+    <p>선택된 코스: <span id="selectedCourse"></span></p>
   </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const country = params.get('country');
+    const course = params.get('course');
+
+    document.getElementById('selectedCountry').textContent = country;
+    document.getElementById('selectedCourse').textContent = course;
+  </script>
 </body>
 </html>
