@@ -49,7 +49,7 @@
   <h2>B2B 견적 입력</h2>
   <div class="form-container">
     <label>코스명</label>
-    <input type="text" id="course" />
+    <input type="text" id="course" value="방비엥 일반" />
 
     <label>인원 수</label>
     <input type="number" id="headCount" />
@@ -129,6 +129,7 @@
       document.getElementById('headCount').addEventListener('input', updateVehicle);
       document.getElementById('optionalTour').addEventListener('change', updateDiscount);
       document.getElementById('shoppingCount').addEventListener('change', updateDiscount);
+      document.getElementById('hotelGrade').addEventListener('change', updateDiscount);
     };
   </script>
 </body>
