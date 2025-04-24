@@ -14,13 +14,14 @@
 
     h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
 
     .info {
-      margin-bottom: 30px;
-      font-size: 18px;
       text-align: center;
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 30px;
     }
 
     .room-container {
@@ -31,7 +32,7 @@
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      max-width: 800px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -47,14 +48,6 @@
       text-align: center;
     }
 
-    .room-summary {
-      grid-column: span 6;
-      text-align: right;
-      font-weight: bold;
-      color: #333;
-      margin-top: 10px;
-    }
-
     .note {
       font-size: 0.9em;
       color: #777;
@@ -68,7 +61,7 @@
     }
 
     .button-container button {
-      background-color: #ff914d;
+      background-color: #ff944d;
       color: white;
       padding: 12px 24px;
       font-size: 16px;
@@ -86,15 +79,16 @@
   <h2>B2B 견적 입력</h2>
 
   <div class="info">
-    선택된 국가: <span id="selected-country">-</span> /
-    선택된 코스: <span id="selected-course">-</span>
+    선택된 국가: <span id="selectedCountry">없음</span> /
+    선택된 코스: <span id="selectedCourse">없음</span> /
+    일정: <span id="selectedItinerary">없음</span>
   </div>
 
   <div class="room-container">
-    <label>싱글룸</label>
-    <label>트윈룸</label>
-    <label>더블룸</label>
-    <label>트리플룸</label>
+    <label for="single">싱글룸</label>
+    <label for="twin">트윈룸</label>
+    <label for="double">더블룸</label>
+    <label for="triple">트리플룸</label>
     <label>총 객실 수</label>
     <label>총 인원 수</label>
 
@@ -113,6 +107,18 @@
   </div>
 
   <script>
+    // URL 파라미터 가져오기
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get("course");
+    const country = urlParams.get("country");
+    const itinerary = urlParams.get("itinerary");
+
+    // 정보 표시
+    document.getElementById("selectedCountry").innerText = country || "없음";
+    document.getElementById("selectedCourse").innerText = course || "없음";
+    document.getElementById("selectedItinerary").innerText = itinerary || "없음";
+
+    // 총 객실 수, 총 인원 수 계산
     function updateTotals() {
       const single = parseInt(document.getElementById('single').value) || 0;
       const twin = parseInt(document.getElementById('twin').value) || 0;
@@ -129,21 +135,15 @@
     function submitForm() {
       const expectedPeople = prompt("총 인원 수를 입력해주세요:");
       const totalPeople = parseInt(document.getElementById('totalPeople').value);
-      const check = parseInt(expectedPeople);
+      const userPeople = parseInt(expectedPeople);
 
-      if (totalPeople !== check) {
+      if (totalPeople !== userPeople) {
         alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
       } else {
-        alert("견적서가 생성됩니다. (실제 견적서 생성 기능은 추가 개발 필요)");
+        alert("견적서가 생성됩니다.");
+        // 향후 PDF 또는 제출로 연결 가능
       }
     }
-
-    const params = new URLSearchParams(window.location.search);
-    const course = params.get("course");
-    const country = params.get("country");
-
-    document.getElementById("selected-course").textContent = course || "없음";
-    document.getElementById("selected-country").textContent = country || "없음";
   </script>
 </body>
 </html>
