@@ -3,90 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>국가 및 여행 코스 선택</title>
+  <title>B2B 견적 입력</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f4ef;
+      font-family: 'Arial', sans-serif;
+      background-color: #f6f2eb;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
     }
+
     .container {
-      background-color: #ffffff;
+      background-color: white;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
       text-align: center;
-      width: 450px;
     }
+
     h2 {
       margin-bottom: 24px;
-      font-size: 22px;
-      color: #333;
     }
+
     select {
-      width: 48%;
       padding: 12px;
       font-size: 16px;
+      margin: 0 10px;
       border-radius: 8px;
       border: 1px solid #ccc;
-      margin-bottom: 20px;
     }
-    .select-group {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
+
     button {
-      margin-top: 10px;
-      padding: 12px 20px;
+      margin-top: 20px;
+      padding: 12px 24px;
+      font-size: 16px;
       background-color: #ff914d;
       color: white;
-      font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      width: 100%;
     }
+
     button:hover {
-      background-color: #e47b35;
+      background-color: #e67e22;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>국가 및 여행 코스 선택</h2>
-    <div class="select-group">
+    <h2>B2B 견적 입력</h2>
+    <div>
       <select id="country" onchange="updateCourses()">
         <option value="">국가 선택</option>
         <option value="laos">라오스</option>
         <option value="vietnam">베트남</option>
       </select>
+
       <select id="course">
         <option value="">코스 선택</option>
       </select>
     </div>
-    <button onclick="proceed()">견적 계속 진행</button>
+    <button onclick="proceed()">견적서 생성</button>
   </div>
 
   <script>
     const courseOptions = {
-      laos: [
-        "방비엥 일반",
-        "루앙프라방 일반",
-        "비엔티안 골프",
-        "비엔티안 골프 및 방비엥(1일) 일반"
-      ],
-      vietnam: [
-        "하노이 일반",
-        "다낭 일반",
-        "푸꾸옥 일반",
-        "나트랑 일반"
-      ]
+      laos: ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프 및 방비엥(1일) 일반"],
+      vietnam: ["하노이 일반", "다낭 일반", "푸꾸옥 일반", "나트랑 일반"]
     };
 
     function updateCourses() {
@@ -105,17 +90,17 @@
     }
 
     function proceed() {
-  const country = document.getElementById("country").value;
-  const course = document.getElementById("course").value;
+      const country = document.getElementById("country").value;
+      const course = document.getElementById("course").value;
 
-  if (!country || !course) {
-    alert("국가와 코스를 모두 선택해주세요.");
-    return;
-  }
+      if (!country || !course) {
+        alert("국가와 코스를 모두 선택해주세요.");
+        return;
+      }
 
-  const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
-  window.location.href = url;
-}
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+      window.location.href = url;
+    }
   </script>
 </body>
 </html>
