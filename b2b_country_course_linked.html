@@ -2,81 +2,54 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>국가 및 코스 선택</title>
-  <style>
-    body {
-      background-color: #fff8f2;
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      background-color: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 90%;
-      max-width: 500px;
-    }
-    h2 {
-      text-align: center;
-      color: #ff944d;
-    }
-    label {
-      font-weight: bold;
-    }
-    select, textarea, button {
-      width: 100%;
-      margin: 0.5rem 0 1rem;
-      padding: 0.5rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #ffa94d;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>국가 및 코스 선택</title>
+    <style>
+        body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f8f8f8; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        select, button { padding: 10px; margin-top: 10px; width: 300px; font-size: 16px; }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>국가 및 코스 선택</h2>
-    <form onsubmit="submitForm(event)">
-      <label for="country">국가</label>
-      <select id="country" onchange="loadCourses()">
-        <option value="라오스">라오스</option>
-        <option value="베트남">베트남</option>
-      </select>
+    <div class="container">
+        <h2>국가 및 여행 코스 선택</h2>
+        <select id="country" onchange="updateCourses()">
+            <option value="">국가 선택</option>
+            <option value="laos">라오스</option>
+            <option value="vietnam">베트남</option>
+        </select>
+        <select id="course">
+            <option value="">코스 선택</option>
+        </select>
+        <button onclick="proceed()">견적 계속 진행</button>
+    </div>
 
-      <label for="course">코스</label>
-      <select id="course">
-        <option value="방비엥 일반">방비엥 일반</option>
-        <option value="루앙프라방 일반">루앙프라방 일반</option>
-        <option value="비엔티안 골프">비엔티안 골프</option>
-        <option value="비엔티안 골프 및 방비엥(1일) 일반">비엔티안 골프 및 방비엥(1일) 일반</option>
-      </select>
+    <script>
+        const courseOptions = {
+            laos: ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프 및 방비엥(1일) 일반"],
+            vietnam: ["하노이 일반", "다낭 일반", "푸꾸옥 일반", "나트랑 일반"]
+        };
 
-      <label for="itinerary">일정</label>
-      <textarea id="itinerary" rows="3" readonly>자동 일정 표시</textarea>
+        function updateCourses() {
+            const country = document.getElementById("country").value;
+            const courseSelect = document.getElementById("course");
+            courseSelect.innerHTML = "<option value=''>코스 선택</option>";
+            if (country && courseOptions[country]) {
+                courseOptions[country].forEach(course => {
+                    const option = document.createElement("option");
+                    option.value = course;
+                    option.text = course;
+                    courseSelect.add(option);
+                });
+            }
+        }
 
-      <button type="submit">견적 계속 진행</button>
-    </form>
-  </div>
-
-  <script>
-    function submitForm(e) {
-      e.preventDefault();
-      const course = document.getElementById('course').value;
-      const itinerary = encodeURIComponent(document.getElementById('itinerary').value);
-      window.location.href = "b2b_estimate_with_course.html?course=" + course + "&itinerary=" + itinerary;
-    }
-  </script>
+        function proceed() {
+            const course = document.getElementById("course").value;
+            const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+            window.location.href = url;
+        }
+    </script>
 </body>
 </html>
