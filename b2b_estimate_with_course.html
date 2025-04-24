@@ -1,70 +1,67 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdf9f3;
+      background-color: #fdfdfd;
       padding: 40px;
+      line-height: 1.6;
     }
 
     h2 {
       text-align: center;
-      color: #222;
-    }
-
-    .info {
-      text-align: center;
       margin-bottom: 30px;
-      font-size: 16px;
-      color: #444;
     }
 
-    .room-container {
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .room-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 12px;
-      background: #fff;
+      gap: 10px;
+      background: #f9f9f9;
       padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      max-width: 900px;
-      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
       margin-bottom: 20px;
     }
 
-    .room-container label {
-      font-weight: bold;
-      text-align: center;
-    }
-
-    .room-container input {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
+    .room-grid label {
       text-align: center;
     }
 
     .note {
       font-size: 0.9em;
       color: #777;
-      text-align: left;
       grid-column: span 6;
     }
 
-    .button-container {
-      text-align: center;
-      margin-top: 30px;
-    }
-
     button {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 24px;
+      font-size: 16px;
       background-color: #ff944d;
       color: white;
-      padding: 14px 28px;
-      font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
@@ -76,68 +73,91 @@
   </style>
 </head>
 <body>
-
   <h2>B2B 견적 입력</h2>
-  <div class="info" id="infoDisplay">선택된 국가 / 코스 / 일정 출력 부분</div>
+  <div class="form-container">
+    <label>코스명</label>
+    <input type="text" id="course" value="루앙프라방 일반" />
 
-  <div class="room-container">
-    <label for="single">싱글룸</label>
-    <label for="twin">트윈룸</label>
-    <label for="double">더블룸</label>
-    <label for="triple">트리플룸</label>
-    <label>총 객실 수</label>
-    <label>총 인원 수</label>
+    <label>일정</label>
+    <textarea id="itinerary">자동 일정 표시</textarea>
 
-    <input type="number" id="single" value="0" min="0" oninput="updateTotals()">
-    <input type="number" id="twin" value="0" min="0" oninput="updateTotals()">
-    <input type="number" id="double" value="0" min="0" oninput="updateTotals()">
-    <input type="number" id="triple" value="0" min="0" oninput="updateTotals()">
-    <input type="text" id="totalRooms" readonly>
-    <input type="text" id="totalPeople" readonly>
+    <label>호텔 등급</label>
+    <select id="hotelGrade">
+      <option>4성급</option>
+      <option>5성급</option>
+    </select>
 
-    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
-  </div>
+    <label>인원 수</label>
+    <input type="number" id="headCount" />
 
-  <div class="button-container">
-    <button onclick="submitEstimate()">견적서 생성</button>
+    <label>차량 자동선택</label>
+    <input type="text" value="자동 계산됨" disabled />
+
+    <label>선택관광</label>
+    <select>
+      <option>있음</option>
+      <option>없음</option>
+    </select>
+
+    <label>쇼핑 횟수</label>
+    <select>
+      <option>노쇼핑</option>
+      <option>1회</option>
+      <option>2회</option>
+      <option>3회</option>
+    </select>
+
+    <div class="room-grid">
+      <label>싱글룸</label>
+      <label>트윈룸</label>
+      <label>더블룸</label>
+      <label>트리플룸</label>
+      <label>총 객실 수</label>
+      <label>총 인원 수</label>
+
+      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
+      <input type="text" id="totalRooms" readonly />
+      <input type="text" id="totalPeople" readonly />
+
+      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
+    </div>
+
+    <label>총 지상비 (전체)</label>
+    <input type="text" />
+
+    <label>성인 1인 지상비 (P/P)</label>
+    <input type="text" />
+
+    <button onclick="submitForm()">견적서 생성</button>
   </div>
 
   <script>
-    // URL 파라미터를 읽어 info 상단에 표시
-    const params = new URLSearchParams(window.location.search);
-    const country = params.get("country") || "없음";
-    const course = params.get("course") || "없음";
-    const itinerary = params.get("itinerary") || "없음";
-    document.getElementById("infoDisplay").innerText =
-      `선택된 국가: ${country} / 선택된 코스: ${course} / 일정: ${itinerary}`;
-
     function updateTotals() {
-      const single = parseInt(document.getElementById("single").value) || 0;
-      const twin = parseInt(document.getElementById("twin").value) || 0;
-      const double = parseInt(document.getElementById("double").value) || 0;
-      const triple = parseInt(document.getElementById("triple").value) || 0;
+      const single = parseInt(document.getElementById('single').value) || 0;
+      const twin = parseInt(document.getElementById('twin').value) || 0;
+      const double = parseInt(document.getElementById('double').value) || 0;
+      const triple = parseInt(document.getElementById('triple').value) || 0;
 
       const totalRooms = single + twin + double + triple;
       const totalPeople = single + twin * 2 + double * 2 + triple * 3;
 
-      document.getElementById("totalRooms").value = totalRooms;
-      document.getElementById("totalPeople").value = totalPeople;
+      document.getElementById('totalRooms').value = totalRooms;
+      document.getElementById('totalPeople').value = totalPeople;
     }
 
-    function submitEstimate() {
-      const expectedPeople = prompt("총 인원을 다시 입력해주세요:");
-      const totalPeople = parseInt(document.getElementById("totalPeople").value);
+    function submitForm() {
+      const entered = parseInt(document.getElementById('headCount').value) || 0;
+      const calculated = parseInt(document.getElementById('totalPeople').value) || 0;
 
-      if (parseInt(expectedPeople) !== totalPeople) {
-        alert("입력한 인원 수와 방 배정 인원이 일치하지 않습니다.");
-      } else {
-        alert("견적서가 생성됩니다!");
-        // 실제 견적서 생성 기능과 연결 필요
+      if (entered !== calculated) {
+        alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
+        return;
       }
+      alert("견적서가 생성됩니다.");
     }
-
-    // 페이지 로드시 초기 계산
-    updateTotals();
   </script>
 </body>
 </html>
