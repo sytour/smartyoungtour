@@ -66,12 +66,11 @@
 <body>
   <h2>B2B 견적 입력</h2>
   <div class="form-container">
-
     <label>코스명</label>
     <input type="text" id="course" value="루앙프라방 일반" />
 
     <label>인원 수</label>
-    <input type="number" id="headCount" />
+    <input type="number" id="headCount" oninput="updateVehicle(); updateDiscount();" />
 
     <label>호텔 등급</label>
     <select id="hotelGrade">
@@ -98,16 +97,16 @@
     </div>
 
     <label>차량 자동선택</label>
-    <input type="text" value="자동 계산됨" disabled />
+    <input type="text" id="vehicle" readonly />
 
     <label>선택관광</label>
-    <select>
+    <select id="optionalTour" onchange="updateDiscount()">
       <option>있음</option>
       <option>없음</option>
     </select>
 
     <label>쇼핑 횟수</label>
-    <select>
+    <select id="shoppingCount" onchange="updateDiscount()">
       <option>노쇼핑</option>
       <option>1회</option>
       <option>2회</option>
@@ -115,10 +114,10 @@
     </select>
 
     <label>총 지상비 (전체)</label>
-    <input type="text" />
+    <input type="text" id="totalCost" />
 
     <label>성인 1인 지상비 (P/P)</label>
-    <input type="text" />
+    <input type="text" id="ppCost" />
 
     <label>일정</label>
     <textarea id="itinerary">자동 일정 표시</textarea>
@@ -127,6 +126,21 @@
   </div>
 
   <script>
+    const discountConfig = {
+      "있음": {
+        "노쇼핑": [0, 0, 0],
+        "1회": [10000, 8000, 5000],
+        "2회": [15000, 12000, 10000],
+        "3회": [20000, 18000, 15000]
+      },
+      "없음": {
+        "노쇼핑": [0, 0, 0],
+        "1회": [5000, 4000, 2000],
+        "2회": [10000, 8000, 5000],
+        "3회": [15000, 12000, 8000]
+      }
+    };
+
     function updateTotals() {
       const single = parseInt(document.getElementById('single').value) || 0;
       const twin = parseInt(document.getElementById('twin').value) || 0;
@@ -138,6 +152,32 @@
 
       document.getElementById('totalRooms').value = totalRooms;
       document.getElementById('totalPeople').value = totalPeople;
+    }
+
+    function updateVehicle() {
+      const headCount = parseInt(document.getElementById('headCount').value) || 0;
+      let vehicle = '';
+      if (headCount <= 6) vehicle = '벤(Van)';
+      else if (headCount <= 11) vehicle = '미니버스(Minibus)';
+      else vehicle = '버스(Bus)';
+      document.getElementById('vehicle').value = vehicle;
+    }
+
+    function updateDiscount() {
+      const optional = document.getElementById('optionalTour').value;
+      const shopping = document.getElementById('shoppingCount').value;
+      const headCount = parseInt(document.getElementById('headCount').value) || 0;
+      const totalBeforeDiscount = 1000000;
+
+      let groupIndex = 0;
+      if (headCount >= 12) groupIndex = 2;
+      else if (headCount >= 8) groupIndex = 1;
+
+      const discount = discountConfig[optional][shopping][groupIndex];
+      const totalAfterDiscount = totalBeforeDiscount - discount;
+
+      document.getElementById('totalCost').value = totalAfterDiscount.toLocaleString();
+      document.getElementById('ppCost').value = headCount ? Math.round(totalAfterDiscount / headCount).toLocaleString() : '';
     }
 
     function submitForm() {
