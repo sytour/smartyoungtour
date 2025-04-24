@@ -105,15 +105,17 @@
     }
 
     function proceed() {
-      const country = document.getElementById("country").value;
-      const course = document.getElementById("course").value;
-      if (!course || !country) {
-        alert("국가와 코스를 선택해주세요.");
-        return;
-      }
-      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
-      window.location.href = url;
-    }
+  const country = document.getElementById("country").value;
+  const course = document.getElementById("course").value;
+
+  if (!country || !course) {
+    alert("국가와 코스를 모두 선택해주세요.");
+    return;
+  }
+
+  const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+  window.location.href = url;
+}
   </script>
 </body>
 </html>
