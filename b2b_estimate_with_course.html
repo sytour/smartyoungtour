@@ -129,6 +129,11 @@
       const city = document.getElementById('city').value;
       const save = document.getElementById('saveInfo').checked;
 
+      if (!company || !phone || !province || !city) {
+        alert("회사명, 연락처, 지역(시/도 및 시/군/구)를 모두 입력해주세요.");
+        return;
+      }
+
       if (save) {
         const userInfo = { company, phone, kakao, region: province + ' ' + city };
         localStorage.setItem('b2b_user_info', JSON.stringify(userInfo));
