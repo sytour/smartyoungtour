@@ -29,6 +29,24 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      margin-bottom: 20px;
+    }
+    .room-grid label {
+      text-align: center;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #777;
+      grid-column: span 6;
+    }
     button {
       display: block;
       margin: 20px auto;
@@ -52,7 +70,7 @@
     <input type="text" id="course" value="방비엥 일반" />
 
     <label>인원 수</label>
-    <input type="number" id="headCount" oninput="updateVehicle()" />
+    <input type="number" id="headCount" oninput="updateVehicle(); updateTotals();" />
 
     <label>호텔 등급</label>
     <select id="hotelGrade">
@@ -60,13 +78,23 @@
       <option value="5성급">5성급</option>
     </select>
 
-    <label>룸 타입 선택</label>
-    <select id="roomType">
-      <option value="싱글">싱글</option>
-      <option value="트윈">트윈</option>
-      <option value="더블">더블</option>
-      <option value="트리플">트리플</option>
-    </select>
+    <div class="room-grid">
+      <label>싱글룸</label>
+      <label>트윈룸</label>
+      <label>더블룸</label>
+      <label>트리플룸</label>
+      <label>총 객실 수</label>
+      <label>총 인원 수</label>
+
+      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
+      <input type="text" id="totalRooms" readonly />
+      <input type="text" id="totalPeople" readonly />
+
+      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
+    </div>
 
     <label>차량 자동선택</label>
     <input type="text" id="vehicle" readonly />
@@ -113,6 +141,19 @@
       updateDiscount();
     }
 
+    function updateTotals() {
+      const single = parseInt(document.getElementById('single').value) || 0;
+      const twin = parseInt(document.getElementById('twin').value) || 0;
+      const double = parseInt(document.getElementById('double').value) || 0;
+      const triple = parseInt(document.getElementById('triple').value) || 0;
+
+      const totalRooms = single + twin + double + triple;
+      const totalPeople = single * 1 + twin * 2 + double * 2 + triple * 3;
+
+      document.getElementById('totalRooms').value = totalRooms;
+      document.getElementById('totalPeople').value = totalPeople;
+    }
+
     function updateDiscount() {
       const optional = document.getElementById('optionalTour').value;
       const shopping = document.getElementById('shoppingCount').value;
@@ -130,6 +171,13 @@
     }
 
     function submitForm() {
+      const headCount = parseInt(document.getElementById('headCount').value) || 0;
+      const calculatedPeople = parseInt(document.getElementById('totalPeople').value) || 0;
+
+      if (headCount !== calculatedPeople) {
+        alert("입력한 인원 수와 객실 배정 인원이 일치하지 않습니다.");
+        return;
+      }
       alert("견적서가 생성됩니다. (PDF 기능은 추후 구현)");
     }
 
