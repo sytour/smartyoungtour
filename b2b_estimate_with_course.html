@@ -5,120 +5,147 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
   <style>
-    /* 스타일 */
     body {
       font-family: Arial, sans-serif;
-      background-color: #f7f4ef;
+      background-color: #f6f2eb;
       padding: 40px;
-      line-height: 1.6;
+      margin: 0;
     }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
     h2 {
       text-align: center;
       margin-bottom: 30px;
     }
-    .select-group {
-      display: flex;
+
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
       gap: 12px;
-      justify-content: center;
-      margin-bottom: 20px;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 10px;
     }
-    select {
-      padding: 12px;
+
+    .room-grid label {
+      font-weight: bold;
+    }
+
+    .room-grid input {
+      padding: 10px;
       font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
     }
+
     .note {
+      grid-column: span 6;
       font-size: 0.9em;
       color: #777;
+      margin-top: 8px;
       text-align: left;
-      margin-top: 10px;
     }
+
     .button-container {
       text-align: center;
       margin-top: 30px;
     }
-    .button-container button {
-      background-color: #ff944d;
+
+    button {
+      background-color: #ff914d;
       color: white;
-      padding: 12px 24px;
+      padding: 14px 28px;
       font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    .button-container button:hover {
+
+    button:hover {
       background-color: #e67e22;
+    }
+
+    .info {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 입력</h2>
+  <div class="container">
+    <h2>B2B 견적 입력</h2>
 
-  <div class="select-group">
-    <select id="country" onchange="updateCourses()">
-      <option value="">국가 선택</option>
-      <option value="laos">라오스</option>
-      <option value="vietnam">베트남</option>
-    </select>
-    <select id="course">
-      <option value="">코스 선택</option>
-    </select>
-  </div>
+    <div class="info">
+      선택된 국가: <span id="selected-country">-</span> /
+      선택된 코스: <span id="selected-course">-</span>
+    </div>
 
-   <div class="button-container">
-    <button onclick="submitForm()">견적서 생성</button>
+    <div class="room-grid">
+      <label>싱글룸</label>
+      <label>트윈룸</label>
+      <label>더블룸</label>
+      <label>트리플룸</label>
+      <label>총 객실 수</label>
+      <label>총 인원 수</label>
+
+      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
+      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
+      <input type="text" id="totalRooms" readonly />
+      <input type="text" id="totalPeople" readonly />
+
+      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
+    </div>
+
+    <div class="button-container">
+      <button onclick="submitForm()">견적서 생성</button>
+    </div>
   </div>
 
   <script>
-    const courseOptions = {
-      laos: [
-        "방비엥 일반",
-        "루앙프라방 일반",
-        "비엔티안 골프",
-        "비엔티안 골프 및 방비엥(1일) 일반"
-      ],
-      vietnam: [
-        "하노이 일반",
-        "다낭 일반",
-        "푸꾸옥 일반",
-        "나트랑 일반"
-      ]
-    };
+    function updateTotals() {
+      const single = parseInt(document.getElementById('single').value) || 0;
+      const twin = parseInt(document.getElementById('twin').value) || 0;
+      const double = parseInt(document.getElementById('double').value) || 0;
+      const triple = parseInt(document.getElementById('triple').value) || 0;
 
-    function updateCourses() {
-      const country = document.getElementById("country").value;
-      const courseSelect = document.getElementById("course");
-      courseSelect.innerHTML = '<option value="">코스 선택</option>';
+      const totalRooms = single + twin + double + triple;
+      const totalPeople = (single * 1) + (twin * 2) + (double * 2) + (triple * 3);
 
-      if (courseOptions[country]) {
-        courseOptions[country].forEach(course => {
-          const option = document.createElement("option");
-          option.value = course;
-          option.text = course;
-          courseSelect.appendChild(option);
-        });
-      }
+      document.getElementById('totalRooms').value = totalRooms;
+      document.getElementById('totalPeople').value = totalPeople;
     }
 
     function submitForm() {
-      const country = document.getElementById("country").value;
-      const course = document.getElementById("course").value;
-      if (!course || !country) {
-        alert("국가와 코스를 선택해주세요.");
-        return;
-      }
+      const expectedPeople = prompt("총 인원 수를 입력해주세요:");
+      const totalPeople = parseInt(document.getElementById('totalPeople').value);
+      const check = parseInt(expectedPeople);
 
-      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
-      window.location.href = url;
+      if (totalPeople !== check) {
+        alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
+      } else {
+        alert("견적서가 생성됩니다. (실제 저장/출력 기능은 개발 필요)");
+      }
     }
 
-    // URL에서 파라미터를 읽어 선택된 값 표시
+    // 쿼리에서 값 불러오기
     const params = new URLSearchParams(window.location.search);
-    const country = params.get('country');
-    const course = params.get('course');
-    document.getElementById('selectedCountry').textContent = country || "선택 안됨";
-    document.getElementById('selectedCourse').textContent = course || "선택 안됨";
+    const course = params.get("course");
+    const country = params.get("country");
+
+    document.getElementById("selected-course").textContent = course || "없음";
+    document.getElementById("selected-country").textContent = country || "없음";
   </script>
 </body>
 </html>
