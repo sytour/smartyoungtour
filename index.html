@@ -4,9 +4,52 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SMARTYOUNG TOUR</title>
+  <style>
+    body {
+      background: #fff8f2;
+      font-family: sans-serif;
+      color: #333;
+    }
+    header {
+      background: #ffa94d;
+      padding: 1rem;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    main {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .quote-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #ffa94d;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 1rem 2rem;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <h1>SMARTYOUNG TOUR 메인 페이지</h1>
-  <p><a href="/b2b_estimate_with_course.html">B2B 견적 시스템 바로가기</a></p>
+  <header>SMARTYOUNG TOUR</header>
+  <main>
+    <h2>베트남 & 라오스 추천 상품</h2>
+    <div>
+      <p>하노이 4박 5일 - ₩799,000~</p>
+      <p>루앙프라방 3박 4일 - ₩699,000~</p>
+    </div>
+  </main>
+  <footer style="text-align:center; margin-top:3rem; padding:1rem;">
+    ⓒ 2025 SMARTYOUNG TOUR | 카카오톡 문의: @sytour
+  </footer>
+  <button class="quote-button" onclick="location.href='b2b_country_course_linked.html'">
+    대리점 견적
+  </button>
 </body>
 </html>
