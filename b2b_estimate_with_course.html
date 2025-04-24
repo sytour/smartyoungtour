@@ -52,7 +52,7 @@
     <input type="text" id="course" value="방비엥 일반" />
 
     <label>인원 수</label>
-    <input type="number" id="headCount" />
+    <input type="number" id="headCount" oninput="updateVehicle()" />
 
     <label>호텔 등급</label>
     <select id="hotelGrade">
@@ -60,17 +60,25 @@
       <option value="5성급">5성급</option>
     </select>
 
+    <label>룸 타입 선택</label>
+    <select id="roomType">
+      <option value="싱글">싱글</option>
+      <option value="트윈">트윈</option>
+      <option value="더블">더블</option>
+      <option value="트리플">트리플</option>
+    </select>
+
     <label>차량 자동선택</label>
     <input type="text" id="vehicle" readonly />
 
     <label>선택관광</label>
-    <select id="optionalTour">
+    <select id="optionalTour" onchange="updateDiscount()">
       <option value="있음">있음</option>
       <option value="없음">없음</option>
     </select>
 
     <label>쇼핑 횟수</label>
-    <select id="shoppingCount">
+    <select id="shoppingCount" onchange="updateDiscount()">
       <option value="노쇼핑">노쇼핑</option>
       <option value="1회">1회</option>
       <option value="2회">2회</option>
