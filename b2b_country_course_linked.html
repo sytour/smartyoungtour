@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2B 견적 입력</title>
+  <title>국가 및 여행 코스 선택</title>
   <style>
     body {
-      font-family: 'Arial', sans-serif;
-      background-color: #f6f2eb;
+      font-family: Arial, sans-serif;
+      background-color: #f9f4ec;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -16,22 +16,23 @@
     }
 
     .container {
-      background-color: white;
+      background-color: #fff;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
 
     h2 {
       margin-bottom: 24px;
+      font-size: 22px;
     }
 
     select {
-      padding: 12px;
+      padding: 10px;
+      margin: 0 8px;
       font-size: 16px;
-      margin: 0 10px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: 1px solid #ccc;
     }
 
@@ -53,7 +54,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>B2B 견적 입력</h2>
+    <h2>국가 및 여행 코스 선택</h2>
     <div>
       <select id="country" onchange="updateCourses()">
         <option value="">국가 선택</option>
@@ -65,13 +66,24 @@
         <option value="">코스 선택</option>
       </select>
     </div>
-    <button onclick="proceed()">견적서 생성</button>
+
+    <button onclick="proceed()">견적 계속 진행</button>
   </div>
 
   <script>
     const courseOptions = {
-      laos: ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프 및 방비엥(1일) 일반"],
-      vietnam: ["하노이 일반", "다낭 일반", "푸꾸옥 일반", "나트랑 일반"]
+      laos: [
+        "방비엥 일반",
+        "루앙프라방 일반",
+        "비엔티안 골프",
+        "비엔티안 골프 및 방비엥(1일) 일반"
+      ],
+      vietnam: [
+        "하노이 일반",
+        "다낭 일반",
+        "푸꾸옥 일반",
+        "나트랑 일반"
+      ]
     };
 
     function updateCourses() {
@@ -98,7 +110,7 @@
         return;
       }
 
-      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}&itinerary=자동 일정 표시`;
+      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
       window.location.href = url;
     }
   </script>
