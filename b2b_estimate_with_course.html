@@ -35,6 +35,9 @@
       align-items: center;
       gap: 8px;
     }
+    .checkbox label {
+      margin-left: 4px;
+    }
     button {
       display: block;
       margin: 20px auto;
@@ -59,10 +62,10 @@
   <h2>B2B 견적 시스템 이용을 위한 정보 입력</h2>
   <div class="form-container">
     <label>회사명 / 성함 <span style="color: red">(필수)</span></label>
-    <input type="text" id="companyName" />
+    <input type="text" id="companyName" oninput="checkInputs()" />
 
     <label>연락처 <span style="color: red">(필수)</span></label>
-    <input type="text" id="phone" />
+    <input type="text" id="phone" oninput="checkInputs()" />
 
     <label>신청자 지역 <span style="color: red">(필수)</span></label>
     <select id="province" onchange="checkInputs()">
@@ -95,7 +98,6 @@
       <option>안양시</option>
       <option>부천시</option>
       <option>남양주시</option>
-      <!-- 추가 가능 -->
     </select>
 
     <label>카카오톡 ID (선택)</label>
@@ -132,7 +134,7 @@
         localStorage.setItem('b2b_user_info', JSON.stringify(userInfo));
       }
 
-      window.location.href = "b2b_country_course_linked.html";
+      location.href = "b2b_country_course_linked.html";
     }
 
     function restoreSavedData() {
@@ -151,8 +153,6 @@
       }
     }
 
-    document.getElementById('companyName').addEventListener('input', checkInputs);
-    document.getElementById('phone').addEventListener('input', checkInputs);
     window.onload = restoreSavedData;
   </script>
 </body>
