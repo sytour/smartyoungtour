@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2B 견적 입력</title>
+  <title>B2B 견적 시스템 이용을 위한 정보 입력</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -29,23 +29,11 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-    .room-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    .checkbox {
       margin-bottom: 20px;
-    }
-    .room-grid label {
-      text-align: center;
-    }
-    .note {
-      font-size: 0.9em;
-      color: #777;
-      grid-column: span 6;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     button {
       display: block;
@@ -61,135 +49,111 @@
     button:hover {
       background-color: #e67e22;
     }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 입력</h2>
+  <h2>B2B 견적 시스템 이용을 위한 정보 입력</h2>
   <div class="form-container">
-    <label>코스명</label>
-    <input type="text" id="course" value="루앙프라방 일반" />
+    <label>회사명 / 성함 <span style="color: red">(필수)</span></label>
+    <input type="text" id="companyName" />
 
-    <label>인원 수</label>
-    <input type="number" id="headCount" oninput="updateVehicle(); updateDiscount();" />
+    <label>연락처 <span style="color: red">(필수)</span></label>
+    <input type="text" id="phone" />
 
-    <label>호텔 등급</label>
-    <select id="hotelGrade">
-      <option>4성급</option>
-      <option>5성급</option>
+    <label>신청자 지역 <span style="color: red">(필수)</span></label>
+    <select id="province" onchange="checkInputs()">
+      <option value="">시/도 선택</option>
+      <option>서울특별시</option>
+      <option>부산광역시</option>
+      <option>대구광역시</option>
+      <option>인천광역시</option>
+      <option>광주광역시</option>
+      <option>대전광역시</option>
+      <option>울산광역시</option>
+      <option>세종특별자치시</option>
+      <option>경기도</option>
+      <option>강원도</option>
+      <option>충청북도</option>
+      <option>충청남도</option>
+      <option>전라북도</option>
+      <option>전라남도</option>
+      <option>경상북도</option>
+      <option>경상남도</option>
+      <option>제주특별자치도</option>
+    </select>
+    <select id="city" onchange="checkInputs()">
+      <option value="">시/군/구 선택</option>
+      <option>성남시</option>
+      <option>수원시</option>
+      <option>용인시</option>
+      <option>고양시</option>
+      <option>화성시</option>
+      <option>안양시</option>
+      <option>부천시</option>
+      <option>남양주시</option>
+      <!-- 추가 가능 -->
     </select>
 
-    <div class="room-grid">
-      <label>싱글룸</label>
-      <label>트윈룸</label>
-      <label>더블룸</label>
-      <label>트리플룸</label>
-      <label>총 객실 수</label>
-      <label>총 인원 수</label>
+    <label>카카오톡 ID (선택)</label>
+    <input type="text" id="kakaoId" />
 
-      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
-      <input type="text" id="totalRooms" readonly />
-      <input type="text" id="totalPeople" readonly />
-
-      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
+    <div class="checkbox">
+      <input type="checkbox" id="saveInfo" />
+      <label for="saveInfo">정보 저장하기</label>
     </div>
 
-    <label>차량 자동선택</label>
-    <input type="text" id="vehicle" readonly />
-
-    <label>선택관광</label>
-    <select id="optionalTour" onchange="updateDiscount()">
-      <option>있음</option>
-      <option>없음</option>
-    </select>
-
-    <label>쇼핑 횟수</label>
-    <select id="shoppingCount" onchange="updateDiscount()">
-      <option>노쇼핑</option>
-      <option>1회</option>
-      <option>2회</option>
-      <option>3회</option>
-    </select>
-
-    <label>총 지상비 (전체)</label>
-    <input type="text" id="totalCost" />
-
-    <label>성인 1인 지상비 (P/P)</label>
-    <input type="text" id="ppCost" />
-
-    <label>일정</label>
-    <textarea id="itinerary">자동 일정 표시</textarea>
-
-    <button onclick="submitForm()">견적서 생성</button>
+    <button id="goButton" onclick="proceedToEstimate()" disabled>B2B 견적 시스템 바로가기</button>
   </div>
 
   <script>
-    const discountConfig = {
-      "있음": {
-        "노쇼핑": [0, 0, 0],
-        "1회": [10000, 8000, 5000],
-        "2회": [15000, 12000, 10000],
-        "3회": [20000, 18000, 15000]
-      },
-      "없음": {
-        "노쇼핑": [0, 0, 0],
-        "1회": [5000, 4000, 2000],
-        "2회": [10000, 8000, 5000],
-        "3회": [15000, 12000, 8000]
+    function checkInputs() {
+      const company = document.getElementById('companyName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const province = document.getElementById('province').value;
+      const city = document.getElementById('city').value;
+      const goButton = document.getElementById('goButton');
+      goButton.disabled = !(company && phone && province && city);
+    }
+
+    function proceedToEstimate() {
+      const company = document.getElementById('companyName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const kakao = document.getElementById('kakaoId').value.trim();
+      const province = document.getElementById('province').value;
+      const city = document.getElementById('city').value;
+      const save = document.getElementById('saveInfo').checked;
+
+      if (save) {
+        const userInfo = { company, phone, kakao, region: province + ' ' + city };
+        localStorage.setItem('b2b_user_info', JSON.stringify(userInfo));
       }
-    };
 
-    function updateTotals() {
-      const single = parseInt(document.getElementById('single').value) || 0;
-      const twin = parseInt(document.getElementById('twin').value) || 0;
-      const double = parseInt(document.getElementById('double').value) || 0;
-      const triple = parseInt(document.getElementById('triple').value) || 0;
-
-      const totalRooms = single + twin + double + triple;
-      const totalPeople = single + twin * 2 + double * 2 + triple * 3;
-
-      document.getElementById('totalRooms').value = totalRooms;
-      document.getElementById('totalPeople').value = totalPeople;
+      window.location.href = "b2b_country_course_linked.html";
     }
 
-    function updateVehicle() {
-      const headCount = parseInt(document.getElementById('headCount').value) || 0;
-      let vehicle = '';
-      if (headCount <= 6) vehicle = '벤(Van)';
-      else if (headCount <= 11) vehicle = '미니버스(Minibus)';
-      else vehicle = '버스(Bus)';
-      document.getElementById('vehicle').value = vehicle;
-    }
-
-    function updateDiscount() {
-      const optional = document.getElementById('optionalTour').value;
-      const shopping = document.getElementById('shoppingCount').value;
-      const headCount = parseInt(document.getElementById('headCount').value) || 0;
-      const totalBeforeDiscount = 1000000;
-
-      let groupIndex = 0;
-      if (headCount >= 12) groupIndex = 2;
-      else if (headCount >= 8) groupIndex = 1;
-
-      const discount = discountConfig[optional][shopping][groupIndex];
-      const totalAfterDiscount = totalBeforeDiscount - discount;
-
-      document.getElementById('totalCost').value = totalAfterDiscount.toLocaleString();
-      document.getElementById('ppCost').value = headCount ? Math.round(totalAfterDiscount / headCount).toLocaleString() : '';
-    }
-
-    function submitForm() {
-      const entered = parseInt(document.getElementById('headCount').value) || 0;
-      const calculated = parseInt(document.getElementById('totalPeople').value) || 0;
-
-      if (entered !== calculated) {
-        alert("입력하신 인원 수와 방 배정 인원이 일치하지 않습니다.");
-        return;
+    function restoreSavedData() {
+      const saved = localStorage.getItem('b2b_user_info');
+      if (saved) {
+        const user = JSON.parse(saved);
+        if (user.company) document.getElementById('companyName').value = user.company;
+        if (user.phone) document.getElementById('phone').value = user.phone;
+        if (user.kakao) document.getElementById('kakaoId').value = user.kakao;
+        if (user.region) {
+          const [prov, city] = user.region.split(' ');
+          document.getElementById('province').value = prov;
+          document.getElementById('city').value = city;
+        }
+        checkInputs();
       }
-      alert("견적서가 생성됩니다.");
     }
+
+    document.getElementById('companyName').addEventListener('input', checkInputs);
+    document.getElementById('phone').addEventListener('input', checkInputs);
+    window.onload = restoreSavedData;
   </script>
 </body>
 </html>
