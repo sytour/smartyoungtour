@@ -1,41 +1,170 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SMARTYOUNG TOUR</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B2B 견적 시스템 이용을 위한 정보 입력</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
       font-family: Arial, sans-serif;
-      background-color: #fef9f4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background-color: #fdfdfd;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h2 {
       text-align: center;
+      margin-bottom: 30px;
     }
-    h1 {
-      font-size: 2rem;
+    .form-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    label {
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .checkbox {
       margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    a {
-      text-decoration: none;
-      color: white;
-      background-color: #ff914d;
+    .checkbox label {
+      margin-left: 4px;
+    }
+    button {
+      display: block;
+      margin: 20px auto;
       padding: 12px 24px;
+      font-size: 16px;
+      background-color: #ff944d;
+      color: white;
+      border: none;
       border-radius: 8px;
-      font-size: 1rem;
+      cursor: pointer;
     }
-    a:hover {
+    button:hover {
       background-color: #e67e22;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
   </style>
 </head>
 <body>
-  <h1>SMARTYOUNG TOUR 메인 페이지</h1>
-  <a href="b2b_country_course_linked.html">B2B 견적 시스템 바로가기</a>
+  <h2>B2B 견적 시스템 이용을 위한 정보 입력</h2>
+  <div class="form-container">
+    <label>회사명 / 성함 <span style="color: red">(필수)</span></label>
+    <input type="text" id="companyName" />
+
+    <label>연락처 <span style="color: red">(필수)</span></label>
+    <input type="text" id="phone" />
+
+    <label>신청자 지역 <span style="color: red">(필수)</span></label>
+    <select id="province">
+      <option value="">시/도 선택</option>
+      <option>서울특별시</option>
+      <option>부산광역시</option>
+      <option>대구광역시</option>
+      <option>인천광역시</option>
+      <option>광주광역시</option>
+      <option>대전광역시</option>
+      <option>울산광역시</option>
+      <option>세종특별자치시</option>
+      <option>경기도</option>
+      <option>강원도</option>
+      <option>충청북도</option>
+      <option>충청남도</option>
+      <option>전라북도</option>
+      <option>전라남도</option>
+      <option>경상북도</option>
+      <option>경상남도</option>
+      <option>제주특별자치도</option>
+    </select>
+    <select id="city">
+      <option value="">시/군/구 선택</option>
+      <option>성남시</option>
+      <option>수원시</option>
+      <option>용인시</option>
+      <option>고양시</option>
+      <option>화성시</option>
+      <option>안양시</option>
+      <option>부천시</option>
+      <option>남양주시</option>
+    </select>
+
+    <label>카카오톡 ID (선택)</label>
+    <input type="text" id="kakaoId" />
+
+    <div class="checkbox">
+      <input type="checkbox" id="saveInfo" />
+      <label for="saveInfo">정보 저장하기</label>
+    </div>
+
+    <button id="goButton" onclick="proceedToEstimate()" disabled>B2B 견적 시스템 바로가기</button>
+  </div>
+
+  <script>
+    function checkInputs() {
+      const company = document.getElementById('companyName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const province = document.getElementById('province').value;
+      const city = document.getElementById('city').value;
+      const goButton = document.getElementById('goButton');
+      goButton.disabled = !(company && phone && province && city);
+    }
+
+    function proceedToEstimate() {
+      const company = document.getElementById('companyName').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const kakao = document.getElementById('kakaoId').value.trim();
+      const province = document.getElementById('province').value;
+      const city = document.getElementById('city').value;
+      const save = document.getElementById('saveInfo').checked;
+
+      if (!company || !phone || !province || !city) {
+        alert('회사명, 연락처, 지역(시/도 및 시/군/구)를 모두 입력해주세요.');
+        return;
+      }
+
+      if (save) {
+        const userInfo = { company, phone, kakao, region: province + ' ' + city };
+        localStorage.setItem('b2b_user_info', JSON.stringify(userInfo));
+      }
+
+      location.href = 'b2b_country_course_linked.html';
+    }
+
+    function restoreSavedData() {
+      const saved = localStorage.getItem('b2b_user_info');
+      if (saved) {
+        const user = JSON.parse(saved);
+        if (user.company) document.getElementById('companyName').value = user.company;
+        if (user.phone) document.getElementById('phone').value = user.phone;
+        if (user.kakao) document.getElementById('kakaoId').value = user.kakao;
+        if (user.region) {
+          const [prov, city] = user.region.split(' ');
+          document.getElementById('province').value = prov;
+          document.getElementById('city').value = city;
+        }
+      }
+      checkInputs();
+    }
+
+    window.onload = function () {
+      restoreSavedData();
+      document.getElementById('companyName').addEventListener('input', checkInputs);
+      document.getElementById('phone').addEventListener('input', checkInputs);
+      document.getElementById('province').addEventListener('change', checkInputs);
+      document.getElementById('city').addEventListener('change', checkInputs);
+    };
+  </script>
 </body>
 </html>
