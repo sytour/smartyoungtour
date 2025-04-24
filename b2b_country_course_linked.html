@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2B 견적 시스템 이용을 위한 정보 입력</title>
+  <title>B2B 견적 입력</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
+      background-color: #fdfcf9;
       padding: 40px;
       line-height: 1.6;
     }
@@ -16,28 +16,20 @@
       margin-bottom: 30px;
     }
     .form-container {
-      max-width: 800px;
+      max-width: 400px;
       margin: 0 auto;
+      text-align: center;
     }
-    label {
-      font-weight: bold;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 16px;
-      border-radius: 6px;
+    select {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
-    .checkbox {
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
     button {
-      display: block;
-      margin: 20px auto;
+      display: inline-block;
+      margin-top: 20px;
       padding: 12px 24px;
       font-size: 16px;
       background-color: #ff944d;
@@ -49,71 +41,39 @@
     button:hover {
       background-color: #e67e22;
     }
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
-    }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 시스템 이용을 위한 정보 입력</h2>
+  <h2>B2B 견적 입력</h2>
   <div class="form-container">
-    <label>회사명 / 성함 <span style="color: red">(필수)</span></label>
-    <input type="text" id="companyName" />
+    <select id="countrySelect">
+      <option>국가 선택</option>
+      <option value="laos">라오스</option>
+      <option value="vietnam">베트남</option>
+    </select>
 
-    <label>연락처 <span style="color: red">(필수)</span></label>
-    <input type="text" id="phone" />
+    <select id="courseSelect">
+      <option>코스 선택</option>
+      <option value="vangvieng">방비엥 일반</option>
+      <option value="luangprabang">루앙프라방 일반</option>
+      <option value="vientiane_golf">비엔티안 골프</option>
+      <option value="vientiane_vangvieng">비엔티안 골프 + 방비엥</option>
+    </select>
 
-    <label>카카오톡 ID (선택)</label>
-    <input type="text" id="kakaoId" />
-
-    <div class="checkbox">
-      <input type="checkbox" id="saveInfo" />
-      <label for="saveInfo">정보 저장하기</label>
-    </div>
-
-    <button id="goButton" onclick="proceedToEstimate()" disabled>B2B 견적 시스템 바로가기</button>
+    <button onclick="goToEstimate()">견적서 생성</button>
   </div>
 
   <script>
-    function checkInputs() {
-      const company = document.getElementById('companyName').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const goButton = document.getElementById('goButton');
-      goButton.disabled = !(company && phone);
-    }
+    function goToEstimate() {
+      const country = document.getElementById("countrySelect").value;
+      const course = document.getElementById("courseSelect").value;
 
-    function proceedToEstimate() {
-      const company = document.getElementById('companyName').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const kakao = document.getElementById('kakaoId').value.trim();
-      const save = document.getElementById('saveInfo').checked;
-
-      if (save) {
-        localStorage.setItem('b2b_company', company);
-        localStorage.setItem('b2b_phone', phone);
-        localStorage.setItem('b2b_kakao', kakao);
+      if (country !== "국가 선택" && course !== "코스 선택") {
+        window.location.href = "b2b_estimate_with_course.html";
+      } else {
+        alert("국가와 코스를 모두 선택해주세요.");
       }
-
-      window.location.href = "b2b_country_course_linked.html";
     }
-
-    function restoreSavedData() {
-      const company = localStorage.getItem('b2b_company');
-      const phone = localStorage.getItem('b2b_phone');
-      const kakao = localStorage.getItem('b2b_kakao');
-
-      if (company) document.getElementById('companyName').value = company;
-      if (phone) document.getElementById('phone').value = phone;
-      if (kakao) document.getElementById('kakaoId').value = kakao;
-
-      checkInputs();
-    }
-
-    document.getElementById('companyName').addEventListener('input', checkInputs);
-    document.getElementById('phone').addEventListener('input', checkInputs);
-
-    window.onload = restoreSavedData;
   </script>
 </body>
 </html>
