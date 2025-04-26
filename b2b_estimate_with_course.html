@@ -65,12 +65,13 @@
     }
   </style>
 </head>
+
 <body>
   <h2>B2B 견적 입력</h2>
 
   <div class="form-group">
     <label for="course">코스명</label>
-    <input type="text" id="course" oninput="updateMealOptions()">
+    <input type="text" id="course" readonly>
   </div>
 
   <div class="form-group">
@@ -110,12 +111,12 @@
     <input type="text" id="vehicle" placeholder="자동 계산됨" readonly>
   </div>
 
-  <!-- ✨ 차량 다음에 식사 구분 추가 -->
-  <div id="generalMeal" class="form-group hidden">
+  <!-- ✨ 차량 다음에 식사구분 -->
+  <div class="form-group hidden" id="generalMeal">
     <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
   </div>
 
-  <div id="golfMeal" class="form-group hidden">
+  <div class="form-group hidden" id="golfMeal">
     <label>골프 투어 식사 설정</label>
     <select id="golfLunch">
       <option value="포함">중식 포함</option>
@@ -164,47 +165,51 @@
     <button onclick="submitForm()">견적서 생성</button>
   </div>
 
-  <script>
-    window.onload = function() {
-      const params = new URLSearchParams(window.location.search);
-      const course = params.get('course');
-      const itinerary = params.get('itinerary');
-      if (course) {
-        document.getElementById('course').value = course;
-        updateMealOptions();
-      }
-      if (itinerary) {
-        document.getElementById('itinerary').value = itinerary;
-      }
-    };
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const course = params.get('course');
+  const itinerary = params.get('itinerary');
 
-    function updateMealOptions() {
-      const course = document.getElementById('course').value;
-      const generalMeal = document.getElementById('generalMeal');
-      const golfMeal = document.getElementById('golfMeal');
-      if (course.includes('골프')) {
-        generalMeal.classList.add('hidden');
-        golfMeal.classList.remove('hidden');
-      } else {
-        golfMeal.classList.add('hidden');
-        generalMeal.classList.remove('hidden');
-      }
-    }
+  if (course) {
+    document.getElementById('course').value = course;
+    updateMealOptions(course);
+  }
+  if (itinerary) {
+    document.getElementById('itinerary').value = itinerary;
+  }
+});
 
-    function updateTotals() {
-      const single = parseInt(document.getElementById('single').value) || 0;
-      const twin = parseInt(document.getElementById('twin').value) || 0;
-      const double = parseInt(document.getElementById('double').value) || 0;
-      const triple = parseInt(document.getElementById('triple').value) || 0;
-      const totalRooms = single + twin + double + triple;
-      const totalPeople = single + (twin + double) * 2 + triple * 3;
-      document.getElementById('totalRooms').value = totalRooms;
-      document.getElementById('totalPeople').value = totalPeople;
-    }
+function updateMealOptions(courseValue) {
+  const generalMeal = document.getElementById('generalMeal');
+  const golfMeal = document.getElementById('golfMeal');
 
-    function submitForm() {
-      alert('견적서가 생성됩니다.');
-    }
-  </script>
+  if (!courseValue) courseValue = document.getElementById('course').value;
+
+  if (courseValue.includes('골프')) {
+    generalMeal.classList.add('hidden');
+    golfMeal.classList.remove('hidden');
+  } else {
+    golfMeal.classList.add('hidden');
+    generalMeal.classList.remove('hidden');
+  }
+}
+
+function updateTotals() {
+  const single = parseInt(document.getElementById('single').value) || 0;
+  const twin = parseInt(document.getElementById('twin').value) || 0;
+  const double = parseInt(document.getElementById('double').value) || 0;
+  const triple = parseInt(document.getElementById('triple').value) || 0;
+  const totalRooms = single + twin + double + triple;
+  const totalPeople = single + (twin + double) * 2 + triple * 3;
+  document.getElementById('totalRooms').value = totalRooms;
+  document.getElementById('totalPeople').value = totalPeople;
+}
+
+function submitForm() {
+  alert('견적서가 생성됩니다.');
+}
+</script>
+
 </body>
 </html>
