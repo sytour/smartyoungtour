@@ -110,7 +110,7 @@
     <input type="text" id="vehicle" placeholder="자동 계산됨" readonly>
   </div>
 
-  <!-- ✨ 식사 구분 위치 여기! 차량 아래 -->
+  <!-- ✨ 차량 다음에 식사 구분 추가 -->
   <div id="generalMeal" class="form-group hidden">
     <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
   </div>
@@ -176,7 +176,7 @@
       if (itinerary) {
         document.getElementById('itinerary').value = itinerary;
       }
-    }
+    };
 
     function updateMealOptions() {
       const course = document.getElementById('course').value;
