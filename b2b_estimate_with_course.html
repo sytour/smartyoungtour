@@ -31,6 +31,24 @@
       border-radius: 6px;
       border: 1px solid #ccc;
     }
+    .room-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      align-items: center;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .room-grid input {
+      text-align: center;
+    }
+    .note {
+      font-size: 0.9em;
+      color: #777;
+      margin-top: 5px;
+    }
     .button-container {
       text-align: center;
       margin-top: 30px;
@@ -62,7 +80,7 @@
 
   <div class="form-group">
     <label for="people">인원 수</label>
-    <input type="number" id="people" min="1">
+    <input type="number" id="people" min="1" oninput="autoSelectVehicle()">
   </div>
 
   <div class="form-group">
@@ -75,17 +93,26 @@
 
   <div class="form-group">
     <label>방 유형 입력</label>
-    <input type="number" id="single" placeholder="싱글룸 수" value="0" oninput="updateTotals()">
-    <input type="number" id="twin" placeholder="트윈룸 수" value="0" oninput="updateTotals()">
-    <input type="number" id="double" placeholder="더블룸 수" value="0" oninput="updateTotals()">
-    <input type="number" id="triple" placeholder="트리플룸 수" value="0" oninput="updateTotals()">
-    <input type="text" id="totalRooms" placeholder="총 객실 수" readonly>
-    <input type="text" id="totalPeople" placeholder="총 인원 수" readonly>
+    <div class="room-grid">
+      <label>싱글룸</label>
+      <label>트윈룸</label>
+      <label>더블룸</label>
+      <label>트리플룸</label>
+      <label>총 객실 수</label>
+      <label>총 인원 수</label>
+      <input type="number" id="single" value="0" min="0" oninput="updateTotals()">
+      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()">
+      <input type="number" id="double" value="0" min="0" oninput="updateTotals()">
+      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()">
+      <input type="text" id="totalRooms" readonly>
+      <input type="text" id="totalPeople" readonly>
+    </div>
+    <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
   </div>
 
   <div class="form-group">
     <label for="vehicle">차량 자동선택</label>
-    <input type="text" id="vehicle" placeholder="자동 계산됨" readonly>
+    <input type="text" id="vehicle" readonly>
   </div>
 
   <div class="form-group">
@@ -168,6 +195,14 @@
 
       document.getElementById('totalRooms').value = totalRooms;
       document.getElementById('totalPeople').value = totalPeople;
+    }
+
+    function autoSelectVehicle() {
+      const people = parseInt(document.getElementById('people').value) || 0;
+      const vehicle = document.getElementById('vehicle');
+      if (people <= 6) vehicle.value = '벤';
+      else if (people <= 11) vehicle.value = '미니버스';
+      else vehicle.value = '버스';
     }
 
     function submitForm() {
