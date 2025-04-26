@@ -15,9 +15,11 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    .form-container {
+    .form-group {
+      margin-bottom: 20px;
       max-width: 800px;
-      margin: 0 auto;
+      margin-left: auto;
+      margin-right: auto;
     }
     label {
       font-weight: bold;
@@ -25,120 +27,134 @@
     input, select, textarea {
       width: 100%;
       padding: 8px;
-      margin-bottom: 16px;
+      margin-top: 6px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-    .room-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      margin-bottom: 20px;
-    }
-    .room-grid label {
+    .button-container {
       text-align: center;
+      margin-top: 30px;
     }
-    .note {
-      font-size: 0.9em;
-      color: #777;
-      grid-column: span 6;
-    }
-    button {
-      display: block;
-      margin: 20px auto;
-      padding: 12px 24px;
-      font-size: 16px;
+    .button-container button {
       background-color: #ff944d;
       color: white;
+      padding: 12px 24px;
+      font-size: 16px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
     }
-    button:hover {
+    .button-container button:hover {
       background-color: #e67e22;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
   <h2>B2B 견적 입력</h2>
-  <div class="form-container">
-    <label>코스명</label>
-    <input type="text" id="course" value="방비엥 일반" />
 
-    <label>인원 수</label>
-    <input type="number" id="headCount" oninput="updateVehicle(); updateTotals();" />
+  <div class="form-group">
+    <label for="course">코스명</label>
+    <input type="text" id="course" oninput="updateMealOptions()">
+  </div>
 
-    <label>호텔 등급</label>
-    <select id="hotelGrade">
+  <div class="form-group">
+    <label for="people">인원 수</label>
+    <input type="number" id="people" min="1">
+  </div>
+
+  <div class="form-group">
+    <label for="hotel">호텔 등급</label>
+    <select id="hotel">
       <option value="4성급">4성급</option>
       <option value="5성급">5성급</option>
     </select>
+  </div>
 
-    <div class="room-grid">
-      <label>싱글룸</label>
-      <label>트윈룸</label>
-      <label>더블룸</label>
-      <label>트리플룸</label>
-      <label>총 객실 수</label>
-      <label>총 인원 수</label>
+  <div class="form-group">
+    <label>방 유형 입력</label>
+    <input type="number" id="single" placeholder="싱글룸 수" value="0" oninput="updateTotals()">
+    <input type="number" id="twin" placeholder="트윈룸 수" value="0" oninput="updateTotals()">
+    <input type="number" id="double" placeholder="더블룸 수" value="0" oninput="updateTotals()">
+    <input type="number" id="triple" placeholder="트리플룸 수" value="0" oninput="updateTotals()">
+    <input type="text" id="totalRooms" placeholder="총 객실 수" readonly>
+    <input type="text" id="totalPeople" placeholder="총 인원 수" readonly>
+  </div>
 
-      <input type="number" id="single" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="twin" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="double" value="0" min="0" oninput="updateTotals()" />
-      <input type="number" id="triple" value="0" min="0" oninput="updateTotals()" />
-      <input type="text" id="totalRooms" readonly />
-      <input type="text" id="totalPeople" readonly />
+  <div class="form-group">
+    <label for="vehicle">차량 자동선택</label>
+    <input type="text" id="vehicle" placeholder="자동 계산됨" readonly>
+  </div>
 
-      <div class="note">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</div>
-    </div>
-
-    <label>차량 자동선택</label>
-    <input type="text" id="vehicle" readonly />
-
-    <label>선택관광</label>
-    <select id="optionalTour" onchange="updateDiscount()">
+  <div class="form-group">
+    <label for="optionalTour">선택관광</label>
+    <select id="optionalTour">
       <option value="있음">있음</option>
       <option value="없음">없음</option>
     </select>
+  </div>
 
-    <label>쇼핑 횟수</label>
-    <select id="shoppingCount" onchange="updateDiscount()">
+  <div class="form-group">
+    <label for="shopping">쇼핑 횟수</label>
+    <select id="shopping">
       <option value="노쇼핑">노쇼핑</option>
       <option value="1회">1회</option>
       <option value="2회">2회</option>
       <option value="3회">3회</option>
     </select>
+  </div>
 
-    <label>총 지상비 (전체)</label>
-    <input type="text" id="totalCost" />
+  <div class="form-group">
+    <label for="totalPrice">총 지상비 (전체)</label>
+    <input type="number" id="totalPrice">
+  </div>
 
-    <label>성인 1인 지상비 (P/P)</label>
-    <input type="text" id="ppCost" />
+  <div class="form-group">
+    <label for="pricePerPerson">성인 1인 지상비 (P/P)</label>
+    <input type="number" id="pricePerPerson">
+  </div>
 
-    <label>일정</label>
-    <textarea id="itinerary">자동 일정 표시</textarea>
+  <div class="form-group">
+    <label for="itinerary">일정</label>
+    <textarea id="itinerary" rows="3">자동 일정 표시</textarea>
+  </div>
 
+  <!-- 식사 구분 -->
+  <div id="generalMeal" class="form-group hidden">
+    <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
+  </div>
+
+  <div id="golfMeal" class="form-group hidden">
+    <label>골프 투어 식사 설정</label>
+    <select id="golfLunch">
+      <option value="포함">중식 포함</option>
+      <option value="불포함">중식 불포함</option>
+    </select>
+    <select id="golfDinner">
+      <option value="포함">석식 포함</option>
+      <option value="불포함">석식 불포함</option>
+    </select>
+  </div>
+
+  <div class="button-container">
     <button onclick="submitForm()">견적서 생성</button>
   </div>
 
   <script>
-    const discountConfig = {
-      있음: { "노쇼핑": [0, 0, 0], "1회": [10000, 8000, 5000], "2회": [15000, 12000, 10000], "3회": [20000, 18000, 15000] },
-      없음: { "노쇼핑": [0, 0, 0], "1회": [5000, 4000, 2000], "2회": [10000, 8000, 5000], "3회": [15000, 12000, 8000] }
-    };
+    function updateMealOptions() {
+      const course = document.getElementById('course').value;
+      const generalMeal = document.getElementById('generalMeal');
+      const golfMeal = document.getElementById('golfMeal');
 
-    function updateVehicle() {
-      const headCount = parseInt(document.getElementById('headCount').value) || 0;
-      let vehicle = '';
-      if (headCount <= 6) vehicle = '벤(Van)';
-      else if (headCount <= 11) vehicle = '미니버스(Minibus)';
-      else vehicle = '버스(Bus)';
-      document.getElementById('vehicle').value = vehicle;
-      updateDiscount();
+      if (course.includes('골프')) {
+        generalMeal.classList.add('hidden');
+        golfMeal.classList.remove('hidden');
+      } else {
+        golfMeal.classList.add('hidden');
+        generalMeal.classList.remove('hidden');
+      }
     }
 
     function updateTotals() {
@@ -148,45 +164,15 @@
       const triple = parseInt(document.getElementById('triple').value) || 0;
 
       const totalRooms = single + twin + double + triple;
-      const totalPeople = single * 1 + twin * 2 + double * 2 + triple * 3;
+      const totalPeople = single + (twin + double) * 2 + triple * 3;
 
       document.getElementById('totalRooms').value = totalRooms;
       document.getElementById('totalPeople').value = totalPeople;
     }
 
-    function updateDiscount() {
-      const optional = document.getElementById('optionalTour').value;
-      const shopping = document.getElementById('shoppingCount').value;
-      const headCount = parseInt(document.getElementById('headCount').value) || 0;
-      const totalBeforeDiscount = 1000000; // 예시값
-      let groupIndex = 0;
-      if (headCount >= 12) groupIndex = 2;
-      else if (headCount >= 8) groupIndex = 1;
-
-      const discount = discountConfig[optional][shopping][groupIndex];
-      const totalAfterDiscount = totalBeforeDiscount - discount;
-
-      document.getElementById('totalCost').value = totalAfterDiscount.toLocaleString();
-      document.getElementById('ppCost').value = headCount ? Math.round(totalAfterDiscount / headCount).toLocaleString() : '';
-    }
-
     function submitForm() {
-      const headCount = parseInt(document.getElementById('headCount').value) || 0;
-      const calculatedPeople = parseInt(document.getElementById('totalPeople').value) || 0;
-
-      if (headCount !== calculatedPeople) {
-        alert("입력한 인원 수와 객실 배정 인원이 일치하지 않습니다.");
-        return;
-      }
-      alert("견적서가 생성됩니다. (PDF 기능은 추후 구현)");
+      alert('견적서가 생성됩니다.');
     }
-
-    window.onload = () => {
-      document.getElementById('headCount').addEventListener('input', updateVehicle);
-      document.getElementById('optionalTour').addEventListener('change', updateDiscount);
-      document.getElementById('shoppingCount').addEventListener('change', updateDiscount);
-      document.getElementById('hotelGrade').addEventListener('change', updateDiscount);
-    };
   </script>
 </body>
 </html>
