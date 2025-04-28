@@ -67,6 +67,7 @@
 
     <select id="course">
       <option value="">코스 선택</option>
+      <!-- 추가 코스 삽입 위치 -->
     </select>
 
     <button onclick="goToEstimate()">견적 계속 진행</button>
@@ -91,7 +92,7 @@
     function updateCourseOptions() {
       const country = document.getElementById('country').value;
       const courseSelect = document.getElementById('course');
-      courseSelect.innerHTML = '<option value="">코스 선택</option>';
+      courseSelect.innerHTML = '<option value="">코스 선택</option><!-- 추가 코스 삽입 위치 -->';
 
       if (courseOptions[country]) {
         courseOptions[country].forEach(course => {
