@@ -110,7 +110,7 @@
         document.getElementById('course').value = '';
         renderTable();
       } catch (error) {
-        alert('추가 중 오류 발생: ' + error);
+        alert('추가 중 오류 발생: ' + error.message);
       }
     }
 
@@ -125,7 +125,7 @@
           alert('수정되었습니다.');
           renderTable();
         } catch (error) {
-          alert('수정 중 오류 발생: ' + error);
+          alert('수정 중 오류 발생: ' + error.message);
         }
       }
     }
@@ -137,7 +137,7 @@
           alert('삭제되었습니다.');
           renderTable();
         } catch (error) {
-          alert('삭제 중 오류 발생: ' + error);
+          alert('삭제 중 오류 발생: ' + error.message);
         }
       }
     }
