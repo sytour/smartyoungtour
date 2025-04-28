@@ -92,13 +92,13 @@
     function updateCourseOptions() {
       const country = document.getElementById('country').value;
       const courseSelect = document.getElementById('course');
-      courseSelect.innerHTML = '<option value="">코스 선택</option><!-- 추가 코스 삽입 위치 -->';
+      courseSelect.innerHTML = '<option value="">코스 선택</option> <!-- 추가 코스 삽입 위치 -->';
 
       if (courseOptions[country]) {
         courseOptions[country].forEach(course => {
           const option = document.createElement('option');
           option.value = course;
-          option.text = course;
+          option.textContent = course;
           courseSelect.appendChild(option);
         });
       }
@@ -116,6 +116,10 @@
       const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${country}&itinerary=자동 일정 표시`;
       window.location.href = url;
     }
+
+    window.onload = function() {
+      updateCourseOptions(); // 초기 상태 업데이트
+    };
   </script>
 </body>
 </html>
