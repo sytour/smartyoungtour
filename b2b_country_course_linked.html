@@ -73,11 +73,14 @@
     const db = getFirestore(app);
 
     async function loadCourses() {
-      const querySnapshot = await getDocs(collection(db, "courses"));
+      const snapshot = await getDocs(collection(db, "courses"));
       const courseList = [];
-      querySnapshot.forEach((docSnap) => {
-        courseList.push(docSnap.data());
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        courseList.push(data);
       });
+
       return courseList;
     }
 
@@ -109,10 +112,6 @@
       const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
       window.location.href = url;
     }
-
-    window.onload = function() {
-      // 처음에는 course select는 비워두고, 국가 선택 후 불러옴
-    };
   </script>
 </head>
 
@@ -128,6 +127,7 @@
 
     <select id="course">
       <option value="">코스 선택</option>
+      <!-- 코스가 여기에 삽입됩니다 -->
     </select>
 
     <button onclick="goToEstimate()">견적 계속 진행</button>
