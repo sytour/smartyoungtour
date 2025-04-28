@@ -85,7 +85,17 @@
   </div>
 
   <script>
-    let courseList = [];
+    // ✅ 초기에 미리 등록되어 있는 코스 목록
+    let courseList = [
+      { country: "라오스", course: "방비엥 일반" },
+      { country: "라오스", course: "루앙프라방 일반" },
+      { country: "라오스", course: "비엔티안 골프" },
+      { country: "라오스", course: "비엔티안 골프 및 방비엥(1일) 일반" },
+      { country: "베트남", course: "하노이 일반" },
+      { country: "베트남", course: "다낭 일반" },
+      { country: "베트남", course: "푸꾸옥 일반" },
+      { country: "베트남", course: "나트랑 일반" }
+    ];
 
     function renderTable() {
       const tableBody = document.getElementById('courseTable').querySelector('tbody');
@@ -136,6 +146,9 @@
         renderTable();
       }
     }
+
+    // ✅ 페이지 로드 시 테이블 그리기
+    window.onload = renderTable;
   </script>
 
 </body>
