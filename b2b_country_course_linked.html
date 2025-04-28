@@ -61,8 +61,8 @@
 
     <select id="country" onchange="updateCourseOptions()">
       <option value="">국가 선택</option>
-      <option value="laos">라오스</option>
-      <option value="vietnam">베트남</option>
+      <option value="라오스">라오스</option>
+      <option value="베트남">베트남</option>
     </select>
 
     <select id="course">
@@ -74,34 +74,38 @@
   </div>
 
   <script>
-    const courseOptions = {
-      laos: [
-        "방비엥 일반",
-        "루앙프라방 일반",
-        "비엔티안 골프",
-        "비엔티안 골프 및 방비엥(1일) 일반"
-      ],
-      vietnam: [
-        "하노이 일반",
-        "다낭 일반",
-        "푸꾸옥 일반",
-        "나트랑 일반"
-      ]
-    };
+    function loadCourses() {
+      const saved = localStorage.getItem('course_list');
+      if (saved) {
+        return JSON.parse(saved);
+      } else {
+        return [
+          { country: "라오스", course: "방비엥 일반" },
+          { country: "라오스", course: "루앙프라방 일반" },
+          { country: "라오스", course: "비엔티안 골프" },
+          { country: "라오스", course: "비엔티안 골프 및 방비엥(1일) 일반" },
+          { country: "베트남", course: "하노이 일반" },
+          { country: "베트남", course: "다낭 일반" },
+          { country: "베트남", course: "푸꾸옥 일반" },
+          { country: "베트남", course: "나트랑 일반" }
+        ];
+      }
+    }
 
     function updateCourseOptions() {
       const country = document.getElementById('country').value;
       const courseSelect = document.getElementById('course');
-      courseSelect.innerHTML = '<option value="">코스 선택</option> <!-- 추가 코스 삽입 위치 -->';
+      courseSelect.innerHTML = '<option value="">코스 선택</option>';
 
-      if (courseOptions[country]) {
-        courseOptions[country].forEach(course => {
-          const option = document.createElement('option');
-          option.value = course;
-          option.textContent = course;
-          courseSelect.appendChild(option);
-        });
-      }
+      const allCourses = loadCourses();
+      const filtered = allCourses.filter(item => item.country === country);
+
+      filtered.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.course;
+        option.textContent = item.course;
+        courseSelect.appendChild(option);
+      });
     }
 
     function goToEstimate() {
@@ -113,12 +117,12 @@
         return;
       }
 
-      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${country}&itinerary=자동 일정 표시`;
+      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
       window.location.href = url;
     }
 
     window.onload = function() {
-      updateCourseOptions(); // 초기 상태 업데이트
+      updateCourseOptions();
     };
   </script>
 </body>
