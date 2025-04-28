@@ -56,6 +56,95 @@
       background-color: #f4f4f4;
     }
   </style>
+
+  <!-- Firebase SDK 연결 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.firebasestorage.app",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+      measurementId: "G-KN3EQNZWLN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function renderTable() {
+      const tableBody = document.getElementById('courseTable').querySelector('tbody');
+      tableBody.innerHTML = "";
+
+      const querySnapshot = await getDocs(collection(db, "courses"));
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const row = `
+          <tr>
+            <td>${data.country}</td>
+            <td>${data.course}</td>
+            <td><button onclick="editCourse('${docSnap.id}', '${data.country}', '${data.course}')">수정</button></td>
+            <td><button onclick="deleteCourse('${docSnap.id}')">삭제</button></td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    window.addCourse = async function() {
+      const country = document.getElementById('country').value.trim();
+      const course = document.getElementById('course').value.trim();
+
+      if (!country || !course) {
+        alert('국가명과 코스명을 모두 입력하세요.');
+        return;
+      }
+
+      try {
+        await addDoc(collection(db, "courses"), { country, course });
+        alert('추가되었습니다.');
+        document.getElementById('country').value = '';
+        document.getElementById('course').value = '';
+        renderTable();
+      } catch (error) {
+        alert('추가 중 오류 발생: ' + error);
+      }
+    }
+
+    window.editCourse = async function(id, oldCountry, oldCourse) {
+      const newCountry = prompt('새 국가명을 입력하세요', oldCountry);
+      const newCourse = prompt('새 코스명을 입력하세요', oldCourse);
+
+      if (newCountry && newCourse) {
+        try {
+          const courseRef = doc(db, "courses", id);
+          await updateDoc(courseRef, { country: newCountry, course: newCourse });
+          alert('수정되었습니다.');
+          renderTable();
+        } catch (error) {
+          alert('수정 중 오류 발생: ' + error);
+        }
+      }
+    }
+
+    window.deleteCourse = async function(id) {
+      if (confirm('정말 삭제하시겠습니까?')) {
+        try {
+          await deleteDoc(doc(db, "courses", id));
+          alert('삭제되었습니다.');
+          renderTable();
+        } catch (error) {
+          alert('삭제 중 오류 발생: ' + error);
+        }
+      }
+    }
+
+    window.onload = renderTable;
+  </script>
+
 </head>
 
 <body>
@@ -79,89 +168,10 @@
       </tr>
     </thead>
     <tbody>
-      <!-- 등록된 코스 리스트 -->
+      <!-- 코스 리스트가 여기 그려집니다 -->
     </tbody>
   </table>
 </div>
-
-<script>
-  let defaultCourses = [
-    { country: "라오스", course: "방비엥 일반" },
-    { country: "라오스", course: "루앙프라방 일반" },
-    { country: "라오스", course: "비엔티안 골프" },
-    { country: "라오스", course: "비엔티안 골프 및 방비엥(1일) 일반" },
-    { country: "베트남", course: "하노이 일반" },
-    { country: "베트남", course: "다낭 일반" },
-    { country: "베트남", course: "푸꾸옥 일반" },
-    { country: "베트남", course: "나트랑 일반" }
-  ];
-
-  function loadCourses() {
-    const saved = localStorage.getItem('course_list');
-    return saved ? JSON.parse(saved) : defaultCourses;
-  }
-
-  function saveCourses() {
-    localStorage.setItem('course_list', JSON.stringify(courseList));
-  }
-
-  let courseList = loadCourses();
-
-  function renderTable() {
-    const tableBody = document.getElementById('courseTable').querySelector('tbody');
-    tableBody.innerHTML = "";
-
-    courseList.forEach((item, index) => {
-      const row = `
-        <tr>
-          <td>${item.country}</td>
-          <td>${item.course}</td>
-          <td><button onclick="editCourse(${index})">수정</button></td>
-          <td><button onclick="deleteCourse(${index})">삭제</button></td>
-        </tr>
-      `;
-      tableBody.innerHTML += row;
-    });
-  }
-
-  function addCourse() {
-    const country = document.getElementById('country').value.trim();
-    const course = document.getElementById('course').value.trim();
-
-    if (!country || !course) {
-      alert('국가명과 코스명을 모두 입력하세요.');
-      return;
-    }
-
-    courseList.push({ country, course });
-    saveCourses();
-    renderTable();
-    document.getElementById('country').value = '';
-    document.getElementById('course').value = '';
-  }
-
-  function editCourse(index) {
-    const newCountry = prompt('새 국가명을 입력하세요', courseList[index].country);
-    const newCourse = prompt('새 코스명을 입력하세요', courseList[index].course);
-
-    if (newCountry && newCourse) {
-      courseList[index].country = newCountry;
-      courseList[index].course = newCourse;
-      saveCourses();
-      renderTable();
-    }
-  }
-
-  function deleteCourse(index) {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      courseList.splice(index, 1);
-      saveCourses();
-      renderTable();
-    }
-  }
-
-  window.onload = renderTable;
-</script>
 
 </body>
 </html>
