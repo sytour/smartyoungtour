@@ -54,7 +54,6 @@
     }
   </style>
 
-  <!-- Firebase SDK 연결 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -77,10 +76,23 @@
     async function loadCourses() {
       const snapshot = await getDocs(collection(db, "courses"));
       allCourses = [];
+      const countriesSet = new Set();
+
       snapshot.forEach((docSnap) => {
-        allCourses.push(docSnap.data());
+        const data = docSnap.data();
+        allCourses.push(data);
+        countriesSet.add(data.country);
       });
-      updateCourseOptions();
+
+      // ✨ 국가 목록 업데이트
+      const countrySelect = document.getElementById('country');
+      countrySelect.innerHTML = '<option value="">국가 선택</option>';
+      countriesSet.forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
     }
 
     function updateCourseOptions() {
@@ -108,12 +120,12 @@
 
       const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
       window.location.href = url;
-    }
+    };
 
     window.onload = async function() {
       await loadCourses();
       document.getElementById('country').addEventListener('change', updateCourseOptions);
-    }
+    };
   </script>
 </head>
 
@@ -123,13 +135,12 @@
 
     <select id="country">
       <option value="">국가 선택</option>
-      <option value="라오스">라오스</option>
-      <option value="베트남">베트남</option>
+      <!-- Firebase에서 가져온 국가로 채워짐 -->
     </select>
 
     <select id="course">
       <option value="">코스 선택</option>
-      <!-- Firebase 데이터로 채워짐 -->
+      <!-- Firebase에서 가져온 코스명으로 채워짐 -->
     </select>
 
     <button onclick="goToEstimate()">견적 계속 진행</button>
