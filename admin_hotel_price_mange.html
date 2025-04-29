@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>호텔 요금 관리</title>
   <style>
     body {
@@ -24,20 +24,19 @@
       margin: 0 auto 30px auto;
     }
     input, select {
-      width: 48%;
-      padding: 10px;
+      padding: 8px;
       margin: 6px;
       border: 1px solid #ccc;
       border-radius: 6px;
     }
     button {
-      padding: 10px 20px;
+      padding: 8px 16px;
       background-color: #ff944d;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      margin: 8px;
+      margin: 6px;
     }
     button:hover {
       background-color: #e67e22;
@@ -60,7 +59,7 @@
   <!-- Firebase SDK 연결 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
@@ -77,10 +76,10 @@
 
     async function renderTable() {
       const tableBody = document.getElementById('hotelTable').querySelector('tbody');
-      tableBody.innerHTML = '';
+      tableBody.innerHTML = "";
 
-      const querySnapshot = await getDocs(collection(db, "hotel_prices"));
-      querySnapshot.forEach((docSnap) => {
+      const snapshot = await getDocs(collection(db, "hotel_prices"));
+      snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const row = `
           <tr>
@@ -90,57 +89,71 @@
             <td>${data.single}</td>
             <td>${data.twin_double}</td>
             <td>${data.triple}</td>
-            <td><button onclick="deletePrice('${docSnap.id}')">삭제</button></td>
+            <td>
+              <button onclick="editHotel('${docSnap.id}', '${data.country}', '${data.course}', '${data.grade}', '${data.single}', '${data.twin_double}', '${data.triple}')">수정</button>
+              <button onclick="deleteHotel('${docSnap.id}')">삭제</button>
+            </td>
           </tr>
         `;
         tableBody.innerHTML += row;
       });
     }
 
-    window.addPrice = async function() {
+    window.addHotel = async function() {
       const country = document.getElementById('country').value.trim();
       const course = document.getElementById('course').value.trim();
       const grade = document.getElementById('grade').value;
-      const single = document.getElementById('single').value.trim();
-      const twin_double = document.getElementById('twin_double').value.trim();
-      const triple = document.getElementById('triple').value.trim();
+      const single = parseInt(document.getElementById('single').value) || 0;
+      const twin_double = parseInt(document.getElementById('twin_double').value) || 0;
+      const triple = parseInt(document.getElementById('triple').value) || 0;
 
-      if (!country || !course || !grade || !single || !twin_double || !triple) {
-        alert('모든 항목을 입력해주세요.');
+      if (!country || !course) {
+        alert('국가명과 코스명을 모두 입력하세요.');
         return;
       }
 
-      try {
-        await addDoc(collection(db, "hotel_prices"), {
-          country, course, grade, single, twin_double, triple
+      await addDoc(collection(db, "hotel_prices"), {
+        country, course, grade, single, twin_double, triple
+      });
+
+      alert('추가 완료');
+      renderTable();
+    }
+
+    window.editHotel = async function(id, oldCountry, oldCourse, oldGrade, oldSingle, oldTwinDouble, oldTriple) {
+      const newCountry = prompt("국가명", oldCountry);
+      const newCourse = prompt("코스명", oldCourse);
+      const newGrade = prompt("호텔 등급 (4성급/5성급)", oldGrade);
+      const newSingle = prompt("싱글 금액", oldSingle);
+      const newTwinDouble = prompt("트윈/더블 금액", oldTwinDouble);
+      const newTriple = prompt("트리플 금액", oldTriple);
+
+      if (newCountry && newCourse && newGrade) {
+        const ref = doc(db, "hotel_prices", id);
+        await updateDoc(ref, {
+          country: newCountry,
+          course: newCourse,
+          grade: newGrade,
+          single: parseInt(newSingle) || 0,
+          twin_double: parseInt(newTwinDouble) || 0,
+          triple: parseInt(newTriple) || 0
         });
-        alert('호텔 요금이 추가되었습니다.');
+        alert('수정 완료');
         renderTable();
-        document.getElementById('country').value = '';
-        document.getElementById('course').value = '';
-        document.getElementById('grade').value = '';
-        document.getElementById('single').value = '';
-        document.getElementById('twin_double').value = '';
-        document.getElementById('triple').value = '';
-      } catch (error) {
-        alert('추가 중 오류 발생: ' + error);
       }
     }
 
-    window.deletePrice = async function(id) {
+    window.deleteHotel = async function(id) {
       if (confirm('정말 삭제하시겠습니까?')) {
-        try {
-          await deleteDoc(doc(db, "hotel_prices", id));
-          alert('삭제되었습니다.');
-          renderTable();
-        } catch (error) {
-          alert('삭제 중 오류 발생: ' + error);
-        }
+        await deleteDoc(doc(db, "hotel_prices", id));
+        alert('삭제 완료');
+        renderTable();
       }
     }
 
     window.onload = renderTable;
   </script>
+
 </head>
 
 <body>
@@ -149,20 +162,18 @@
 
 <div class="form-container">
   <select id="country">
-    <option value="">국가 선택</option>
     <option value="라오스">라오스</option>
     <option value="베트남">베트남</option>
   </select>
   <input type="text" id="course" placeholder="코스명 (예: 방비엥 일반)">
   <select id="grade">
-    <option value="">호텔 등급 선택</option>
     <option value="4성급">4성급</option>
     <option value="5성급">5성급</option>
   </select>
-  <input type="number" id="single" placeholder="싱글룸 금액">
-  <input type="number" id="twin_double" placeholder="트윈/더블 금액">
-  <input type="number" id="triple" placeholder="트리플 금액">
-  <button onclick="addPrice()">추가</button>
+  <input type="number" id="single" placeholder="싱글 요금">
+  <input type="number" id="twin_double" placeholder="트윈/더블 요금">
+  <input type="number" id="triple" placeholder="트리플 요금">
+  <button onclick="addHotel()">추가</button>
 </div>
 
 <div class="list-container">
@@ -172,14 +183,14 @@
         <th>국가명</th>
         <th>코스명</th>
         <th>호텔 등급</th>
-        <th>싱글룸</th>
+        <th>싱글</th>
         <th>트윈/더블</th>
         <th>트리플</th>
-        <th>삭제</th>
+        <th>관리</th>
       </tr>
     </thead>
     <tbody>
-      <!-- 호텔 요금 리스트 표시 -->
+      <!-- 데이터 표시 -->
     </tbody>
   </table>
 </div>
