@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>호텔 요금 관리</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdfcf9;
+      padding: 40px;
+      line-height: 1.6;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    select, input {
+      padding: 10px;
+      margin: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #ff944d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 8px;
+    }
+    button:hover {
+      background-color: #e67e22;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>호텔 요금 관리</h2>
+  <div class="container">
+    <label>국가+코스 선택:</label>
+    <select id="courseSelect">
+      <!-- Firebase에서 로드될 예정 -->
+    </select>
+
+    <table>
+      <thead>
+        <tr>
+          <th>호텔 등급</th>
+          <th>싱글</th>
+          <th>트윈/더블</th>
+          <th>트리플</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>4성급</td>
+          <td><input type="number" id="p4_single" placeholder="₩"></td>
+          <td><input type="number" id="p4_twin" placeholder="₩"></td>
+          <td><input type="number" id="p4_triple" placeholder="₩"></td>
+        </tr>
+        <tr>
+          <td>5성급</td>
+          <td><input type="number" id="p5_single" placeholder="₩"></td>
+          <td><input type="number" id="p5_twin" placeholder="₩"></td>
+          <td><input type="number" id="p5_triple" placeholder="₩"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <button onclick="saveHotelPrices()">저장</button>
+  </div>
+
+  <!-- Firebase SDK 연결 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.firebasestorage.app",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+      measurementId: "G-KN3EQNZWLN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadCourses() {
+      const querySnapshot = await getDocs(collection(db, "courses"));
+      const select = document.getElementById("courseSelect");
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const option = document.createElement("option");
+        option.value = `${data.country}||${data.course}`;
+        option.textContent = `${data.country} - ${data.course}`;
+        select.appendChild(option);
+      });
+    }
+
+    window.saveHotelPrices = async function() {
+      const [country, course] = document.getElementById("courseSelect").value.split("||");
+      const data = {
+        p4: {
+          single: parseInt(document.getElementById("p4_single").value) || 0,
+          twin: parseInt(document.getElementById("p4_twin").value) || 0,
+          triple: parseInt(document.getElementById("p4_triple").value) || 0
+        },
+        p5: {
+          single: parseInt(document.getElementById("p5_single").value) || 0,
+          twin: parseInt(document.getElementById("p5_twin").value) || 0,
+          triple: parseInt(document.getElementById("p5_triple").value) || 0
+        }
+      };
+
+      try {
+        await setDoc(doc(db, "hotel_prices", `${country}_${course}`), data);
+        alert("저장되었습니다.");
+      } catch (e) {
+        alert("저장 중 오류 발생: " + e);
+      }
+    }
+
+    window.onload = loadCourses;
+  </script>
+</body>
+</html>
