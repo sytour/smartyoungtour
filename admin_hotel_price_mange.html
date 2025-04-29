@@ -121,12 +121,12 @@
     }
 
     window.editHotel = async function(id, oldCountry, oldCourse, oldGrade, oldSingle, oldTwinDouble, oldTriple) {
-      const newCountry = prompt("국가명", oldCountry);
-      const newCourse = prompt("코스명", oldCourse);
-      const newGrade = prompt("호텔 등급 (4성급/5성급)", oldGrade);
-      const newSingle = prompt("싱글 금액", oldSingle);
-      const newTwinDouble = prompt("트윈/더블 금액", oldTwinDouble);
-      const newTriple = prompt("트리플 금액", oldTriple);
+      const newCountry = prompt("\uad6d\uac00\uba85", oldCountry);
+      const newCourse = prompt("\ucf54\uc2a4\uba85", oldCourse);
+      const newGrade = prompt("\ud638\ud154 \ub4f1\uae09 (4\uc131\ae09/5\uc131\ae09)", oldGrade);
+      const newSingle = prompt("\uc2f1\uae00 \uae08액", oldSingle);
+      const newTwinDouble = prompt("\ud2b8\uc717/\ub354\ube14 \uae08액", oldTwinDouble);
+      const newTriple = prompt("\ud2b8\ub9ac\ud50c \uae08액", oldTriple);
 
       if (newCountry && newCourse && newGrade) {
         const ref = doc(db, "hotel_prices", id);
@@ -153,11 +153,9 @@
 
     window.onload = renderTable;
   </script>
-
 </head>
 
 <body>
-
 <h2>호텔 요금 관리</h2>
 
 <div class="form-container">
@@ -165,13 +163,13 @@
     <option value="라오스">라오스</option>
     <option value="베트남">베트남</option>
   </select>
-  <input type="text" id="course" placeholder="코스명 (예: 방비엥 일반)">
+  <input type="text" id="course" placeholder="코스명 (예: 방비엽 일반)">
   <select id="grade">
     <option value="4성급">4성급</option>
     <option value="5성급">5성급</option>
   </select>
   <input type="number" id="single" placeholder="싱글 요금">
-  <input type="number" id="twin_double" placeholder="트윈/더블 요금">
+  <input type="number" id="twin_double" placeholder="트윗/더블 요금">
   <input type="number" id="triple" placeholder="트리플 요금">
   <button onclick="addHotel()">추가</button>
 </div>
@@ -184,7 +182,7 @@
         <th>코스명</th>
         <th>호텔 등급</th>
         <th>싱글</th>
-        <th>트윈/더블</th>
+        <th>트윗/더블</th>
         <th>트리플</th>
         <th>관리</th>
       </tr>
