@@ -15,32 +15,20 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    .container {
+    .form-container, .list-container {
       background: white;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      max-width: 900px;
-      margin: 0 auto;
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
     }
-    select, input {
+    input, select {
+      width: 48%;
       padding: 10px;
-      margin: 8px;
+      margin: 6px;
       border: 1px solid #ccc;
       border-radius: 6px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background-color: #f4f4f4;
     }
     button {
       padding: 10px 20px;
@@ -54,49 +42,25 @@
     button:hover {
       background-color: #e67e22;
     }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
   </style>
-</head>
-
-<body>
-  <h2>호텔 요금 관리</h2>
-  <div class="container">
-    <label>국가+코스 선택:</label>
-    <select id="courseSelect">
-      <!-- Firebase에서 로드될 예정 -->
-    </select>
-
-    <table>
-      <thead>
-        <tr>
-          <th>호텔 등급</th>
-          <th>싱글</th>
-          <th>트윈/더블</th>
-          <th>트리플</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>4성급</td>
-          <td><input type="number" id="p4_single" placeholder="₩"></td>
-          <td><input type="number" id="p4_twin" placeholder="₩"></td>
-          <td><input type="number" id="p4_triple" placeholder="₩"></td>
-        </tr>
-        <tr>
-          <td>5성급</td>
-          <td><input type="number" id="p5_single" placeholder="₩"></td>
-          <td><input type="number" id="p5_twin" placeholder="₩"></td>
-          <td><input type="number" id="p5_triple" placeholder="₩"></td>
-        </tr>
-      </tbody>
-    </table>
-
-    <button onclick="saveHotelPrices()">저장</button>
-  </div>
 
   <!-- Firebase SDK 연결 -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
@@ -111,42 +75,114 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    async function loadCourses() {
-      const querySnapshot = await getDocs(collection(db, "courses"));
-      const select = document.getElementById("courseSelect");
-      querySnapshot.forEach(docSnap => {
+    async function renderTable() {
+      const tableBody = document.getElementById('hotelTable').querySelector('tbody');
+      tableBody.innerHTML = '';
+
+      const querySnapshot = await getDocs(collection(db, "hotel_prices"));
+      querySnapshot.forEach((docSnap) => {
         const data = docSnap.data();
-        const option = document.createElement("option");
-        option.value = `${data.country}||${data.course}`;
-        option.textContent = `${data.country} - ${data.course}`;
-        select.appendChild(option);
+        const row = `
+          <tr>
+            <td>${data.country}</td>
+            <td>${data.course}</td>
+            <td>${data.grade}</td>
+            <td>${data.single}</td>
+            <td>${data.twin_double}</td>
+            <td>${data.triple}</td>
+            <td><button onclick="deletePrice('${docSnap.id}')">삭제</button></td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
       });
     }
 
-    window.saveHotelPrices = async function() {
-      const [country, course] = document.getElementById("courseSelect").value.split("||");
-      const data = {
-        p4: {
-          single: parseInt(document.getElementById("p4_single").value) || 0,
-          twin: parseInt(document.getElementById("p4_twin").value) || 0,
-          triple: parseInt(document.getElementById("p4_triple").value) || 0
-        },
-        p5: {
-          single: parseInt(document.getElementById("p5_single").value) || 0,
-          twin: parseInt(document.getElementById("p5_twin").value) || 0,
-          triple: parseInt(document.getElementById("p5_triple").value) || 0
-        }
-      };
+    window.addPrice = async function() {
+      const country = document.getElementById('country').value.trim();
+      const course = document.getElementById('course').value.trim();
+      const grade = document.getElementById('grade').value;
+      const single = document.getElementById('single').value.trim();
+      const twin_double = document.getElementById('twin_double').value.trim();
+      const triple = document.getElementById('triple').value.trim();
+
+      if (!country || !course || !grade || !single || !twin_double || !triple) {
+        alert('모든 항목을 입력해주세요.');
+        return;
+      }
 
       try {
-        await setDoc(doc(db, "hotel_prices", `${country}_${course}`), data);
-        alert("저장되었습니다.");
-      } catch (e) {
-        alert("저장 중 오류 발생: " + e);
+        await addDoc(collection(db, "hotel_prices"), {
+          country, course, grade, single, twin_double, triple
+        });
+        alert('호텔 요금이 추가되었습니다.');
+        renderTable();
+        document.getElementById('country').value = '';
+        document.getElementById('course').value = '';
+        document.getElementById('grade').value = '';
+        document.getElementById('single').value = '';
+        document.getElementById('twin_double').value = '';
+        document.getElementById('triple').value = '';
+      } catch (error) {
+        alert('추가 중 오류 발생: ' + error);
       }
     }
 
-    window.onload = loadCourses;
+    window.deletePrice = async function(id) {
+      if (confirm('정말 삭제하시겠습니까?')) {
+        try {
+          await deleteDoc(doc(db, "hotel_prices", id));
+          alert('삭제되었습니다.');
+          renderTable();
+        } catch (error) {
+          alert('삭제 중 오류 발생: ' + error);
+        }
+      }
+    }
+
+    window.onload = renderTable;
   </script>
+</head>
+
+<body>
+
+<h2>호텔 요금 관리</h2>
+
+<div class="form-container">
+  <select id="country">
+    <option value="">국가 선택</option>
+    <option value="라오스">라오스</option>
+    <option value="베트남">베트남</option>
+  </select>
+  <input type="text" id="course" placeholder="코스명 (예: 방비엥 일반)">
+  <select id="grade">
+    <option value="">호텔 등급 선택</option>
+    <option value="4성급">4성급</option>
+    <option value="5성급">5성급</option>
+  </select>
+  <input type="number" id="single" placeholder="싱글룸 금액">
+  <input type="number" id="twin_double" placeholder="트윈/더블 금액">
+  <input type="number" id="triple" placeholder="트리플 금액">
+  <button onclick="addPrice()">추가</button>
+</div>
+
+<div class="list-container">
+  <table id="hotelTable">
+    <thead>
+      <tr>
+        <th>국가명</th>
+        <th>코스명</th>
+        <th>호텔 등급</th>
+        <th>싱글룸</th>
+        <th>트윈/더블</th>
+        <th>트리플</th>
+        <th>삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- 호텔 요금 리스트 표시 -->
+    </tbody>
+  </table>
+</div>
+
 </body>
 </html>
