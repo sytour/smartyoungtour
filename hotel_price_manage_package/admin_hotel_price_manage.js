@@ -72,33 +72,33 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let allCourses = [];
+    let courseMap = new Map();
 
     window.addEventListener('DOMContentLoaded', async () => {
       const countrySelect = document.getElementById("country");
       const courseSelect = document.getElementById("course");
 
       const snapshot = await getDocs(collection(db, "courses"));
-      const countries = new Set();
-      allCourses = [];
+      courseMap = new Map();
 
       snapshot.forEach(doc => {
         const data = doc.data();
         if (data.country && data.course) {
-          countries.add(data.country);
-          allCourses.push(data);
+          if (!courseMap.has(data.country)) {
+            courseMap.set(data.country, new Set());
+          }
+          courseMap.get(data.country).add(data.course);
         }
       });
 
       countrySelect.innerHTML = "<option value=''>국가 선택</option>";
-      [...countries].sort().forEach(country => {
+      [...courseMap.keys()].sort().forEach(country => {
         const option = document.createElement("option");
         option.value = country;
         option.textContent = country;
         countrySelect.appendChild(option);
       });
 
-      // 초기 로드 시 첫 번째 국가 선택 및 코스 로딩
       if (countrySelect.options.length > 1) {
         countrySelect.selectedIndex = 1;
         updateCourseOptions();
@@ -108,14 +108,15 @@
 
       function updateCourseOptions() {
         const selectedCountry = countrySelect.value;
-        const matchedCourses = allCourses.filter(c => c.country === selectedCountry);
         courseSelect.innerHTML = "<option value=''>코스 선택</option>";
-        matchedCourses.forEach(item => {
-          const option = document.createElement("option");
-          option.value = item.course;
-          option.textContent = item.course;
-          courseSelect.appendChild(option);
-        });
+        if (courseMap.has(selectedCountry)) {
+          [...courseMap.get(selectedCountry)].sort().forEach(course => {
+            const option = document.createElement("option");
+            option.value = course;
+            option.textContent = course;
+            courseSelect.appendChild(option);
+          });
+        }
       }
     });
   </script>
