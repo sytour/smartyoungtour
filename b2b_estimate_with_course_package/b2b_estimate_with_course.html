@@ -104,17 +104,13 @@
     <label for="vehicle">차량 자동선택</label>
     <input type="text" id="vehicle" readonly>
   </div>
- <!-- 일반 투어 식사 항목 -->
+<!-- 일반 투어 식사 항목 -->
 <div id="generalMeal" class="form-group hidden">
-  <label>
-    일반 투어: 식사 자동 포함 (중식/석식)
-    <span style="margin-left: 20px;">
-      <label style="font-weight: normal;">
-        낮 비행기 도착(석식)
-        <input type="checkbox" id="day1Dinner">
-      </label>
-    </span>
-  </label>
+  <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
+  <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+    <input type="checkbox" id="day1Dinner">
+    <span>낮 비행기 도착(석식) <small style="color: #888;">(선택 시 1일차 석식 포함)</small></span>
+  </div>
 </div>
 
 <!-- 골프 투어 식사 항목 -->
@@ -129,10 +125,10 @@
       <option value="포함">석식 포함</option>
       <option value="불포함">석식 불포함</option>
     </select>
-    <label style="margin-left: 20px; font-weight: normal;">
-      낮 비행기 도착(석식)
-      <input type="checkbox" id="day1DinnerGolf">
-    </label>
+  </div>
+  <div style="margin-top: 10px; display: flex; align-items: center; gap: 8px;">
+    <input type="checkbox" id="day1DinnerGolf">
+    <span>낮 비행기 도착(석식) <small style="color: #888;">(체크 시 1일차 석식 포함)</small></span>
   </div>
 </div>
   <div class="form-group">
