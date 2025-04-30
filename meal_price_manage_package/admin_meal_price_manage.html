@@ -67,10 +67,16 @@
     <option value="">코스 선택</option>
   </select>
   <select id="days">
-    <option value="3">3박</option>
+    <option value="1">1박</option>
+    <option value="2">2박</option>
+    <option value="3" selected>3박</option>
     <option value="4">4박</option>
     <option value="5">5박</option>
   </select>
+  <label><input type="checkbox" id="firstDinner" /> 1일차 석식 포함</label>
+  <button id="addBtn">추가</button>
+</div>
+<div class="form-container">
   <table>
     <thead>
       <tr>
@@ -79,23 +85,19 @@
         <th>석식 (USD)</th>
       </tr>
     </thead>
-    <tbody id="mealInputs">
-      <!-- 자바스크립트로 동적 생성 -->
-    </tbody>
+    <tbody id="mealInputs"></tbody>
   </table>
-  <label><input type="checkbox" id="firstDinner" /> 낮비행기 도착 석식 1회 포함</label><br>
-  <button id="addBtn">추가</button>
 </div>
 <div class="list-container">
   <table id="mealTable">
     <thead>
       <tr>
-        <th>국가</th>
-        <th>코스</th>
-        <th>일수</th>
-        <th>중식 합계</th>
-        <th>석식 합계</th>
-        <th>낮비행기 석식 포함</th>
+        <th>국가명</th>
+        <th>코스명</th>
+        <th>숙박</th>
+        <th>총 중식</th>
+        <th>총 석식</th>
+        <th>1일차 석식</th>
         <th>관리</th>
       </tr>
     </thead>
