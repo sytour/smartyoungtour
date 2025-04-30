@@ -73,15 +73,22 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    let allCourses = [];
+
     window.addEventListener('DOMContentLoaded', async () => {
       const countrySelect = document.getElementById("country");
       const courseInput = document.getElementById("course");
 
       const snapshot = await getDocs(collection(db, "courses"));
       const countries = new Set();
+      allCourses = [];
+
       snapshot.forEach(doc => {
         const data = doc.data();
-        if (data.country) countries.add(data.country);
+        if (data.country && data.course) {
+          countries.add(data.country);
+          allCourses.push(data);
+        }
       });
 
       countrySelect.innerHTML = "<option value=''>국가 선택</option>";
@@ -90,6 +97,16 @@
         option.value = country;
         option.textContent = country;
         countrySelect.appendChild(option);
+      });
+
+      countrySelect.addEventListener("change", () => {
+        const selectedCountry = countrySelect.value;
+        const matchedCourses = allCourses.filter(c => c.country === selectedCountry);
+        if (matchedCourses.length === 1) {
+          courseInput.value = matchedCourses[0].course;
+        } else {
+          courseInput.value = "";
+        }
       });
     });
   </script>
