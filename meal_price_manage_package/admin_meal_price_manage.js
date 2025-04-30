@@ -86,14 +86,28 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     let totalLunch = 0;
     let totalDinner = 0;
+    let firstDinnerValue = 0;
+
     for (let i = 1; i <= days + 1; i++) {
-      totalLunch += parseFloat(document.getElementById(`lunch${i}`).value) || 0;
-      totalDinner += parseFloat(document.getElementById(`dinner${i}`).value) || 0;
+      const lunchVal = parseFloat(document.getElementById(`lunch${i}`).value) || 0;
+      const dinnerVal = parseFloat(document.getElementById(`dinner${i}`).value) || 0;
+      if (i === 1 && includeFirstDinner) {
+        firstDinnerValue = dinnerVal;
+      } else {
+        totalLunch += lunchVal;
+        totalDinner += dinnerVal;
+      }
     }
 
     try {
       await addDoc(collection(db, "meal_prices"), {
-        country, course, days, totalLunch, totalDinner, includeFirstDinner
+        country,
+        course,
+        days,
+        totalLunch,
+        totalDinner,
+        includeFirstDinner,
+        firstDinnerValue
       });
       alert("등록 완료");
       renderTable();
@@ -111,14 +125,16 @@ window.addEventListener("DOMContentLoaded", async () => {
     const snapshot = await getDocs(collection(db, "meal_prices"));
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      const totalAll = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${data.country}</td>
         <td>${data.course}</td>
         <td>${data.days}박</td>
+        <td>${data.includeFirstDinner ? '$' + data.firstDinnerValue : ''}</td>
         <td>$${data.totalLunch}</td>
         <td>$${data.totalDinner}</td>
-        <td>${data.includeFirstDinner ? "포함" : "불포함"}</td>
+        <td>$${totalAll}</td>
         <td><button onclick="deleteMeal('${docSnap.id}')">삭제</button></td>
       `;
       tbody.appendChild(row);
