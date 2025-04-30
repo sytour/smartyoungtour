@@ -91,7 +91,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     for (let i = 1; i <= days + 1; i++) {
       const lunchVal = parseFloat(document.getElementById(`lunch${i}`).value) || 0;
       const dinnerVal = parseFloat(document.getElementById(`dinner${i}`).value) || 0;
-      if (i === 1 && includeFirstDinner) {
+      if (i === 1) {
         firstDinnerValue = dinnerVal;
       } else {
         totalLunch += lunchVal;
@@ -131,7 +131,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         <td>${data.country}</td>
         <td>${data.course}</td>
         <td>${data.days}박</td>
-        <td>${data.includeFirstDinner ? '$' + data.firstDinnerValue : ''}</td>
+        <td>${data.includeFirstDinner ? "포함" : ""}</td>
         <td>$${data.totalLunch}</td>
         <td>$${data.totalDinner}</td>
         <td>$${totalAll}</td>
