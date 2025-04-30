@@ -55,6 +55,7 @@
       background-color: #f4f4f4;
     }
   </style>
+  <!-- 반드시 이 경로로 JS 분리파일을 불러와야 작동합니다 -->
   <script type="module" src="./admin_hotel_price_manage.js"></script>
 </head>
 <body>
@@ -70,9 +71,9 @@
     <option value="4성급">4성급</option>
     <option value="5성급">5성급</option>
   </select>
-  <input type="number" id="single" placeholder="싱글 요금">
-  <input type="number" id="twin_double" placeholder="트윈/더블 요금">
-  <input type="number" id="triple" placeholder="트리플 요금">
+  <input type="number" id="single" placeholder="싱글 요금 (USD)">
+  <input type="number" id="twin_double" placeholder="트윈/더블 요금 (USD)">
+  <input type="number" id="triple" placeholder="트리플 요금 (USD)">
   <button id="addBtn">추가</button>
 </div>
 <div class="list-container">
@@ -82,9 +83,9 @@
         <th>국가명</th>
         <th>코스명</th>
         <th>호텔 등급</th>
-        <th>싱글</th>
-        <th>트윈/더블</th>
-        <th>트리플</th>
+        <th>싱글 (USD)</th>
+        <th>트윈/더블 (USD)</th>
+        <th>트리플 (USD)</th>
         <th>관리</th>
       </tr>
     </thead>
