@@ -55,7 +55,6 @@
       background-color: #f4f4f4;
     }
   </style>
-  <script type="module" src="./admin_hotel_price_manage.js"></script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -77,7 +76,7 @@
 
     window.addEventListener('DOMContentLoaded', async () => {
       const countrySelect = document.getElementById("country");
-      const courseInput = document.getElementById("course");
+      const courseSelect = document.getElementById("course");
 
       const snapshot = await getDocs(collection(db, "courses"));
       const countries = new Set();
@@ -102,11 +101,13 @@
       countrySelect.addEventListener("change", () => {
         const selectedCountry = countrySelect.value;
         const matchedCourses = allCourses.filter(c => c.country === selectedCountry);
-        if (matchedCourses.length === 1) {
-          courseInput.value = matchedCourses[0].course;
-        } else {
-          courseInput.value = "";
-        }
+        courseSelect.innerHTML = "<option value=''>코스 선택</option>";
+        matchedCourses.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item.course;
+          option.textContent = item.course;
+          courseSelect.appendChild(option);
+        });
       });
     });
   </script>
@@ -117,7 +118,9 @@
   <select id="country">
     <option value="">국가 선택</option>
   </select>
-  <input type="text" id="course" placeholder="코스명 (예: 방비엥 일반)">
+  <select id="course">
+    <option value="">코스 선택</option>
+  </select>
   <select id="grade">
     <option value="4성급">4성급</option>
     <option value="5성급">5성급</option>
