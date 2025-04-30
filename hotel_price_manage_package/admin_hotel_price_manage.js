@@ -55,16 +55,50 @@
       background-color: #f4f4f4;
     }
   </style>
-  <!-- ✅ 수정된 스크립트 경로 (상대경로) -->
   <script type="module" src="./admin_hotel_price_manage.js"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.firebasestorage.app",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+      measurementId: "G-KN3EQNZWLN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      const countrySelect = document.getElementById("country");
+      const courseInput = document.getElementById("course");
+
+      const snapshot = await getDocs(collection(db, "courses"));
+      const countries = new Set();
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if (data.country) countries.add(data.country);
+      });
+
+      countrySelect.innerHTML = "<option value=''>국가 선택</option>";
+      countries.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
+    });
+  </script>
 </head>
 <body>
 <h2>호텔 요금 관리</h2>
 <div class="form-container">
   <select id="country">
-    <option value="라오스">라오스</option>
-    <option value="베트남">베트남</option>
-    <option value="미얀마">미얀마</option>
+    <option value="">국가 선택</option>
   </select>
   <input type="text" id="course" placeholder="코스명 (예: 방비엥 일반)">
   <select id="grade">
