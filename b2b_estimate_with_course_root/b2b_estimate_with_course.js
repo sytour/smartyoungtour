@@ -58,5 +58,11 @@ function autoSelectVehicle() {
 }
 
 function submitForm() {
+  const isGeneralChecked = document.getElementById('day1Dinner')?.checked;
+  const isGolfChecked = document.getElementById('day1DinnerGolf')?.checked;
+
+  console.log('낮비행기 도착(석식) - 일반:', isGeneralChecked);
+  console.log('낮비행기 도착(석식) - 골프:', isGolfChecked);
+
   alert('견적서가 생성됩니다.');
 }
