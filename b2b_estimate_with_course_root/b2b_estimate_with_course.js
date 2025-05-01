@@ -1,4 +1,4 @@
-// b2b_estimate_with_course.js
+// b2b_estimate_with_course.js (루트 경로에서 사용 가능하도록 구성)
 
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
