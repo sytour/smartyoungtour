@@ -1,147 +1,181 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>견적 입력 화면</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B2B 견적 입력</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #fdfdfd;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .container {
-      max-width: 900px;
-      width: 100%;
-      background: white;
       padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      line-height: 1.6;
     }
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-    }
-    .section {
       margin-bottom: 30px;
     }
+    .form-group {
+      margin-bottom: 20px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
     label {
-      display: block;
-      margin-bottom: 10px;
       font-weight: bold;
     }
-    input, select {
+    input, select, textarea {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 16px;
+      padding: 8px;
+      margin-top: 6px;
       border-radius: 6px;
       border: 1px solid #ccc;
     }
-    .checkbox-group {
-      display: flex;
-      flex-direction: column;
+    .room-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      margin-bottom: 8px;
+    .room-container input {
+      text-align: center;
     }
-    .checkbox-item input[type="checkbox"] {
-      margin-right: 8px;
+    .button-container {
+      text-align: center;
+      margin-top: 30px;
     }
-    button {
-      background-color: orange;
+    .button-container button {
+      background-color: #ff944d;
       color: white;
       padding: 12px 24px;
-      border: none;
-      border-radius: 6px;
       font-size: 16px;
-      cursor: pointer;
-      width: 100%;
-    }
-    .info-box {
-      background-color: #fafafa;
-      padding: 20px;
+      border: none;
       border-radius: 8px;
-      border: 1px solid #ddd;
-      margin-bottom: 20px;
+      cursor: pointer;
+    }
+    .button-container button:hover {
+      background-color: #e67e22;
+    }
+    .hidden {
+      display: none;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
     }
   </style>
-  <script>
-    function getQueryParam(name) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(name);
-    }
-
-    window.onload = function() {
-      document.getElementById("countryDisplay").textContent = getQueryParam("country") || "-";
-      document.getElementById("courseDisplay").textContent = getQueryParam("course") || "-";
-    };
-  </script>
+  <script type="module" src="b2b_estimate_with_course.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h2>B2B 견적 입력</h2>
-    <div class="info-box">
-      <p><strong>선택된 국가:</strong> <span id="countryDisplay"></span></p>
-      <p><strong>선택된 코스:</strong> <span id="courseDisplay"></span></p>
+  <h2>B2B 견적 입력</h2>
+
+  <div class="form-group">
+    <label for="course">코스명</label>
+    <input type="text" id="course" readonly>
+  </div>
+
+  <div class="form-group">
+    <label for="people">인원 수</label>
+    <input type="number" id="people" min="1">
+  </div>
+
+  <div class="form-group">
+    <label for="hotel">호텔 등급</label>
+    <select id="hotel">
+      <option value="4성급">4성급</option>
+      <option value="5성급">5성급</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>방 유형 입력</label>
+    <div class="room-container">
+      <label>싱글룸</label>
+      <label>트윈룸</label>
+      <label>더블룸</label>
+      <label>트리플룸</label>
+      <label>총 객실 수</label>
+      <label>총 인원 수</label>
+
+      <input type="number" id="single" value="0" min="0">
+      <input type="number" id="twin" value="0" min="0">
+      <input type="number" id="double" value="0" min="0">
+      <input type="number" id="triple" value="0" min="0">
+      <input type="text" id="totalRooms" readonly>
+      <input type="text" id="totalPeople" readonly>
     </div>
+  </div>
 
-    <div class="section">
-      <label>여행 인원 수</label>
-      <input type="number" placeholder="예: 12명" />
+  <div class="form-group">
+    <label for="vehicle">차량 자동선택</label>
+    <input type="text" id="vehicle" readonly>
+  </div>
 
-      <label>여행 기간</label>
-      <input type="text" placeholder="예: 4박 5일" />
+  <div id="generalMeal" class="form-group hidden">
+    <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
+    <div class="checkbox-label">
+      <input type="checkbox" id="day1Dinner">
+      <span>낮비행기 도착 (석식) (체크)</span>
     </div>
+  </div>
 
-    <div class="section">
-      <label>호텔 등급 선택</label>
-      <select>
-        <option value="">-- 선택 --</option>
-        <option value="4성급">4성급</option>
-        <option value="5성급">5성급</option>
-      </select>
-
-      <label>식사 포함 여부</label>
-      <select>
-        <option value="">-- 선택 --</option>
-        <option value="포함">포함</option>
-        <option value="불포함">불포함</option>
-      </select>
-
-      <label>차량 옵션</label>
-      <select>
-        <option value="">-- 선택 --</option>
-        <option value="벤">벤 (1~6명)</option>
-        <option value="미니버스">미니버스 (7~11명)</option>
-        <option value="버스">버스 (12명 이상)</option>
-      </select>
+  <div id="golfMeal" class="form-group hidden">
+    <label>골프 투어 식사 설정</label>
+    <select id="golfLunch">
+      <option value="포함">중식 포함</option>
+      <option value="불포함">중식 불포함</option>
+    </select>
+    <select id="golfDinner">
+      <option value="포함">석식 포함</option>
+      <option value="불포함">석식 불포함</option>
+    </select>
+    <div class="checkbox-label">
+      <input type="checkbox" id="day1DinnerGolf">
+      <span>낮비행기 도착 (석식) (체크)</span>
     </div>
+  </div>
 
-    <div class="section">
-      <label>선택사항</label>
-      <div class="checkbox-group">
-        <div class="checkbox-item">
-          <input type="checkbox" id="shopping1" />
-          <label for="shopping1">쇼핑 1회</label>
-        </div>
-        <div class="checkbox-item">
-          <input type="checkbox" id="shopping2" />
-          <label for="shopping2">쇼핑 2회</label>
-        </div>
-        <div class="checkbox-item">
-          <input type="checkbox" id="optionalTour" />
-          <label for="optionalTour">선택 관광 포함</label>
-        </div>
-      </div>
-    </div>
+  <div class="form-group">
+    <label for="optionalTour">선택관광</label>
+    <select id="optionalTour">
+      <option value="있음">있음</option>
+      <option value="없음">없음</option>
+    </select>
+  </div>
 
-    <button>PDF 견적서 만들기 (준비중)</button>
+  <div class="form-group">
+    <label for="shopping">쇼핑 횟수</label>
+    <select id="shopping">
+      <option value="노쇼핑">노쇼핑</option>
+      <option value="1회">1회</option>
+      <option value="2회">2회</option>
+      <option value="3회">3회</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="totalPrice">총 지상비 (전체)</label>
+    <input type="number" id="totalPrice">
+  </div>
+
+  <div class="form-group">
+    <label for="pricePerPerson">성인 1인 지상비 (P/P)</label>
+    <input type="number" id="pricePerPerson">
+  </div>
+
+  <div class="form-group">
+    <label for="itinerary">일정</label>
+    <textarea id="itinerary" rows="3"></textarea>
+  </div>
+
+  <div class="button-container">
+    <button onclick="submitForm()">견적서 생성</button>
   </div>
 </body>
 </html>
