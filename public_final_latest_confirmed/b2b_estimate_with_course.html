@@ -2,104 +2,58 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>국가 및 코스 선택</title>
+  <title>견적 입력 화면</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfcf9;
+      background-color: #fdfdfd;
       padding: 40px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    h2 {
       text-align: center;
+      margin-bottom: 20px;
     }
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 16px;
-    }
-    button {
-      background-color: #ff944d;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #e67e22;
+    .info-box {
+      background-color: #fafafa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
     }
   </style>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-      measurementId: "G-KN3EQNZWLN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.addEventListener("DOMContentLoaded", async () => {
-      const countrySelect = document.getElementById("country");
-      const courseSelect = document.getElementById("course");
-
-      const snapshot = await getDocs(collection(db, "courses"));
-      const countryMap = new Map();
-
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        if (data.country && data.course) {
-          if (!countryMap.has(data.country)) {
-            countryMap.set(data.country, new Set());
-          }
-          countryMap.get(data.country).add(data.course);
-        }
-      });
-
-      countrySelect.innerHTML = '<option value="">국가 선택</option>';
-      [...countryMap.keys()].sort().forEach(country => {
-        const option = document.createElement("option");
-        option.value = country;
-        option.textContent = country;
-        countrySelect.appendChild(option);
-      });
-
-      countrySelect.addEventListener("change", () => {
-        const selectedCountry = countrySelect.value;
-        courseSelect.innerHTML = '<option value="">코스 선택</option>';
-        if (countryMap.has(selectedCountry)) {
-          [...countryMap.get(selectedCountry)].forEach(course => {
-            const option = document.createElement("option");
-            option.value = course;
-            option.textContent = course;
-            courseSelect.appendChild(option);
-          });
-        }
-      });
-    });
-
-    window.goToEstimate = () => {
-      const country = document.getElementById("country").value;
-      const course = document.getElementById("course").value;
-      if (!country || !course) {
-        alert("국가와 코스를 모두 선택하세요.");
-        return;
-      }
-      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}`;
-      window.location.href = url;
+  <script>
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
     }
+
+    window.onload = function() {
+      const country = getQueryParam("country");
+      const course = getQueryParam("course");
+
+      document.getElementById("countryDisplay").textContent = country || "-";
+      document.getElementById("courseDisplay").textContent = course || "-";
+    };
   </script>
 </head>
 <body>
-  <h2>국가 및 코스 선택</h2>
-  <select id="country"></select>
-  <select id="course"></select>
-  <br>
-  <button onclick="goToEstimate()">견적 입력 화면으로 이동</button>
+  <div class="container">
+    <h2>견적 입력</h2>
+    <div class="info-box">
+      <p><strong>선택된 국가:</strong> <span id="countryDisplay"></span></p>
+      <p><strong>선택된 코스:</strong> <span id="courseDisplay"></span></p>
+    </div>
+
+    <!-- 여기에 견적 입력 양식 추가 예정 -->
+    <p>여기에 견적 입력 폼이 들어갈 예정입니다.</p>
+  </div>
 </body>
 </html>
