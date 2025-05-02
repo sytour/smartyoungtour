@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login</title>
+</head>
+<body>
+  <h2>Admin Login</h2>
+  <input type="text" id="adminId" placeholder="아이디">
+  <input type="password" id="adminPassword" placeholder="비밀번호">
+  <button onclick="login()">로그인</button>
+  <script>
+    function login() {
+      const id = document.getElementById('adminId').value;
+      const pw = document.getElementById('adminPassword').value;
+      if (id === 'admin' && pw === '1234') {
+        localStorage.setItem('authorized', 'true');
+        window.location.href = 'admin_main.html';
+      } else {
+        alert('아이디 또는 비밀번호가 틀렸습니다.');
+      }
+    }
+  </script>
+</body>
+</html>
