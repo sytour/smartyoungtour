@@ -126,12 +126,24 @@
   }
 </style>
 
+<style>
+  .checkbox-inline {
+    display: flex;
+    align-items: center;
+    margin-top: 8px;
+  }
+  .checkbox-inline input[type="checkbox"] {
+    margin-right: 6px;
+    transform: scale(1.2);
+  }
+</style>
+
 <!-- 일반 투어용 -->
 <div id="generalMeal" class="form-group hidden">
   <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
   <div class="checkbox-inline">
     <input type="checkbox" id="day1Dinner" />
-    <label for="day1Dinner">낮비행기 도착시 체크 (석식)</label>
+    <span>낮비행기 도착 시 체크(석식)</span>
   </div>
 </div>
 
@@ -148,7 +160,7 @@
   </select>
   <div class="checkbox-inline">
     <input type="checkbox" id="day1DinnerGolf" />
-    <label for="day1DinnerGolf">낮비행기 도착시 체크 (석식)</label>
+    <span>낮비행기 도착 시 체크(석식)</span>
   </div>
 </div>
 
