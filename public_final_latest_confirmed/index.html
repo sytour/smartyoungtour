@@ -1,17 +1,74 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>SmartYoungTour</title>
-  <script>
-    if (localStorage.getItem('authorized') !== 'true') {
-      window.location.href = 'login.html';
-    } else {
-      window.location.href = 'b2b_country_course_linked.html';
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartYoungTour 접속</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdfdfd;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-  </script>
+    .login-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    h2 {
+      margin-bottom: 24px;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff944d;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #e67e22;
+    }
+  </style>
 </head>
 <body>
-  <p>접속 확인 중...</p>
+  <div class="login-container">
+    <h2>SmartYoungTour 접속</h2>
+    <input type="text" id="mainId" placeholder="아이디">
+    <input type="password" id="mainPw" placeholder="비밀번호">
+    <button onclick="login()">로그인</button>
+  </div>
+
+  <script>
+    function login() {
+      const id = document.getElementById('mainId').value;
+      const pw = document.getElementById('mainPw').value;
+
+      if (id === 'sytour' && pw === '2024') {
+        localStorage.setItem('mainAuthorized', 'true');
+        window.location.href = 'b2b_country_course_linked.html';
+      } else {
+        alert('아이디 또는 비밀번호가 틀렸습니다.');
+      }
+    }
+  </script>
 </body>
 </html>
