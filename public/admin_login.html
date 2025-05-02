@@ -7,7 +7,7 @@
     function adminLogin() {
       const id = document.getElementById("adminId").value.trim();
       const pw = document.getElementById("adminPw").value.trim();
-      if (id === "admin" && pw === "admin1234") {
+      if (id === "syglobal" && pw === "!seongtaehyun") {
         window.location.href = "admin_main.html";
       } else {
         alert("관리자 아이디 또는 비밀번호가 틀렸습니다.");
@@ -25,8 +25,8 @@
 <body>
   <div class="login-container">
     <h2>관리자 로그인</h2>
-    <input type="text" id="syglobal" placeholder="관리자 아이디" />
-    <input type="password" id="!seongtaehyun" placeholder="비밀번호" />
+    <input type="text" id="adminId" placeholder="관리자 아이디" />
+    <input type="password" id="adminPw" placeholder="비밀번호" />
     <button onclick="adminLogin()">로그인</button>
   </div>
 </body>
