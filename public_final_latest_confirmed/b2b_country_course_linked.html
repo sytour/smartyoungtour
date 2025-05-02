@@ -2,104 +2,75 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>국가 및 코스 선택</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfcf9;
+      background-color: #fdfdfd;
       padding: 40px;
+    }
+    .form-box {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    h2 {
       text-align: center;
+      margin-bottom: 20px;
     }
     select, button {
+      width: 100%;
       padding: 10px;
-      margin: 10px;
+      margin-bottom: 16px;
       border-radius: 6px;
       border: 1px solid #ccc;
-      font-size: 16px;
     }
     button {
-      background-color: #ff944d;
+      background-color: orange;
       color: white;
+      font-weight: bold;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #e67e22;
-    }
   </style>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-      measurementId: "G-KN3EQNZWLN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.addEventListener("DOMContentLoaded", async () => {
-      const countrySelect = document.getElementById("country");
-      const courseSelect = document.getElementById("course");
-
-      const snapshot = await getDocs(collection(db, "courses"));
-      const countryMap = new Map();
-
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        if (data.country && data.course) {
-          if (!countryMap.has(data.country)) {
-            countryMap.set(data.country, new Set());
-          }
-          countryMap.get(data.country).add(data.course);
-        }
-      });
-
-      countrySelect.innerHTML = '<option value="">국가 선택</option>';
-      [...countryMap.keys()].sort().forEach(country => {
-        const option = document.createElement("option");
-        option.value = country;
-        option.textContent = country;
-        countrySelect.appendChild(option);
-      });
-
-      countrySelect.addEventListener("change", () => {
-        const selectedCountry = countrySelect.value;
-        courseSelect.innerHTML = '<option value="">코스 선택</option>';
-        if (countryMap.has(selectedCountry)) {
-          [...countryMap.get(selectedCountry)].forEach(course => {
-            const option = document.createElement("option");
-            option.value = course;
-            option.textContent = course;
-            courseSelect.appendChild(option);
-          });
-        }
-      });
-    });
-
-    window.goToEstimate = () => {
+  <script>
+    function goToEstimate() {
       const country = document.getElementById("country").value;
       const course = document.getElementById("course").value;
+
       if (!country || !course) {
-        alert("국가와 코스를 모두 선택하세요.");
+        alert("국가와 코스를 모두 선택해주세요.");
         return;
       }
-      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}`;
+
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}`;
       window.location.href = url;
     }
   </script>
 </head>
 <body>
-  <h2>국가 및 코스 선택</h2>
-  <select id="country"></select>
-  <select id="course"></select>
-  <br>
-  <button onclick="goToEstimate()">견적 입력 화면으로 이동</button>
+  <div class="form-box">
+    <h2>국가 및 여행 코스 선택</h2>
+
+    <label for="country">국가 선택</label>
+    <select id="country">
+      <option value="">-- 선택 --</option>
+      <option value="라오스">라오스</option>
+      <option value="베트남">베트남</option>
+    </select>
+
+    <label for="course">여행 코스 선택</label>
+    <select id="course">
+      <option value="">-- 선택 --</option>
+      <option value="방비엥 일반">방비엥 일반</option>
+      <option value="루앙프라방 일반">루앙프라방 일반</option>
+      <option value="비엔티안 골프">비엔티안 골프</option>
+      <option value="비엔티안 골프+방비엥(1일) 일반">비엔티안 골프+방비엥(1일) 일반</option>
+    </select>
+
+    <button onclick="goToEstimate()">견적 입력 화면으로 이동</button>
+  </div>
 </body>
 </html>
