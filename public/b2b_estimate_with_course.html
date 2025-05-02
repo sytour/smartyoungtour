@@ -5,9 +5,13 @@
   <title>견적 입력 화면</title>
   <style>
     body { font-family: Arial, sans-serif; background-color: #fdfdfd; padding: 40px; }
-    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
     h2 { text-align: center; margin-bottom: 20px; }
-    .info-box { background-color: #fafafa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+    .section { margin-bottom: 30px; }
+    label { font-weight: bold; display: block; margin-bottom: 6px; }
+    input, select { width: 100%; padding: 10px; margin-bottom: 16px; border-radius: 6px; border: 1px solid #ccc; }
+    button { background-color: orange; color: white; padding: 12px 24px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+    .info-box { background-color: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; }
   </style>
   <script>
     function getQueryParam(name) {
@@ -30,7 +34,40 @@
       <p><strong>선택된 국가:</strong> <span id="countryDisplay"></span></p>
       <p><strong>선택된 코스:</strong> <span id="courseDisplay"></span></p>
     </div>
-    <p>여기에 견적 입력 폼이 들어갈 예정입니다.</p>
+
+    <div class="section">
+      <label>여행 인원 수</label>
+      <input type="number" placeholder="예: 12명" />
+
+      <label>여행 기간</label>
+      <input type="text" placeholder="예: 4박 5일" />
+    </div>
+
+    <div class="section">
+      <label>호텔 등급 선택</label>
+      <select>
+        <option value="">-- 선택 --</option>
+        <option value="4성급">4성급</option>
+        <option value="5성급">5성급</option>
+      </select>
+
+      <label>식사 포함 여부</label>
+      <select>
+        <option value="">-- 선택 --</option>
+        <option value="포함">포함</option>
+        <option value="불포함">불포함</option>
+      </select>
+
+      <label>차량 옵션</label>
+      <select>
+        <option value="">-- 선택 --</option>
+        <option value="벤">벤 (1~6명)</option>
+        <option value="미니버스">미니버스 (7~11명)</option>
+        <option value="버스">버스 (12명 이상)</option>
+      </select>
+    </div>
+
+    <button>PDF 견적서 만들기 (기능 준비중)</button>
   </div>
 </body>
 </html>
