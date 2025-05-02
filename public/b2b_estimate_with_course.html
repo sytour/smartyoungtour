@@ -128,13 +128,18 @@
 
 <style>
   .checkbox-inline {
-    display: flex;
-    align-items: center;
+    display: block;
+    text-align: left;
     margin-top: 8px;
   }
+  .checkbox-inline label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: normal;
+  }
   .checkbox-inline input[type="checkbox"] {
-    margin-right: 6px;
-    transform: scale(1.2);
+    margin: 0;
   }
 </style>
 
@@ -142,8 +147,10 @@
 <div id="generalMeal" class="form-group hidden">
   <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
   <div class="checkbox-inline">
-    <input type="checkbox" id="day1Dinner" />
-    <span>낮비행기 도착 시 체크(석식)</span>
+    <label>
+      <input type="checkbox" id="day1Dinner" />
+      낮비행기 도착 시 체크(석식)
+    </label>
   </div>
 </div>
 
@@ -159,8 +166,10 @@
     <option value="불포함">석식 불포함</option>
   </select>
   <div class="checkbox-inline">
-    <input type="checkbox" id="day1DinnerGolf" />
-    <span>낮비행기 도착 시 체크(석식)</span>
+    <label>
+      <input type="checkbox" id="day1DinnerGolf" />
+      낮비행기 도착 시 체크(석식)
+    </label>
   </div>
 </div>
 
