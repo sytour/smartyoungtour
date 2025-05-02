@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>관리자 메인화면</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .admin-box {
+      background-color: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 30px;
+    }
+    button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-box">
+    <h2>관리자 메인화면</h2>
+    <button onclick="location.href='admin_course_manage.html'">코스 관리</button>
+    <button onclick="location.href='admin_hotel_price.html'">호텔 요금 관리</button>
+    <button onclick="location.href='admin_meal_settings.html'">식사 설정</button>
+    <button onclick="location.href='login.html'">로그아웃</button>
+  </div>
+</body>
+</html>
