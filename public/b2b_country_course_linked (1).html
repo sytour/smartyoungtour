@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>국가 및 코스 선택</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #fdfdfd; padding: 40px; }
+    .form-box { max-width: 500px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 20px; }
+    select, button { width: 100%; padding: 10px; margin-bottom: 16px; border-radius: 6px; border: 1px solid #ccc; }
+    button { background-color: orange; color: white; font-weight: bold; cursor: pointer; }
+  </style>
+  <script>
+    function goToEstimate() {
+      const country = document.getElementById("country").value;
+      const course = document.getElementById("course").value;
+      if (!country || !course) {
+        alert("국가와 코스를 모두 선택해주세요.");
+        return;
+      }
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}`;
+      window.location.href = url;
+    }
+
+    function updateCourseOptions() {
+      const courseSelect = document.getElementById("course");
+      const country = document.getElementById("country").value;
+      const laosCourses = ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프+방비엥(1일) 일반"];
+      const vietnamCourses = ["하노이 시티투어", "다낭 자유여행", "호치민 시내관광"];
+
+      // Clear current options
+      courseSelect.innerHTML = '<option value="">-- 선택 --</option>';
+      let selectedCourses = country === "라오스" ? laosCourses : country === "베트남" ? vietnamCourses : [];
+
+      selectedCourses.forEach(course => {
+        const option = document.createElement("option");
+        option.value = course;
+        option.textContent = course;
+        courseSelect.appendChild(option);
+      });
+    }
+  </script>
+</head>
+<body>
+  <div class="form-box">
+    <h2>국가 및 여행 코스 선택</h2>
+
+    <label for="country">국가 선택</label>
+    <select id="country" onchange="updateCourseOptions()">
+      <option value="">-- 선택 --</option>
+      <option value="라오스">라오스</option>
+      <option value="베트남">베트남</option>
+    </select>
+
+    <label for="course">여행 코스 선택</label>
+    <select id="course">
+      <option value="">-- 선택 --</option>
+    </select>
+
+    <button onclick="goToEstimate()">견적 입력 화면으로 이동</button>
+  </div>
+</body>
+</html>
