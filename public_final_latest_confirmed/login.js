@@ -1,8 +1,6 @@
 function login() {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
-
-  // 예시: 아이디/비밀번호 고정
   if (username === "agent" && password === "1234") {
     window.location.href = "b2b_country_course_linked.html";
   } else {
