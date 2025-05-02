@@ -1,46 +1,66 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>관리자 로그인</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMARTYOUNG 관리자 로그인</title>
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: Arial, sans-serif;
-      background-color: #f8f8f8;
-      padding: 40px;
-      text-align: center;
+      background-color: #fdfdfd;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; /* 화면 전체 높이 */
     }
-    .login-box {
+
+    .login-container {
       background: white;
-      padding: 20px;
-      border-radius: 8px;
-      display: inline-block;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 40px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 400px;
     }
+
+    h2 {
+      margin-bottom: 30px;
+    }
+
     input {
-      padding: 10px;
-      margin: 10px;
-      width: 250px;
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
     }
+
     button {
-      padding: 10px 20px;
+      width: 100%;
+      padding: 12px;
       background-color: #ff944d;
       color: white;
+      font-size: 16px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
+
     button:hover {
       background-color: #e67e22;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
+  <div class="login-container">
     <h2>SMARTYOUNG 관리자 로그인</h2>
-    <input type="text" placeholder="아이디"><br>
-    <input type="password" placeholder="비밀번호"><br>
+    <input type="text" placeholder="아이디" />
+    <input type="password" placeholder="비밀번호" />
     <button>로그인</button>
   </div>
 </body>
