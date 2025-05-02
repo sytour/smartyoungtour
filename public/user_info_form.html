@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>사용자 정보 입력</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
+      background-color: #f9f9f9;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -17,66 +17,66 @@
       background: white;
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 500px;
     }
     h2 {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     label {
-      font-weight: bold;
       display: block;
-      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: bold;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 10px;
-      margin-top: 8px;
-      border-radius: 6px;
+      margin-bottom: 16px;
       border: 1px solid #ccc;
-    }
-    .button-group {
-      margin-top: 30px;
-      display: flex;
-      justify-content: space-between;
+      border-radius: 6px;
     }
     button {
-      padding: 12px 24px;
-      font-size: 16px;
+      width: 100%;
+      padding: 12px;
+      background-color: orange;
+      color: white;
+      font-weight: bold;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
     }
-    .next-btn {
-      background-color: orange;
-      color: white;
+    .footer-btn {
+      margin-top: 10px;
+      text-align: center;
     }
-    .admin-btn {
-      background-color: #333;
-      color: white;
+    .footer-btn button {
+      background-color: #444;
     }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>사용자 정보 입력</h2>
-    <label>상호명</label>
-    <input type="text" placeholder="예: 스마트영투어" />
 
-    <label>이름</label>
-    <input type="text" placeholder="예: 홍길동" />
+    <label for="name">상호명 또는 이름 <span style="color: red;">*</span></label>
+    <input type="text" id="name" placeholder="예: 홍길동 or 스마트영투어" required>
 
-    <label>연락처</label>
-    <input type="text" placeholder="예: 010-0000-0000" />
+    <label for="phone">연락처 <span style="color: red;">*</span></label>
+    <input type="text" id="phone" placeholder="예: 010-0000-0000" required>
 
-    <label>카카오톡 ID</label>
-    <input type="text" placeholder="예: sytour" />
+    <label for="region">지역 <span style="color: red;">*</span></label>
+    <input type="text" id="region" placeholder="예: 경기도 성남시" required>
 
-    <div class="button-group">
-      <button class="next-btn" onclick="location.href='b2b_country_course_linked.html'">다음</button>
-      <button class="admin-btn" onclick="location.href='admin_login.html'">관리자 로그인</button>
+    <label for="kakao">카카오톡 ID (선택)</label>
+    <input type="text" id="kakao" placeholder="예: sytour">
+
+    <button onclick="location.href='b2b_country_course_linked.html'">다음</button>
+
+    <div class="footer-btn">
+      <button onclick="location.href='admin_login.html'">관리자 로그인</button>
     </div>
   </div>
 </body>
