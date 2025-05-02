@@ -1,1 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 로그인</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdfcf9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 24px;
+      color: #333;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #ff944d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e67e22;
+    }
+  </style>
+</head>
 
+<body>
+  <div class="login-container">
+    <h2>관리자 로그인</h2>
+    <input type="password" id="password" placeholder="비밀번호 입력" />
+    <button onclick="login()">로그인</button>
+  </div>
+
+  <script>
+    function login() {
+      const inputPassword = document.getElementById('password').value;
+
+      if (inputPassword === "!seongtaehyun") {
+        alert("로그인 성공!");
+        window.location.href = "admin_main.html"; // 관리자 메인으로 이동 (다음 만들 예정)
+      } else {
+        alert("비밀번호가 틀렸습니다.");
+      }
+    }
+  </script>
+</body>
+</html>
