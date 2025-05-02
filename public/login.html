@@ -2,29 +2,42 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>사용자 로그인</title>
-  <script src="login.js?v=3" defer></script>
+  <title>SMART YOUNG TOUR 로그인</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f4f4;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
     }
-    .login-box {
+    .login-container {
       background: white;
       padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.1);
       max-width: 400px;
+      width: 90%;
+    }
+    .contact-box {
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .contact-box div {
+      margin-bottom: 4px;
     }
     h2 {
       text-align: center;
       margin-bottom: 20px;
+      font-size: 22px;
+      color: #333;
     }
     input {
       width: 100%;
@@ -32,24 +45,43 @@
       margin: 10px 0;
       border-radius: 6px;
       border: 1px solid #ccc;
+      font-size: 14px;
     }
     button {
       width: 100%;
       padding: 12px;
       background-color: orange;
       color: white;
-      font-weight: bold;
       border: none;
       border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
     }
   </style>
+  <script>
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+      if (username === "agent" && password === "1234") {
+        window.location.href = "user_info_form.html";
+      } else {
+        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      }
+    }
+  </script>
 </head>
 <body>
-  <div class="login-box">
-    <h2>로그인</h2>
-    <input type="text" id="username" placeholder="아이디" />
-    <input type="password" id="password" placeholder="비밀번호" />
+  <div class="login-container">
+    <div class="contact-box">
+      <div><strong>현지 담당자:</strong> 070-0000-0000</div>
+      <div><strong>현지 담당자(라오스):</strong> +856 20-9918-8669, 카톡ID:</div>
+      <div><strong>한국 담당자:</strong> +82 10-4009-1397, 카톡ID:</div>
+    </div>
+
+    <h2>SMART YOUNG TOUR</h2>
+    <input type="text" id="username" placeholder="ID" />
+    <input type="password" id="password" placeholder="PW" />
     <button onclick="login()">로그인</button>
   </div>
 </body>
