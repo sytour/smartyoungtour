@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>관리자 로그인</title>
+  <script>
+    function adminLogin() {
+      const id = document.getElementById("adminId").value.trim();
+      const pw = document.getElementById("adminPw").value.trim();
+      if (id === "admin" && pw === "admin1234") {
+        window.location.href = "admin_main.html";
+      } else {
+        alert("관리자 아이디 또는 비밀번호가 틀렸습니다.");
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #f4f4f4; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .login-container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+    h2 { text-align: center; }
+    input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 6px; border: 1px solid #ccc; }
+    button { width: 100%; padding: 10px; background-color: #333; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2>관리자 로그인</h2>
+    <input type="text" id="adminId" placeholder="관리자 아이디" />
+    <input type="password" id="adminPw" placeholder="비밀번호" />
+    <button onclick="adminLogin()">로그인</button>
+  </div>
+</body>
+</html>

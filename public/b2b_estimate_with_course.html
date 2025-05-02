@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>견적 입력 화면</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #fdfdfd; padding: 40px; }
+    .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 20px; }
+    .info-box { background-color: #fafafa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd; }
+  </style>
+  <script>
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    window.onload = function() {
+      const country = getQueryParam("country");
+      const course = getQueryParam("course");
+      document.getElementById("countryDisplay").textContent = country || "-";
+      document.getElementById("courseDisplay").textContent = course || "-";
+    };
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h2>견적 입력</h2>
+    <div class="info-box">
+      <p><strong>선택된 국가:</strong> <span id="countryDisplay"></span></p>
+      <p><strong>선택된 코스:</strong> <span id="courseDisplay"></span></p>
+    </div>
+    <p>여기에 견적 입력 폼이 들어갈 예정입니다.</p>
+  </div>
+</body>
+</html>
