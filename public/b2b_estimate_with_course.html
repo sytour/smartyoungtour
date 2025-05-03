@@ -177,5 +177,14 @@
   <div class="button-container">
     <button onclick="submitForm()">견적서 생성</button>
   </div>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      const courseName = new URLSearchParams(window.location.search).get("course") || "";
+      const isGolf = courseName.includes("골프");
+      document.getElementById("generalMeal").classList.toggle("hidden", isGolf);
+      document.getElementById("golfMeal").classList.toggle("hidden", !isGolf);
+    });
+  </script>
 </body>
 </html>
