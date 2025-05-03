@@ -1,97 +1,145 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>국가 및 코스 선택</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>국가 및 여행 코스 선택</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
-      padding: 0;
+      background-color: #fdfcf9;
+      padding: 40px;
       margin: 0;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
     }
-    .form-box {
+    .form-container {
       width: 100%;
-      max-width: 500px;
-      background: white;
+      max-width: 400px;
+      background: #fff;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      text-align: center;
     }
     h2 {
-      text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      font-size: 24px;
+      color: #333;
     }
-    select, button {
+    select {
       width: 100%;
       padding: 10px;
-      margin-bottom: 16px;
-      border-radius: 6px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 8px;
       border: 1px solid #ccc;
     }
     button {
-      background-color: orange;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #ff944d;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
+      margin-top: 16px;
+    }
+    button:hover {
+      background-color: #e67e22;
     }
   </style>
-  <script>
-    function goToEstimate() {
-      const country = document.getElementById("country").value;
-      const course = document.getElementById("course").value;
-      if (!country || !course) {
-        alert("국가와 코스를 모두 선택해주세요.");
-        return;
-      }
-      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(country)}&course=${encodeURIComponent(course)}`;
-      window.location.href = url;
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.appspot.com",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+      measurementId: "G-KN3EQNZWLN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let allCourses = [];
+
+    async function loadCourses() {
+      const snapshot = await getDocs(collection(db, "courses"));
+      allCourses = [];
+      const countriesSet = new Set();
+
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        allCourses.push(data);
+        countriesSet.add(data.country);
+      });
+
+      const countrySelect = document.getElementById('country');
+      countrySelect.innerHTML = '<option value="">국가 선택</option>';
+      Array.from(countriesSet).sort((a, b) => a.localeCompare(b, "ko")).forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
     }
 
     function updateCourseOptions() {
-      const courseSelect = document.getElementById("course");
-      const country = document.getElementById("country").value;
+      const country = document.getElementById('country').value;
+      const courseSelect = document.getElementById('course');
+      courseSelect.innerHTML = '<option value="">코스 선택</option>';
 
-      const courseData = {
-        "라오스": ["방비엥 일반", "루앙프라방 일반", "비엔티안 골프", "비엔티안 골프+방비엥(1일) 일반"],
-        "베트남": ["푸꾸옥 일반"],
-        "미얀마": ["양곤 골프"]
-      };
-
-      courseSelect.innerHTML = '<option value="">-- 선택 --</option>';
-      if (courseData[country]) {
-        courseData[country].forEach(course => {
-          const option = document.createElement("option");
-          option.value = course;
-          option.textContent = course;
-          courseSelect.appendChild(option);
-        });
-      }
+      const filtered = allCourses.filter(item => item.country === country);
+      filtered.sort((a, b) => a.course.localeCompare(b.course, "ko")).forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.course;
+        option.textContent = item.course;
+        courseSelect.appendChild(option);
+      });
     }
+
+    window.goToEstimate = function() {
+      const country = document.getElementById('country').value;
+      const course = document.getElementById('course').value;
+
+      if (!country || !course) {
+        alert('국가와 코스를 모두 선택해주세요.');
+        return;
+      }
+
+      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
+      window.location.href = url;
+    };
+
+    window.onload = async function() {
+      await loadCourses();
+      document.getElementById('country').addEventListener('change', updateCourseOptions);
+    };
   </script>
 </head>
+
 <body>
-  <div class="form-box">
+  <div class="form-container">
     <h2>국가 및 여행 코스 선택</h2>
 
-    <label for="country">국가 선택</label>
-    <select id="country" onchange="updateCourseOptions()">
-      <option value="">-- 선택 --</option>
-      <option value="라오스">라오스</option>
-      <option value="베트남">베트남</option>
-      <option value="미얀마">미얀마</option>
+    <select id="country">
+      <option value="">국가 선택</option>
     </select>
 
-    <label for="course">여행 코스 선택</label>
     <select id="course">
-      <option value="">-- 선택 --</option>
+      <option value="">코스 선택</option>
     </select>
 
-    <button onclick="goToEstimate()">견적 입력 화면으로 이동</button>
+    <button onclick="goToEstimate()">견적 계속 진행</button>
   </div>
 </body>
 </html>
