@@ -1,1 +1,83 @@
-<html><body>사용자 정보 입력</body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>사용자 정보 입력</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .form-container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .button-group {
+      margin-top: 30px;
+      display: flex;
+      justify-content: space-between;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .next-btn {
+      background-color: orange;
+      color: white;
+    }
+    .admin-btn {
+      background-color: #333;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>사용자 정보 입력</h2>
+    <label>상호명</label>
+    <input type="text" placeholder="예: 스마트영투어" />
+
+    <label>이름</label>
+    <input type="text" placeholder="예: 홍길동" />
+
+    <label>연락처</label>
+    <input type="text" placeholder="예: 010-0000-0000" />
+
+    <label>카카오톡 ID</label>
+    <input type="text" placeholder="예: sytour" />
+
+    <div class="button-group">
+      <button class="next-btn" onclick="location.href='b2b_country_course_linked.html'">다음</button>
+      <button class="admin-btn" onclick="location.href='admin_login.html'">관리자 로그인</button>
+    </div>
+  </div>
+</body>
+</html>
