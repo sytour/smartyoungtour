@@ -1,1 +1,71 @@
-<html><body>관리자 메인</body></html>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMARTYOUNG TOUR 관리자 페이지</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdfcf9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 90%;
+      text-align: center;
+    }
+    h2 {
+      margin-bottom: 24px;
+      color: #333;
+    }
+    .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .menu button {
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff944d;
+      color: white;
+      cursor: pointer;
+    }
+    .menu button:hover {
+      background-color: #e67e22;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>SMARTYOUNG TOUR 관리자 페이지</h2>
+    <div class="menu">
+      <button onclick="location.href='admin_course_manage.html'">[ 코스 관리 ]</button>
+      <button onclick="location.href='hotel_price_manage_package/admin_hotel_price_manage.html'">[ 호텔 요금 관리 ]</button>
+      <button onclick="alert('식사 요금 관리 페이지 준비 중')">[ 식사 요금 관리 ]</button>
+      <button onclick="alert('차량 요금 관리 페이지 준비 중')">[ 차량 요금 관리 ]</button>
+      <button onclick="alert('투어 입장료 요금 관리 페이지 준비 중')">[ 투어 진행시 입장료 요금 관리 ]</button>
+      <button onclick="alert('가이드 요금 관리 페이지 준비 중')">[ 가이드 요금 관리 ]</button>
+      <button onclick="alert('선택관광 할인 관리 페이지 준비 중')">[ 선택관광 할인 관리 ]</button>
+      <button onclick="alert('쇼핑 할인 관리 페이지 준비 중')">[ 쇼핑 할인 관리 ]</button>
+      <button onclick="alert('기타 요금 관리 페이지 준비 중')">[ 기타 요금 관리 ]</button>
+      <button onclick="alert('견적서 목록 보기 페이지 준비 중')">[ 견적서 보기 ]</button>
+      <button onclick="alert('코스별 일정 관리 페이지 준비 중')">[ 코스별 일정 관리 ]</button>
+      <button onclick="alert('고객 관리 시스템 페이지 준비 중')">[ 고객 관리 시스템 ]</button>
+    </div>
+  </div>
+</body>
+</html>
