@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>B2B 견적 입력</title>
   <style>
     body {
@@ -63,6 +63,7 @@
     .hidden {
       display: none;
     }
+
     .checkbox-inline {
       display: block;
       text-align: left;
@@ -72,7 +73,7 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
+      white-space: nowrap; /* ✅ 줄바꿈 방지 */
       font-weight: normal;
     }
     .checkbox-inline input[type="checkbox"] {
@@ -126,53 +127,35 @@
     <input type="text" id="vehicle" readonly>
   </div>
 
- <style>
-  .checkbox-inline {
-    display: block;
-    text-align: left;
-    margin-top: 8px;
-  }
-  .checkbox-inline label {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap; /* ✅ 줄바꿈 방지 */
-    font-weight: normal;
-  }
-  .checkbox-inline input[type="checkbox"] {
-    margin: 0;
-  }
-</style>
-
-<!-- 일반 투어용 -->
-<div id="generalMeal" class="form-group hidden">
-  <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
-  <div class="checkbox-inline">
-    <label>
-      <input type="checkbox" id="day1Dinner" />
-      낮비행기 도착 시 체크(석식)
-    </label>
+  <!-- 일반 투어용 -->
+  <div id="generalMeal" class="form-group hidden">
+    <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
+    <div class="checkbox-inline">
+      <label>
+        <input type="checkbox" id="day1Dinner" />
+        낮비행기 도착 체크시 석식 포함
+      </label>
+    </div>
   </div>
-</div>
 
-<!-- 골프 투어용 -->
-<div id="golfMeal" class="form-group hidden">
-  <label>골프 투어 식사 설정</label>
-  <select id="golfLunch">
-    <option value="포함">중식 포함</option>
-    <option value="불포함">중식 불포함</option>
-  </select>
-  <select id="golfDinner">
-    <option value="포함">석식 포함</option>
-    <option value="불포함">석식 불포함</option>
-  </select>
-  <div class="checkbox-inline">
-    <label>
-      <input type="checkbox" id="day1DinnerGolf" />
-      낮비행기 도착 시 체크(석식)
-    </label>
+  <!-- 골프 투어용 -->
+  <div id="golfMeal" class="form-group hidden">
+    <label>골프 투어 식사 설정</label>
+    <select id="golfLunch">
+      <option value="포함">중식 포함</option>
+      <option value="불포함">중식 불포함</option>
+    </select>
+    <select id="golfDinner">
+      <option value="포함">석식 포함</option>
+      <option value="불포함">석식 불포함</option>
+    </select>
+    <div class="checkbox-inline">
+      <label>
+        <input type="checkbox" id="day1DinnerGolf" />
+        낮비행기 도착 체크시 석식 포함
+      </label>
+    </div>
   </div>
-</div>
 
   <div class="form-group">
     <label for="optionalTour">선택관광</label>
