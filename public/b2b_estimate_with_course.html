@@ -38,14 +38,22 @@
         <option value="5성급">5성급</option>
       </select>
       <table class="room-table">
-  <tr><th>싱글</th><th>트윈/더블</th><th>트리플</th></tr>
+  <tr>
+    <th>싱글</th>
+    <th>트윈/더블</th>
+    <th>트리플</th>
+    <th>총 룸 수</th>
+    <th>총 인원 수</th>
+  </tr>
   <tr>
     <td><input type="number" id="roomSingle" value="0"></td>
     <td><input type="number" id="roomTwinDouble" value="0"></td>
     <td><input type="number" id="roomTriple" value="0"></td>
+    <td><input type="text" id="calculatedRoomTotal" readonly></td>
+    <td><input type="text" id="calculatedPersonTotal" readonly></td>
   </tr>
 </table>
-      <div class="summary-right" id="roomSummary">총 룸 수: 0 / 총 인원 수: 0</div>
+      
     </div>
 
     <div class="section">
@@ -107,7 +115,8 @@
       const tr = parseInt(document.getElementById('roomTriple').value) || 0;
       const totalRooms = s + td + tr;
       const totalPeople = s + (td * 2) + (tr * 3);
-      document.getElementById('roomSummary').innerText = `총 룸 수: ${totalRooms} / 총 인원 수: ${totalPeople}`;
+      document.getElementById('calculatedRoomTotal').value = totalRooms;
+      document.getElementById('calculatedPersonTotal').value = totalPeople;
 
       const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
       let vehicle = '벤';
@@ -126,15 +135,16 @@
     if (course.includes("골프")) {
       mealLabel.innerText = "골프 투어 식사 설정";
       mealInfo.innerHTML = `
-        <label class="inline-group">
+        <div class="inline-group">
           <input type="checkbox" id="golfLunch">
-          중식 포함
-        </label>
-        <label class="inline-group">
-          <input type="checkbox" id="golfDinner">
-          석식 포함
-        </label>
-      `;
+          <label for="golfLunch">중식 포함</label>
+          <input type="checkbox" id="golfDinner" style="margin-left: 20px;">
+          <label for="golfDinner">석식 포함</label>
+        </div>
+        <div class="inline-group" style="margin-top: 10px;">
+          <input type="checkbox" id="lateArrivalDinnerGolf">
+          <label for="lateArrivalDinnerGolf">낮 비행기 도착 시 석식 포함</label>
+        </div>`;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
