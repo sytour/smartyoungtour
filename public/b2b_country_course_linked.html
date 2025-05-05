@@ -2,144 +2,73 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>국가 및 여행 코스 선택</title>
+  <title>SMARTYOUNG TOUR - B2B 견적 입력</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfcf9;
       padding: 40px;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      background-color: #fffdf7;
     }
-    .form-container {
-      width: 100%;
-      max-width: 400px;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-      text-align: center;
+    .hidden {
+      display: none;
     }
     h2 {
       margin-bottom: 24px;
-      font-size: 24px;
-      color: #333;
     }
-    select {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
+    label {
+      display: block;
+      margin-bottom: 10px;
     }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #ff944d;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 16px;
+    .checkbox label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    button:hover {
-      background-color: #e67e22;
+    input[type="text"], select {
+      width: 300px;
+      padding: 6px;
+      margin-bottom: 16px;
     }
   </style>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-      measurementId: "G-KN3EQNZWLN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let allCourses = [];
-
-    async function loadCourses() {
-      const snapshot = await getDocs(collection(db, "courses"));
-      allCourses = [];
-      const countriesSet = new Set();
-
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        allCourses.push(data);
-        countriesSet.add(data.country);
-      });
-
-      const countrySelect = document.getElementById('country');
-      countrySelect.innerHTML = '<option value="">국가 선택</option>';
-      Array.from(countriesSet).sort((a, b) => a.localeCompare(b, "ko")).forEach(country => {
-        const option = document.createElement('option');
-        option.value = country;
-        option.textContent = country;
-        countrySelect.appendChild(option);
-      });
-    }
-
-    function updateCourseOptions() {
-      const country = document.getElementById('country').value;
-      const courseSelect = document.getElementById('course');
-      courseSelect.innerHTML = '<option value="">코스 선택</option>';
-
-      const filtered = allCourses.filter(item => item.country === country);
-      filtered.sort((a, b) => a.course.localeCompare(b.course, "ko")).forEach(item => {
-        const option = document.createElement('option');
-        option.value = item.course;
-        option.textContent = item.course;
-        courseSelect.appendChild(option);
-      });
-    }
-
-    window.goToEstimate = function() {
-      const country = document.getElementById('country').value;
-      const course = document.getElementById('course').value;
-
-      if (!country || !course) {
-        alert('국가와 코스를 모두 선택해주세요.');
-        return;
-      }
-
-      const url = `b2b_estimate_with_course.html?course=${encodeURIComponent(course)}&country=${encodeURIComponent(country)}&itinerary=자동 일정 표시`;
-      window.location.href = url;
-    };
-
-    window.onload = async function() {
-      await loadCourses();
-      document.getElementById('country').addEventListener('change', updateCourseOptions);
-    };
-  </script>
 </head>
-
 <body>
-  <div class="form-container">
-    <h2>국가 및 여행 코스 선택</h2>
+  <h2>B2B 견적 요청 입력</h2>
 
-    <select id="country">
-      <option value="">국가 선택</option>
-    </select>
+  <!-- 코스명 입력은 숨기고 자동 설정 -->
+  <input type="text" id="courseName" hidden />
 
-    <select id="course">
-      <option value="">코스 선택</option>
-    </select>
-
-    <button onclick="goToEstimate()">견적 계속 진행</button>
+  <div id="normalMealSection" class="hidden">
+    <h3>식사 구성 (일반 투어 - 자동 포함)</h3>
+    <p>중식 및 석식이 자동 포함됩니다.</p>
   </div>
+
+  <div id="golfMealSection" class="hidden">
+    <h3>골프 투어 식사 설정</h3>
+    <label><input type="checkbox" id="lunchIncluded" /> ㅁ 중식 포함</label>
+    <label><input type="checkbox" id="dinnerIncluded" /> ㅁ 석식 포함</label>
+  </div>
+
+  <script>
+    // URL 파라미터 파싱 함수
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return decodeURIComponent(params.get(name) || "");
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const courseName = getQueryParam("course"); // URL에서 ?course= 값 읽음
+      const courseInput = document.getElementById("courseName");
+
+      if (courseInput) {
+        courseInput.value = courseName;
+
+        const isGolf = courseName.includes("골프");
+        const isNormal = courseName.includes("일반") && !isGolf;
+
+        document.getElementById("normalMealSection").classList.toggle("hidden", !isNormal);
+        document.getElementById("golfMealSection").classList.toggle("hidden", !isGolf);
+      }
+    });
+  </script>
 </body>
 </html>
