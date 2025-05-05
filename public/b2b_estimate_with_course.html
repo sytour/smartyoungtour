@@ -48,18 +48,29 @@
     <label><input type="checkbox" id="dinnerIncluded" /> ㅁ 석식 포함</label>
   </div>
 
-  <!-- 이후 항목들 예시적으로 추가 (인원수, 쇼핑, 방 선택 등은 이 아래로 확장) -->
-
   <script>
+    // URL 파라미터 파싱 함수
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return decodeURIComponent(params.get(name) || "");
+    }
+
     window.addEventListener("DOMContentLoaded", () => {
-      const courseName = localStorage.getItem("selectedCourseName"); // 예: "비엔티안 골프"
+      const courseName = getQueryParam("course"); // URL에서 ?course= 값 읽음
       const courseInput = document.getElementById("courseName");
 
-      if (courseName && courseInput) {
+      if (courseInput) {
         courseInput.value = courseName;
 
-        const isGolf = courseName.includes("골프");
-        const isNormal = courseName.includes("일반") && !isGolf;
+        // 명확한 분기 처리: 골프가 포함되면 무조건 골프, 그 외 일반
+        let isGolf = false;
+        let isNormal = false;
+
+        if (courseName.includes("골프")) {
+          isGolf = true;
+        } else if (courseName.includes("일반")) {
+          isNormal = true;
+        }
 
         document.getElementById("normalMealSection").classList.toggle("hidden", !isNormal);
         document.getElementById("golfMealSection").classList.toggle("hidden", !isGolf);
