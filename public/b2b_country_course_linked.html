@@ -51,42 +51,50 @@
     const nextButton = document.getElementById("nextButton");
 
     const loadCourses = async () => {
-      const snapshot = await getDocs(collection(db, "courses"));
-      const data = snapshot.docs.map(doc => doc.data());
+      try {
+        const snapshot = await getDocs(collection(db, "courses"));
+        const data = snapshot.docs.map(doc => doc.data());
 
-      const countries = [...new Set(data.map(item => item.country))].sort();
-
-      countries.forEach(country => {
-        const option = document.createElement("option");
-        option.value = country;
-        option.textContent = country;
-        countrySelect.appendChild(option);
-      });
-
-      const updateCourses = () => {
-        courseSelect.innerHTML = "";
-        const selectedCountry = countrySelect.value;
-        const filtered = data.filter(item => item.country === selectedCountry);
-        filtered.forEach(item => {
+        const countries = [...new Set(data.map(item => item.country))].sort();
+        countries.forEach(country => {
           const option = document.createElement("option");
-          option.value = item.course;
-          option.textContent = item.course;
-          courseSelect.appendChild(option);
+          option.value = country;
+          option.textContent = country;
+          countrySelect.appendChild(option);
         });
-      };
 
-      countrySelect.addEventListener("change", updateCourses);
-      updateCourses();
+        const updateCourses = () => {
+          courseSelect.innerHTML = "";
+          const selectedCountry = countrySelect.value;
+          const filtered = data.filter(item => item.country === selectedCountry);
+          filtered.forEach(item => {
+            const option = document.createElement("option");
+            option.value = item.course;
+            option.textContent = item.course;
+            courseSelect.appendChild(option);
+          });
+        };
+
+        countrySelect.addEventListener("change", updateCourses);
+        updateCourses();
+
+        nextButton.addEventListener("click", () => {
+          const selectedCountry = countrySelect.value;
+          const selectedCourse = courseSelect.value;
+          if (!selectedCountry || !selectedCourse) {
+            alert("국가와 코스를 모두 선택해주세요.");
+            return;
+          }
+          const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(selectedCountry)}&course=${encodeURIComponent(selectedCourse)}&itinerary=자동 일정 표시`;
+          window.location.href = url;
+        });
+      } catch (err) {
+        console.error("코스 데이터를 불러오는 중 오류 발생:", err);
+        alert("코스 정보를 불러오는 데 실패했습니다.");
+      }
     };
 
     loadCourses();
-
-    nextButton.addEventListener("click", () => {
-      const selectedCountry = countrySelect.value;
-      const selectedCourse = courseSelect.value;
-      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(selectedCountry)}&course=${encodeURIComponent(selectedCourse)}&itinerary=자동 일정 표시`;
-      window.location.href = url;
-    });
   </script>
 </body>
 </html>
