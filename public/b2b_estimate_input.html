@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>B2B 견적 입력</title>
+  <link rel="stylesheet" href="css/b2b_estimate_input.css" />
+  <script defer src="js/b2b_estimate_input.js"></script>
+</head>
+<body>
+  <h2>B2B 견적 입력</h2>
+  <form>
+    <div class="form-section">
+      <label>코스명: <span id="courseNameDisplay">선택된 코스명 자동 표시</span></label>
+    </div>
+    <div id="meal-section-general" class="form-section">
+      <label><input type="checkbox" id="lunchIncluded"> 중식 포함 (예: 현지식)</label><br>
+      <label><input type="checkbox" id="dinnerIncluded"> 석식 포함 (낮 비행기 도착 시 석식 포함)</label>
+    </div>
+    <div id="meal-section-golf" class="form-section" style="display:none;">
+      <label><input type="checkbox" id="golfLunchIncluded"> 중식 포함 (예: 클럽하우스)</label><br>
+      <label><input type="checkbox" id="golfDinnerIncluded"> 석식 포함 (예: 자유식 또는 한식)</label>
+    </div>
+  </form>
+</body>
+</html>
