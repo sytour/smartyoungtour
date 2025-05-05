@@ -127,21 +127,25 @@
     document.getElementById('itinerary').innerText = itinerary;
 
     function updateRoomSummary() {
-      const s = parseInt(document.getElementById('roomSingle').value) || 0;
-      const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
-      // 제거된 더블 항목
-      const tr = parseInt(document.getElementById('roomTriple').value) || 0;
-      const totalRooms = s + td + tr;
-      const totalPeople = s + (td * 2) + (tr * 3);
-      document.getElementById('calculatedRoomTotal').value = totalRooms;
-      document.getElementById('calculatedPersonTotal').value = totalPeople;
+  const s = parseInt(document.getElementById('roomSingle').value) || 0;
+  const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
+  const tr = parseInt(document.getElementById('roomTriple').value) || 0;
+  const totalRooms = s + td + tr;
+  const totalPeople = s + (td * 2) + (tr * 3);
+  document.getElementById('calculatedRoomTotal').value = totalRooms;
+  document.getElementById('calculatedPersonTotal').value = totalPeople;
 
-      const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
-      let vehicle = '벤';
-      if (inputTotal > 6 && inputTotal <= 11) vehicle = '미니버스';
-      else if (inputTotal >= 12) vehicle = '버스';
-      document.getElementById('vehicleResult').innerText = vehicle;
-    }
+  const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
+  let vehicle = '벤';
+  if (inputTotal > 6 && inputTotal <= 11) vehicle = '미니버스';
+  else if (inputTotal >= 12) vehicle = '버스';
+  document.getElementById('vehicleResult').innerText = vehicle;
+
+  // 추가된 인원수 불일치 확인
+  if (inputTotal > 0 && totalPeople > 0 && inputTotal !== totalPeople) {
+    alert('❌ 총 인원 수와 호텔 객실 인원 수의 합계가 일치하지 않습니다. 다시 확인해 주세요.');
+  }
+}
 
     ['roomSingle', 'roomTwinDouble', 'roomTriple', 'totalPeople'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateRoomSummary);
