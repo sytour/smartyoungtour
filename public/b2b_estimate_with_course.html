@@ -5,38 +5,12 @@
   <title>B2B 견적 요청 입력</title>
   <script type="module" src="/js/b2b_estimate_with_course.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fffaf0;
-      padding: 30px;
-    }
-    h2 {
-      text-align: center;
-    }
-    .section {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 16px;
-    }
+    body { font-family: Arial, sans-serif; background-color: #fffaf0; padding: 30px; }
+    h2 { text-align: center; }
+    .section { background: #fff; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, select { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; }
+    button { margin-top: 20px; padding: 10px 20px; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -59,14 +33,10 @@
       <option value="4성급">4성급</option>
       <option value="5성급">5성급</option>
     </select>
-    <label>싱글룸 수</label>
-    <input type="number" id="roomSingle" value="0">
-    <label>트윈룸 수</label>
-    <input type="number" id="roomTwin" value="0">
-    <label>더블룸 수</label>
-    <input type="number" id="roomDouble" value="0">
-    <label>트리플룸 수</label>
-    <input type="number" id="roomTriple" value="0">
+    <label>싱글룸 수</label><input type="number" id="roomSingle" value="0">
+    <label>트윈룸 수</label><input type="number" id="roomTwin" value="0">
+    <label>더블룸 수</label><input type="number" id="roomDouble" value="0">
+    <label>트리플룸 수</label><input type="number" id="roomTriple" value="0">
     <p style="color: gray;">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</p>
   </div>
 
@@ -106,12 +76,10 @@
   </div>
 
   <script>
-    // URL 파라미터 처리
     const urlParams = new URLSearchParams(window.location.search);
     const course = urlParams.get('course');
     const country = urlParams.get('country');
     const itinerary = urlParams.get('itinerary');
-
     if (country) document.getElementById('countryName').innerText = decodeURIComponent(country);
     if (course) document.getElementById('courseName').innerText = decodeURIComponent(course);
     if (itinerary) document.getElementById('itinerary').innerText = decodeURIComponent(itinerary);
@@ -123,14 +91,12 @@
       const tr = parseInt(document.getElementById('roomTriple').value) || 0;
       const totalInput = parseInt(document.getElementById('totalPeople').value) || 0;
       const totalCalc = s + (t * 2) + (d * 2) + (tr * 3);
-
       const resultBox = document.getElementById('estimateResult');
       if (totalInput !== totalCalc) {
         resultBox.innerHTML = `<span style='color:red;'>❌ 방 인원수 총합(${totalCalc})이 입력한 총 인원수(${totalInput})와 일치하지 않습니다.</span>`;
       } else {
         resultBox.innerHTML = `<span style='color:green;'>✅ 인원수 일치 확인됨 (${totalCalc}명)</span>`;
       }
-
       const vehicleBox = document.getElementById('vehicleResult');
       let vehicle = '벤';
       if (totalInput > 6 && totalInput <= 11) vehicle = '미니버스';
