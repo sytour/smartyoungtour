@@ -12,6 +12,7 @@
     label { display: block; margin-top: 12px; font-weight: bold; }
     input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
     .inline-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+    .row-group { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
     .room-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .room-table th, .room-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     .summary-right { text-align: right; font-size: 14px; color: #555; margin-top: 10px; }
@@ -23,34 +24,27 @@
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
 
-    <div class="section">
+    <div class="section row-group">
       <label>코스명</label>
       <input type="text" id="courseName" readonly>
-    </div>
-
-    <div class="section">
       <label>총 인원 수</label>
       <input type="number" id="totalPeople" value="0">
     </div>
 
     <div class="section">
-      <label>호텔</label>
-      <div class="inline-group">
-        <label>등급</label>
-        <select id="hotelGrade">
-          <option value="4성급">4성급</option>
-          <option value="5성급">5성급</option>
-        </select>
-      </div>
+      <label>호텔 등급 (4성급 / 5성급)</label>
+      <select id="hotelGrade">
+        <option value="4성급">4성급</option>
+        <option value="5성급">5성급</option>
+      </select>
       <table class="room-table">
-        <tr><th>싱글</th><th>트윈</th><th>더블</th><th>트리플</th></tr>
-        <tr>
-          <td><input type="number" id="roomSingle" value="0"></td>
-          <td><input type="number" id="roomTwin" value="0"></td>
-          <td><input type="number" id="roomDouble" value="0"></td>
-          <td><input type="number" id="roomTriple" value="0"></td>
-        </tr>
-      </table>
+  <tr><th>싱글</th><th>트윈/더블</th><th>트리플</th></tr>
+  <tr>
+    <td><input type="number" id="roomSingle" value="0"></td>
+    <td><input type="number" id="roomTwinDouble" value="0"></td>
+    <td><input type="number" id="roomTriple" value="0"></td>
+  </tr>
+</table>
       <div class="summary-right" id="roomSummary">총 룸 수: 0 / 총 인원 수: 0</div>
     </div>
 
@@ -108,11 +102,11 @@
 
     function updateRoomSummary() {
       const s = parseInt(document.getElementById('roomSingle').value) || 0;
-      const t = parseInt(document.getElementById('roomTwin').value) || 0;
-      const d = parseInt(document.getElementById('roomDouble').value) || 0;
+      const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
+      // 제거된 더블 항목
       const tr = parseInt(document.getElementById('roomTriple').value) || 0;
-      const totalRooms = s + t + d + tr;
-      const totalPeople = s + (t * 2) + (d * 2) + (tr * 3);
+      const totalRooms = s + td + tr;
+      const totalPeople = s + (td * 2) + (tr * 3);
       document.getElementById('roomSummary').innerText = `총 룸 수: ${totalRooms} / 총 인원 수: ${totalPeople}`;
 
       const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
@@ -122,7 +116,7 @@
       document.getElementById('vehicleResult').innerText = vehicle;
     }
 
-    ['roomSingle', 'roomTwin', 'roomDouble', 'roomTriple', 'totalPeople'].forEach(id => {
+    ['roomSingle', 'roomTwinDouble', 'roomTriple', 'totalPeople'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateRoomSummary);
     });
 
@@ -132,10 +126,14 @@
     if (course.includes("골프")) {
       mealLabel.innerText = "골프 투어 식사 설정";
       mealInfo.innerHTML = `
-        <label>중식 포함 여부</label>
-        <select><option>포함</option><option>불포함</option></select>
-        <label>석식 포함 여부</label>
-        <select><option>포함</option><option>불포함</option></select>
+        <label class="inline-group">
+          <input type="checkbox" id="golfLunch">
+          중식 포함
+        </label>
+        <label class="inline-group">
+          <input type="checkbox" id="golfDinner">
+          석식 포함
+        </label>
       `;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
