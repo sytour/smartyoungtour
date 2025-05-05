@@ -1,64 +1,19 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>B2B 견적 요청 입력</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fffaf0;
-      margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      justify-content: center;
-    }
-    .container {
-      width: 100%;
-      max-width: 800px;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .section {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-    }
-    label {
-      display: block;
-      margin-top: 12px;
-      font-weight: bold;
-    }
-    input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      margin-top: 10px;
-      gap: 6px;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #ff9800;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #e68900;
-    }
+    body { font-family: Arial, sans-serif; background-color: #fffaf0; margin: 0; padding: 40px; display: flex; justify-content: center; }
+    .container { width: 100%; max-width: 900px; }
+    h2 { text-align: center; margin-bottom: 30px; }
+    .section { background: #fff; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; }
+    label { display: block; margin-top: 12px; font-weight: bold; }
+    input, select { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 6px; }
+    .checkbox-label { display: flex; align-items: center; gap: 6px; margin-top: 10px; }
+    button { width: 100%; padding: 12px; font-size: 16px; background-color: #ff9800; color: white; border: none; border-radius: 8px; cursor: pointer; }
+    button:hover { background-color: #e68900; }
   </style>
 </head>
 <body>
@@ -71,9 +26,9 @@
       <p><strong>일정 설정:</strong> <span id="itinerary">로딩 중...</span></p>
     </div>
 
-    <div class="section" id="mealSection">
-      <label id="mealLabel">식사 구성</label>
-      <div id="mealInfo">중식 및 석식이 자동 포함됩니다.</div>
+    <div class="section" id="peopleSection">
+      <label>총 인원 수</label>
+      <input type="number" id="totalPeople" value="0">
     </div>
 
     <div class="section" id="hotelSection">
@@ -89,15 +44,15 @@
       <p style="color: gray;">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</p>
     </div>
 
-    <div class="section" id="peopleSection">
-      <label>총 인원 수</label>
-      <input type="number" id="totalPeople" value="0">
-    </div>
-
     <div class="section" id="vehicleSection">
       <label>차량 종류</label>
       <p>※ 인원 수에 따라 자동 선택됩니다 (6명 이하: 벤, 7~11명: 미니버스, 12명 이상: 버스)</p>
       <div id="vehicleResult">자동 계산됨</div>
+    </div>
+
+    <div class="section" id="mealSection">
+      <label id="mealLabel">식사 구성</label>
+      <div id="mealInfo">중식 및 석식이 자동 포함됩니다.</div>
     </div>
 
     <div class="section" id="optionSection">
@@ -115,9 +70,15 @@
       </select>
     </div>
 
-    <div class="section" id="summarySection">
+    <div class="section">
+      <label>총 지상비 (전체)</label>
+      <input type="text" id="totalGroundCost" readonly>
+      <label>성인 1인 지상비 (p/p)</label>
+      <input type="text" id="perPersonCost" readonly>
+    </div>
+
+    <div class="section">
       <button onclick="calculateEstimate()">총액 계산</button>
-      <div id="estimateResult" style="margin-top: 20px;"></div>
     </div>
 
     <div class="section">
@@ -170,19 +131,22 @@
       const tr = parseInt(document.getElementById('roomTriple').value) || 0;
       const totalInput = parseInt(document.getElementById('totalPeople').value) || 0;
       const totalCalc = s + (t * 2) + (d * 2) + (tr * 3);
-      const resultBox = document.getElementById('estimateResult');
 
       if (totalInput !== totalCalc) {
-        resultBox.innerHTML = `<span style='color:red;'>❌ 방 인원수 총합(${totalCalc})이 입력한 총 인원수(${totalInput})와 일치하지 않습니다.</span>`;
-      } else {
-        resultBox.innerHTML = `<span style='color:green;'>✅ 인원수 일치 확인됨 (${totalCalc}명)</span>`;
+        alert(`❌ 방 인원수 총합(${totalCalc})이 입력한 총 인원수(${totalInput})와 일치하지 않습니다.`);
+        return;
       }
 
-      const vehicleBox = document.getElementById('vehicleResult');
       let vehicle = '벤';
       if (totalInput > 6 && totalInput <= 11) vehicle = '미니버스';
       else if (totalInput >= 12) vehicle = '버스';
-      vehicleBox.innerText = `${vehicle} (자동 선택됨)`;
+      document.getElementById('vehicleResult').innerText = `${vehicle} (자동 선택됨)`;
+
+      // 예시: 지상비 계산 (고정값 × 인원)
+      const groundUnitPrice = 1000000; // 테스트용 단가
+      const totalCost = totalInput * groundUnitPrice;
+      document.getElementById('totalGroundCost').value = totalCost.toLocaleString() + '원';
+      document.getElementById('perPersonCost').value = groundUnitPrice.toLocaleString() + '원';
     }
 
     function generatePDF() {
