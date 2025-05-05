@@ -1,81 +1,110 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>SMARTYOUNG TOUR - B2B 견적 입력</title>
+  <meta charset="UTF-8">
+  <title>B2B 견적 요청 입력</title>
+  <script type="module" src="/js/b2b_estimate_with_course.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
+      background-color: #fdfbf5;
       padding: 40px;
-      background-color: #fffdf7;
-    }
-    .hidden {
-      display: none;
     }
     h2 {
-      margin-bottom: 24px;
+      text-align: center;
+    }
+    .section {
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
     }
     label {
       display: block;
-      margin-bottom: 10px;
+      font-weight: bold;
+      margin-top: 10px;
     }
-    .checkbox label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
     }
-    input[type="text"], select {
-      width: 300px;
-      padding: 6px;
-      margin-bottom: 16px;
+    .checkbox {
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h2>B2B 견적 요청 입력</h2>
 
-  <!-- 코스명 입력은 숨기고 자동 설정 -->
-  <input type="text" id="courseName" hidden />
+  <div id="courseTitle"></div>
 
-  <div id="normalMealSection" class="hidden">
-    <h3>식사 구성 (일반 투어 - 자동 포함)</h3>
+  <div class="section" id="mealSection">
+    <label id="mealTitle">식사 구성 (일반 투어 - 자동 포함)</label>
     <p>중식 및 석식이 자동 포함됩니다.</p>
   </div>
 
-  <div id="golfMealSection" class="hidden">
-    <h3>골프 투어 식사 설정</h3>
-    <label><input type="checkbox" id="lunchIncluded" /> ㅁ 중식 포함</label>
-    <label><input type="checkbox" id="dinnerIncluded" /> ㅁ 석식 포함</label>
+  <div class="section" id="hotelSection">
+    <label>호텔 선택</label>
+    <select id="hotelGradeSelect">
+      <option value="4성급">4성급</option>
+      <option value="5성급">5성급</option>
+    </select>
+    <label>싱글룸 수</label>
+    <input type="number" id="singleCount" value="0">
+    <label>트윈룸 수</label>
+    <input type="number" id="twinCount" value="0">
+    <label>더블룸 수</label>
+    <input type="number" id="doubleCount" value="0">
+    <label>트리플룸 수</label>
+    <input type="number" id="tripleCount" value="0">
+    <p>※ 트윈과 더블은 호텔 사정에 따라 다를 수 있습니다.</p>
+  </div>
+
+  <div class="section" id="optionSection">
+    <label>선택관광 포함 여부</label>
+    <select id="optionalTourSelect">
+      <option value="Y">포함</option>
+      <option value="N">불포함</option>
+    </select>
+    <label>쇼핑 횟수</label>
+    <select id="shoppingCountSelect">
+      <option value="0">노쇼핑</option>
+      <option value="1">1회</option>
+      <option value="2">2회</option>
+      <option value="3">3회</option>
+    </select>
+  </div>
+
+  <div class="section" id="peopleSection">
+    <label>총 인원 수</label>
+    <input type="number" id="totalPeople" value="0">
+    <button onclick="calculate()">총액 계산</button>
+  </div>
+
+  <div class="section">
+    <h3>계산 결과</h3>
+    <p id="result"></p>
   </div>
 
   <script>
-    // URL 파라미터 파싱 함수
-    function getQueryParam(name) {
-      const params = new URLSearchParams(window.location.search);
-      return decodeURIComponent(params.get(name) || "");
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const courseName = getQueryParam("course"); // URL에서 ?course= 값 읽음
-      const courseInput = document.getElementById("courseName");
-
-      if (courseInput) {
-        courseInput.value = courseName;
-
-        // 명확한 분기 처리: 골프가 포함되면 무조건 골프, 그 외 일반
-        let isGolf = false;
-        let isNormal = false;
-
-        if (courseName.includes("골프")) {
-          isGolf = true;
-        } else if (courseName.includes("일반")) {
-          isNormal = true;
-        }
-
-        document.getElementById("normalMealSection").classList.toggle("hidden", !isNormal);
-        document.getElementById("golfMealSection").classList.toggle("hidden", !isGolf);
+    function calculate() {
+      const single = parseInt(document.getElementById('singleCount').value);
+      const twin = parseInt(document.getElementById('twinCount').value);
+      const dbl = parseInt(document.getElementById('doubleCount').value);
+      const triple = parseInt(document.getElementById('tripleCount').value);
+      const totalInput = parseInt(document.getElementById('totalPeople').value);
+      const total = single + twin * 2 + dbl * 2 + triple * 3;
+      const result = document.getElementById('result');
+      if (total !== totalInput) {
+        result.innerText = `❗ 총 인원 수(${total})가 입력한 인원 수(${totalInput})와 일치하지 않습니다.`;
+      } else {
+        result.innerText = `✅ 총 인원 수 확인됨: ${total}명`;
       }
-    });
+    }
   </script>
 </body>
 </html>
