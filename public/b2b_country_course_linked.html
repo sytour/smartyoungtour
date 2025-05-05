@@ -2,72 +2,90 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>SMARTYOUNG TOUR - B2B 견적 입력</title>
+  <title>SMARTYOUNG TOUR - 국가 및 코스 선택</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 40px;
       background-color: #fffdf7;
     }
-    .hidden {
-      display: none;
-    }
-    h2 {
-      margin-bottom: 24px;
-    }
-    label {
+    label, select, button {
       display: block;
-      margin-bottom: 10px;
-    }
-    .checkbox label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    input[type="text"], select {
-      width: 300px;
-      padding: 6px;
       margin-bottom: 16px;
     }
   </style>
 </head>
 <body>
-  <h2>B2B 견적 요청 입력</h2>
+  <h2>B2B 견적 요청 입력 - 국가 및 코스 선택</h2>
 
-  <!-- 코스명 입력은 숨기고 자동 설정 -->
-  <input type="text" id="courseName" hidden />
+  <label for="country">국가 선택</label>
+  <select id="country"></select>
 
-  <div id="normalMealSection" class="hidden">
-    <h3>식사 구성 (일반 투어 - 자동 포함)</h3>
-    <p>중식 및 석식이 자동 포함됩니다.</p>
-  </div>
+  <label for="course">코스 선택</label>
+  <select id="course"></select>
 
-  <div id="golfMealSection" class="hidden">
-    <h3>골프 투어 식사 설정</h3>
-    <label><input type="checkbox" id="lunchIncluded" /> ㅁ 중식 포함</label>
-    <label><input type="checkbox" id="dinnerIncluded" /> ㅁ 석식 포함</label>
-  </div>
+  <button id="nextButton">다음</button>
 
-  <script>
-    // URL 파라미터 파싱 함수
-    function getQueryParam(name) {
-      const params = new URLSearchParams(window.location.search);
-      return decodeURIComponent(params.get(name) || "");
-    }
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    window.addEventListener("DOMContentLoaded", () => {
-      const courseName = getQueryParam("course"); // URL에서 ?course= 값 읽음
-      const courseInput = document.getElementById("courseName");
+    const firebaseConfig = {
+      apiKey: "AIzaSyDUnNEi2lmQUg0T7i2xyFxUgUou6sKXW7A",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.appspot.com",
+      messagingSenderId: "676186443672",
+      appId: "1:676186443672:web:dd3a6f771ddf0fcf4327b5"
+    };
 
-      if (courseInput) {
-        courseInput.value = courseName;
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        const isGolf = courseName.includes("골프");
-        const isNormal = courseName.includes("일반") && !isGolf;
+    const countrySelect = document.getElementById("country");
+    const courseSelect = document.getElementById("course");
+    const nextButton = document.getElementById("nextButton");
 
-        document.getElementById("normalMealSection").classList.toggle("hidden", !isNormal);
-        document.getElementById("golfMealSection").classList.toggle("hidden", !isGolf);
-      }
+    const loadCourses = async () => {
+      const snapshot = await getDocs(collection(db, "courses"));
+      const data = snapshot.docs.map(doc => doc.data());
+
+      const countries = [...new Set(data.map(item => item.country))].sort();
+
+      countries.forEach(country => {
+        const option = document.createElement("option");
+        option.value = country;
+        option.textContent = country;
+        countrySelect.appendChild(option);
+      });
+
+      const updateCourses = () => {
+        courseSelect.innerHTML = "";
+        const selectedCountry = countrySelect.value;
+        const filtered = data.filter(item => item.country === selectedCountry);
+        filtered.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item.course;
+          option.textContent = item.course;
+          courseSelect.appendChild(option);
+        });
+      };
+
+      countrySelect.addEventListener("change", updateCourses);
+      updateCourses();
+    };
+
+    loadCourses();
+
+    nextButton.addEventListener("click", () => {
+      const selectedCountry = countrySelect.value;
+      const selectedCourse = courseSelect.value;
+      const url = `b2b_estimate_with_course.html?country=${encodeURIComponent(selectedCountry)}&course=${encodeURIComponent(selectedCourse)}&itinerary=자동 일정 표시`;
+      window.location.href = url;
     });
   </script>
 </body>
