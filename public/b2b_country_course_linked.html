@@ -8,16 +8,19 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #fffaf3;
-      padding: 40px;
       margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     .container {
+      width: 100%;
       max-width: 600px;
-      margin: 0 auto;
       background-color: #ffffff;
-      padding: 30px 40px;
+      padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     h2 {
       text-align: center;
@@ -53,10 +56,14 @@
     <h2>국가 및 코스 선택</h2>
 
     <label for="country">국가 선택</label>
-    <select id="country"></select>
+    <select id="country">
+      <option disabled selected>선택</option>
+    </select>
 
     <label for="course">코스 선택</label>
-    <select id="course"></select>
+    <select id="course">
+      <option disabled selected>선택</option>
+    </select>
 
     <button id="nextButton">견적 요청 세부 입력으로 이동</button>
   </div>
@@ -91,6 +98,9 @@
         const data = snapshot.docs.map(doc => doc.data());
 
         const countries = [...new Set(data.map(item => item.country))].sort();
+        
+        // 국가 드롭다운 초기화 후 '선택' 추가
+        countrySelect.innerHTML = "<option disabled selected>선택</option>";
         countries.forEach(country => {
           const option = document.createElement("option");
           option.value = country;
@@ -99,7 +109,7 @@
         });
 
         const updateCourses = () => {
-          courseSelect.innerHTML = "";
+          courseSelect.innerHTML = "<option disabled selected>선택</option>";
           const selectedCountry = countrySelect.value;
           const filtered = data.filter(item => item.country === selectedCountry);
           filtered.forEach(item => {
@@ -111,12 +121,11 @@
         };
 
         countrySelect.addEventListener("change", updateCourses);
-        updateCourses();
 
         nextButton.addEventListener("click", () => {
           const selectedCountry = countrySelect.value;
           const selectedCourse = courseSelect.value;
-          if (!selectedCountry || !selectedCourse) {
+          if (!selectedCountry || !selectedCourse || selectedCountry === "선택" || selectedCourse === "선택") {
             alert("국가와 코스를 모두 선택해주세요.");
             return;
           }
