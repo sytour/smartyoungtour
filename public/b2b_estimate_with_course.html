@@ -1,181 +1,146 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>B2B 견적 입력</title>
+  <meta charset="UTF-8">
+  <title>B2B 견적 요청 입력</title>
+  <script type="module" src="/js/b2b_estimate_with_course.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
-      padding: 40px;
-      line-height: 1.6;
+      background-color: #fffaf0;
+      padding: 30px;
     }
     h2 {
       text-align: center;
-      margin-bottom: 30px;
     }
-    .form-group {
+    .section {
+      background: #fff;
+      padding: 20px;
       margin-bottom: 20px;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
+      border: 1px solid #ddd;
+      border-radius: 8px;
     }
     label {
+      display: block;
+      margin-top: 10px;
       font-weight: bold;
     }
-    input, select, textarea {
+    input, select {
       width: 100%;
       padding: 8px;
-      margin-top: 6px;
-      border-radius: 6px;
+      margin-top: 4px;
       border: 1px solid #ccc;
+      border-radius: 6px;
     }
-    .room-container {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-      background: #f9f9f9;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-    .room-container input {
-      text-align: center;
-    }
-    .button-container {
-      text-align: center;
-      margin-top: 30px;
-    }
-    .button-container button {
-      background-color: #ff944d;
-      color: white;
-      padding: 12px 24px;
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
       font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .button-container button:hover {
-      background-color: #e67e22;
-    }
-    .hidden {
-      display: none;
-    }
-    .checkbox-label {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
     }
   </style>
-  <script type="module" src="b2b_estimate_with_course.js"></script>
 </head>
 <body>
-  <h2>B2B 견적 입력</h2>
+  <h2>B2B 견적 요청 입력</h2>
 
-  <div class="form-group">
-    <label for="course">코스명</label>
-    <input type="text" id="course" readonly>
+  <div class="section" id="courseInfoSection">
+    <p><strong>선택한 국가:</strong> <span id="countryName">로딩 중...</span></p>
+    <p><strong>선택한 코스:</strong> <span id="courseName">로딩 중...</span></p>
+    <p><strong>일정 설정:</strong> <span id="itinerary">로딩 중...</span></p>
   </div>
 
-  <div class="form-group">
-    <label for="people">인원 수</label>
-    <input type="number" id="people" min="1">
+  <div class="section" id="mealSection">
+    <label id="mealLabel">식사 구성</label>
+    <div id="mealInfo">중식 및 석식이 자동 포함됩니다.</div>
   </div>
 
-  <div class="form-group">
-    <label for="hotel">호텔 등급</label>
-    <select id="hotel">
+  <div class="section" id="hotelSection">
+    <label>호텔 등급</label>
+    <select id="hotelGrade">
       <option value="4성급">4성급</option>
       <option value="5성급">5성급</option>
     </select>
+    <label>싱글룸 수</label>
+    <input type="number" id="roomSingle" value="0">
+    <label>트윈룸 수</label>
+    <input type="number" id="roomTwin" value="0">
+    <label>더블룸 수</label>
+    <input type="number" id="roomDouble" value="0">
+    <label>트리플룸 수</label>
+    <input type="number" id="roomTriple" value="0">
+    <p style="color: gray;">※ 트윈과 더블은 호텔 사정에 따라 상이할 수 있습니다.</p>
   </div>
 
-  <div class="form-group">
-    <label>방 유형 입력</label>
-    <div class="room-container">
-      <label>싱글룸</label>
-      <label>트윈룸</label>
-      <label>더블룸</label>
-      <label>트리플룸</label>
-      <label>총 객실 수</label>
-      <label>총 인원 수</label>
-
-      <input type="number" id="single" value="0" min="0">
-      <input type="number" id="twin" value="0" min="0">
-      <input type="number" id="double" value="0" min="0">
-      <input type="number" id="triple" value="0" min="0">
-      <input type="text" id="totalRooms" readonly>
-      <input type="text" id="totalPeople" readonly>
-    </div>
+  <div class="section" id="peopleSection">
+    <label>총 인원 수</label>
+    <input type="number" id="totalPeople" value="0">
   </div>
 
-  <div class="form-group">
-    <label for="vehicle">차량 자동선택</label>
-    <input type="text" id="vehicle" readonly>
+  <div class="section" id="vehicleSection">
+    <label>차량 종류</label>
+    <p>※ 인원 수에 따라 자동 선택됩니다 (6명 이하: 벤, 7~11명: 미니버스, 12명 이상: 버스)</p>
+    <div id="vehicleResult">자동 계산됨</div>
   </div>
 
-  <div id="generalMeal" class="form-group hidden">
-    <label>일반 투어: 식사 자동 포함 (중식/석식)</label>
-    <div class="checkbox-label">
-      <input type="checkbox" id="day1Dinner">
-      <span>낮비행기 도착 (석식) (체크)</span>
-    </div>
-  </div>
-
-  <div id="golfMeal" class="form-group hidden">
-    <label>골프 투어 식사 설정</label>
-    <select id="golfLunch">
-      <option value="포함">중식 포함</option>
-      <option value="불포함">중식 불포함</option>
-    </select>
-    <select id="golfDinner">
-      <option value="포함">석식 포함</option>
-      <option value="불포함">석식 불포함</option>
-    </select>
-    <div class="checkbox-label">
-      <input type="checkbox" id="day1DinnerGolf">
-      <span>낮비행기 도착 (석식) (체크)</span>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <label for="optionalTour">선택관광</label>
+  <div class="section" id="optionSection">
+    <label>선택관광 포함 여부</label>
     <select id="optionalTour">
-      <option value="있음">있음</option>
-      <option value="없음">없음</option>
+      <option value="Y">포함</option>
+      <option value="N">불포함</option>
+    </select>
+    <label>쇼핑 횟수</label>
+    <select id="shoppingCount">
+      <option value="0">노쇼핑</option>
+      <option value="1">1회</option>
+      <option value="2">2회</option>
+      <option value="3">3회</option>
     </select>
   </div>
 
-  <div class="form-group">
-    <label for="shopping">쇼핑 횟수</label>
-    <select id="shopping">
-      <option value="노쇼핑">노쇼핑</option>
-      <option value="1회">1회</option>
-      <option value="2회">2회</option>
-      <option value="3회">3회</option>
-    </select>
+  <div class="section" id="summarySection">
+    <button onclick="calculateEstimate()">총액 계산</button>
+    <div id="estimateResult" style="margin-top: 20px;"></div>
   </div>
 
-  <div class="form-group">
-    <label for="totalPrice">총 지상비 (전체)</label>
-    <input type="number" id="totalPrice">
+  <div class="section">
+    <button onclick="generatePDF()">PDF 견적서 출력</button>
   </div>
 
-  <div class="form-group">
-    <label for="pricePerPerson">성인 1인 지상비 (P/P)</label>
-    <input type="number" id="pricePerPerson">
-  </div>
+  <script>
+    // URL 파라미터 처리
+    const urlParams = new URLSearchParams(window.location.search);
+    const course = urlParams.get('course');
+    const country = urlParams.get('country');
+    const itinerary = urlParams.get('itinerary');
 
-  <div class="form-group">
-    <label for="itinerary">일정</label>
-    <textarea id="itinerary" rows="3"></textarea>
-  </div>
+    if (country) document.getElementById('countryName').innerText = decodeURIComponent(country);
+    if (course) document.getElementById('courseName').innerText = decodeURIComponent(course);
+    if (itinerary) document.getElementById('itinerary').innerText = decodeURIComponent(itinerary);
 
-  <div class="button-container">
-    <button onclick="submitForm()">견적서 생성</button>
-  </div>
+    function calculateEstimate() {
+      const s = parseInt(document.getElementById('roomSingle').value) || 0;
+      const t = parseInt(document.getElementById('roomTwin').value) || 0;
+      const d = parseInt(document.getElementById('roomDouble').value) || 0;
+      const tr = parseInt(document.getElementById('roomTriple').value) || 0;
+      const totalInput = parseInt(document.getElementById('totalPeople').value) || 0;
+      const totalCalc = s + (t * 2) + (d * 2) + (tr * 3);
+
+      const resultBox = document.getElementById('estimateResult');
+      if (totalInput !== totalCalc) {
+        resultBox.innerHTML = `<span style='color:red;'>❌ 방 인원수 총합(${totalCalc})이 입력한 총 인원수(${totalInput})와 일치하지 않습니다.</span>`;
+      } else {
+        resultBox.innerHTML = `<span style='color:green;'>✅ 인원수 일치 확인됨 (${totalCalc}명)</span>`;
+      }
+
+      const vehicleBox = document.getElementById('vehicleResult');
+      let vehicle = '벤';
+      if (totalInput > 6 && totalInput <= 11) vehicle = '미니버스';
+      else if (totalInput >= 12) vehicle = '버스';
+      vehicleBox.innerText = `${vehicle} (자동 선택됨)`;
+    }
+
+    function generatePDF() {
+      alert('PDF 견적서 생성 기능은 준비 중입니다.');
+    }
+  </script>
 </body>
 </html>
