@@ -55,7 +55,6 @@
       background-color: #f4f4f4;
     }
   </style>
-  <script type="module" src="./admin_vehicle_price_manage.js"></script>
 </head>
 <body>
   <h2>차량 요금 관리</h2>
@@ -92,5 +91,8 @@
       <tbody id="vehicleTable"></tbody>
     </table>
   </div>
+
+  <!-- ✅ JS는 body 제일 마지막에 위치해야 버튼 이벤트가 정상 동작 -->
+  <script type="module" src="./admin_vehicle_price_manage.js"></script>
 </body>
 </html>
