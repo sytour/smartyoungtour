@@ -115,10 +115,15 @@ async function renderTable() {
     }
   });
 
+  // ✅ 정렬: 국가 → 코스 → 인원 오름차순
   dataList.sort((a, b) => {
-    const keyA = `${a.country}${a.course}${a.minPeople}`;
-    const keyB = `${b.country}${b.course}${b.minPeople}`;
-    return keyA.localeCompare(keyB, 'ko');
+    const c1 = a.country.localeCompare(b.country, 'ko');
+    if (c1 !== 0) return c1;
+
+    const c2 = a.course.localeCompare(b.course, 'ko');
+    if (c2 !== 0) return c2;
+
+    return a.minPeople - b.minPeople;
   });
 
   dataList.forEach(data => {
@@ -128,12 +133,12 @@ async function renderTable() {
       <td>${data.country}</td>
       <td>${data.course}</td>
       <td>
-        <input type="number" id="min_${data.id}" value="${data.minPeople}" /> ~
-        <input type="number" id="max_${data.id}" value="${data.maxPeople}" />
+        <input type="number" id="min_${data.id}" value="${data.minPeople}" style="width:50px"/> ~
+        <input type="number" id="max_${data.id}" value="${data.maxPeople}" style="width:50px"/>
       </td>
-      <td><input type="number" id="van_${data.id}" value="${data.van}" /></td>
-      <td><input type="number" id="minibus_${data.id}" value="${data.minibus}" /></td>
-      <td><input type="number" id="bus_${data.id}" value="${data.bus}" /></td>
+      <td><input type="number" id="van_${data.id}" value="${data.van}" style="width:60px"/></td>
+      <td><input type="number" id="minibus_${data.id}" value="${data.minibus}" style="width:60px"/></td>
+      <td><input type="number" id="bus_${data.id}" value="${data.bus}" style="width:60px"/></td>
       <td>$${total}</td>
       <td class="control-buttons">
         <button onclick="window.saveVehicle('${data.id}', '${data.country}', '${data.course}')">저장</button>
