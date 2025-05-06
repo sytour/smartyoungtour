@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>식사 요금 관리</title>
   <style>
     body {
@@ -23,6 +22,15 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       max-width: 1000px;
       margin: 0 auto 30px auto;
+    }
+    .filter-box {
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+      text-align: left;
+    }
+    .filter-box label {
+      font-weight: bold;
+      margin-right: 8px;
     }
     input, select {
       padding: 8px;
@@ -88,6 +96,12 @@
     </thead>
     <tbody id="mealInputs"></tbody>
   </table>
+</div>
+<div class="filter-box">
+  <label for="countryFilter">국가별 보기:</label>
+  <select id="countryFilter">
+    <option value="">전체 보기</option>
+  </select>
 </div>
 <div class="list-container">
   <table id="mealTable">
