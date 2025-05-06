@@ -59,7 +59,7 @@
     .filter {
       margin-top: 20px;
       display: flex;
-      justify-content: center; /* 중앙 정렬 추가 */
+      justify-content: flex-start;
       align-items: center;
       gap: 10px;
     }
@@ -163,14 +163,12 @@
     <input type="text" id="country" placeholder="국가명 입력">
     <input type="text" id="course" placeholder="코스명 입력">
     <button id="addBtn">등록</button>
-
     <div class="filter">
       <label for="countryFilter">국가별 보기:</label>
       <select id="countryFilter">
         <option value="">전체 보기</option>
       </select>
     </div>
-
     <table>
       <thead>
         <tr>
