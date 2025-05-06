@@ -59,8 +59,8 @@
 <body>
   <h2>차량 요금 관리</h2>
   <div class="form-container">
-    <select id="country"><option value="">국가 선택</option></select>
-    <select id="course"><option value="">코스 선택</option></select>
+    <select id="country" disabled><option value="">국가 선택</option></select>
+    <select id="course" disabled><option value="">코스 선택</option></select>
     <input type="number" id="minPeople" placeholder="최소 인원" />
     <input type="number" id="maxPeople" placeholder="최대 인원" />
     <input type="number" id="van" placeholder="벤 (USD)" />
@@ -92,7 +92,6 @@
     </table>
   </div>
 
-  <!-- ✅ JS는 body 제일 마지막에 위치해야 버튼 이벤트가 정상 동작 -->
   <script type="module" src="./admin_vehicle_price_manage.js"></script>
 </body>
 </html>
