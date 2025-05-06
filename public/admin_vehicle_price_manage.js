@@ -1,97 +1,172 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>차량 요금 관리</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fdfcf9;
-      padding: 40px;
-      line-height: 1.6;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    .form-container, .list-container {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      max-width: 1000px;
-      margin: 0 auto 30px auto;
-    }
-    input, select {
-      padding: 8px;
-      margin: 6px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      padding: 8px 16px;
-      background-color: #ff944d;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin: 6px;
-    }
-    button:hover {
-      background-color: #e67e22;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-  </style>
-</head>
-<body>
-  <h2>차량 요금 관리</h2>
-  <div class="form-container">
-    <select id="country" disabled><option value="">국가 선택</option></select>
-    <select id="course" disabled><option value="">코스 선택</option></select>
-    <input type="number" id="minPeople" placeholder="최소 인원" />
-    <input type="number" id="maxPeople" placeholder="최대 인원" />
-    <input type="number" id="van" placeholder="벤 (USD)" />
-    <input type="number" id="minibus" placeholder="미니버스 (USD)" />
-    <input type="number" id="bus" placeholder="버스 (USD)" />
-    <button id="addBtn">추가</button>
-  </div>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-  <div class="form-container">
-    <label>국가별 보기:</label>
-    <select id="countryFilter"><option value="">전체 보기</option></select>
-  </div>
+const firebaseConfig = {
+  apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.firebasestorage.app",
+  messagingSenderId: "615207664322",
+  appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+  measurementId: "G-KN3EQNZWLN"
+};
 
-  <div class="list-container">
-    <table>
-      <thead>
-        <tr>
-          <th>국가</th>
-          <th>코스</th>
-          <th>인원</th>
-          <th>벤</th>
-          <th>미니버스</th>
-          <th>버스</th>
-          <th>합계</th>
-          <th>관리</th>
-        </tr>
-      </thead>
-      <tbody id="vehicleTable"></tbody>
-    </table>
-  </div>
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  <script type="module" src="./admin_vehicle_price_manage.js"></script>
-</body>
-</html>
+let courseMap = new Map();
+
+window.addEventListener("DOMContentLoaded", async () => {
+  const countrySelect = document.getElementById("country");
+  const courseSelect = document.getElementById("course");
+  const addBtn = document.getElementById("addBtn");
+  const filterSelect = document.getElementById("countryFilter");
+
+  const courseSnap = await getDocs(collection(db, "courses"));
+  courseMap = new Map();
+
+  courseSnap.forEach(doc => {
+    const data = doc.data();
+    if (data.country && data.course) {
+      if (!courseMap.has(data.country)) courseMap.set(data.country, new Set());
+      courseMap.get(data.country).add(data.course);
+    }
+  });
+
+  const countries = [...courseMap.keys()].sort((a, b) => a.localeCompare(b, 'ko'));
+  countries.forEach(country => {
+    const opt1 = document.createElement("option");
+    const opt2 = document.createElement("option");
+    opt1.value = country;
+    opt1.textContent = country;
+    opt2.value = country;
+    opt2.textContent = country;
+    countrySelect.appendChild(opt1);
+    filterSelect.appendChild(opt2);
+  });
+
+  countrySelect.addEventListener("change", () => {
+    const selectedCountry = countrySelect.value;
+    courseSelect.innerHTML = "<option value=''>코스 선택</option>";
+    if (courseMap.has(selectedCountry)) {
+      [...courseMap.get(selectedCountry)].sort((a, b) => a.localeCompare(b, 'ko')).forEach(course => {
+        const option = document.createElement("option");
+        option.value = course;
+        option.textContent = course;
+        courseSelect.appendChild(option);
+      });
+    }
+  });
+
+  filterSelect.addEventListener("change", renderTable);
+
+  addBtn.addEventListener("click", async () => {
+    const country = countrySelect.value;
+    const course = courseSelect.value;
+    const minPeople = parseInt(document.getElementById("minPeople").value);
+    const maxPeople = parseInt(document.getElementById("maxPeople").value);
+    const van = parseFloat(document.getElementById("van").value) || 0;
+    const minibus = parseFloat(document.getElementById("minibus").value) || 0;
+    const bus = parseFloat(document.getElementById("bus").value) || 0;
+
+    if (!country || !course || isNaN(minPeople) || isNaN(maxPeople)) {
+      alert("모든 항목을 입력해주세요.");
+      return;
+    }
+
+    await addDoc(collection(db, "vehicle_prices"), {
+      country,
+      course,
+      minPeople,
+      maxPeople,
+      van,
+      minibus,
+      bus
+    });
+
+    alert("등록 완료");
+    await renderTable();
+  });
+
+  await renderTable();
+});
+
+async function renderTable() {
+  const tableBody = document.getElementById("vehicleTable");
+  tableBody.innerHTML = "";
+
+  const filter = document.getElementById("countryFilter").value;
+  const snapshot = await getDocs(collection(db, "vehicle_prices"));
+  const dataList = [];
+
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    data.id = docSnap.id;
+    if (!filter || data.country === filter) {
+      dataList.push(data);
+    }
+  });
+
+  dataList.sort((a, b) => {
+    const keyA = `${a.country}${a.course}${a.minPeople}`;
+    const keyB = `${b.country}${b.course}${b.minPeople}`;
+    return keyA.localeCompare(keyB, 'ko');
+  });
+
+  dataList.forEach(data => {
+    const total = (data.van || 0) + (data.minibus || 0) + (data.bus || 0);
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${data.country}</td>
+      <td>${data.course}</td>
+      <td><input type="number" id="min_${data.id}" value="${data.minPeople}" style="width:60px"/> ~ 
+          <input type="number" id="max_${data.id}" value="${data.maxPeople}" style="width:60px"/></td>
+      <td><input type="number" id="van_${data.id}" value="${data.van}" style="width:80px"/></td>
+      <td><input type="number" id="minibus_${data.id}" value="${data.minibus}" style="width:80px"/></td>
+      <td><input type="number" id="bus_${data.id}" value="${data.bus}" style="width:80px"/></td>
+      <td>$${total}</td>
+      <td>
+        <button onclick="window.saveVehicle('${data.id}', '${data.country}', '${data.course}')">저장</button>
+        <button onclick="window.deleteVehicle('${data.id}')">삭제</button>
+      </td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+window.saveVehicle = async function (id, country, course) {
+  const minPeople = parseInt(document.getElementById(`min_${id}`).value);
+  const maxPeople = parseInt(document.getElementById(`max_${id}`).value);
+  const van = parseFloat(document.getElementById(`van_${id}`).value);
+  const minibus = parseFloat(document.getElementById(`minibus_${id}`).value);
+  const bus = parseFloat(document.getElementById(`bus_${id}`).value);
+
+  await updateDoc(doc(db, "vehicle_prices", id), {
+    country,
+    course,
+    minPeople,
+    maxPeople,
+    van,
+    minibus,
+    bus
+  });
+
+  alert("수정 완료");
+  await renderTable();
+};
+
+window.deleteVehicle = async function (id) {
+  if (confirm("삭제하시겠습니까?")) {
+    await deleteDoc(doc(db, "vehicle_prices", id));
+    alert("삭제 완료");
+    await renderTable();
+  }
+};
