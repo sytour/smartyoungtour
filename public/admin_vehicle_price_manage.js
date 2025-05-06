@@ -132,14 +132,12 @@ async function renderTable() {
     }
   });
 
-  // ✅ 국가 → 코스 → 최소 인원 기준 정렬
+  // ✅ 정렬: 국가 → 코스 → 최소 인원
   dataList.sort((a, b) => {
     const countryCompare = a.country.localeCompare(b.country, 'ko');
     if (countryCompare !== 0) return countryCompare;
-
     const courseCompare = a.course.localeCompare(b.course, 'ko');
     if (courseCompare !== 0) return courseCompare;
-
     return a.minPeople - b.minPeople;
   });
 
@@ -172,20 +170,27 @@ window.deleteVehicle = async function (id) {
 };
 
 window.editVehicle = async function (id) {
-  const snapshot = await getDocs(collection(db, "vehicle_prices"));
-  snapshot.forEach(docSnap => {
-    if (docSnap.id === id) {
-      const data = docSnap.data();
+  const docSnap = await getDocs(collection(db, "vehicle_prices"));
+  for (const doc of docSnap.docs) {
+    if (doc.id === id) {
+      const data = doc.data();
+      editingId = id;
+
+      // 국가 설정
       document.getElementById("country").value = data.country;
 
+      // 코스 강제 설정
       const courseSelect = document.getElementById("course");
-      courseSelect.innerHTML = `<option>${data.course}</option>`;
+      courseSelect.innerHTML = `<option value="${data.course}">${data.course}</option>`;
+      courseSelect.value = data.course;
+
+      // 입력값 세팅
       document.getElementById("minPeople").value = data.minPeople;
       document.getElementById("maxPeople").value = data.maxPeople;
       document.getElementById("van").value = data.van || 0;
       document.getElementById("minibus").value = data.minibus || 0;
       document.getElementById("bus").value = data.bus || 0;
-      editingId = id;
+      break;
     }
-  });
+  }
 };
