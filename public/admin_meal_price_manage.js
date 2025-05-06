@@ -1,4 +1,3 @@
-
 // admin_meal_price_manage.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
@@ -25,6 +24,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const mealInputs = document.getElementById("mealInputs");
   const addBtn = document.getElementById("addBtn");
   const firstDinner = document.getElementById("firstDinner");
+  const countryFilter = document.getElementById("countryFilter");
 
   const snapshot = await getDocs(collection(db, "courses"));
   const countryMap = new Map();
@@ -37,11 +37,17 @@ window.addEventListener("DOMContentLoaded", async () => {
   });
 
   countrySelect.innerHTML = "<option value=''>국가 선택</option>";
+  countryFilter.innerHTML = "<option value=''>전체 보기</option>";
   [...countryMap.keys()].sort().forEach(country => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
-    countrySelect.appendChild(option);
+    const option1 = document.createElement("option");
+    option1.value = country;
+    option1.textContent = country;
+    countrySelect.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = country;
+    option2.textContent = country;
+    countryFilter.appendChild(option2);
   });
 
   countrySelect.addEventListener("change", () => {
@@ -56,6 +62,8 @@ window.addEventListener("DOMContentLoaded", async () => {
       });
     }
   });
+
+  countryFilter.addEventListener("change", renderTable);
 
   daysSelect.addEventListener("change", generateMealInputs);
   generateMealInputs();
@@ -123,22 +131,25 @@ window.addEventListener("DOMContentLoaded", async () => {
   async function renderTable() {
     const tbody = document.querySelector("#mealTable tbody");
     tbody.innerHTML = "";
+    const selectedCountry = countryFilter.value;
     const snapshot = await getDocs(collection(db, "meal_prices"));
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
-      const totalAll = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
-      const row = document.createElement("tr");
-      row.innerHTML = `
-        <td>${data.country}</td>
-        <td>${data.course}</td>
-        <td>${data.days}박</td>
-        <td>${data.includeFirstDinner ? "포함" : ""}</td>
-        <td>$${data.totalLunch}</td>
-        <td>$${data.totalDinner}</td>
-        <td>$${totalAll}</td>
-        <td><button onclick="deleteMeal('${docSnap.id}')">삭제</button></td>
-      `;
-      tbody.appendChild(row);
+      if (!selectedCountry || data.country === selectedCountry) {
+        const totalAll = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.country}</td>
+          <td>${data.course}</td>
+          <td>${data.days}박</td>
+          <td>${data.includeFirstDinner ? "포함" : ""}</td>
+          <td>$${data.totalLunch}</td>
+          <td>$${data.totalDinner}</td>
+          <td>$${totalAll}</td>
+          <td><button onclick="deleteMeal('${docSnap.id}')">삭제</button></td>
+        `;
+        tbody.appendChild(row);
+      }
     });
   }
 
