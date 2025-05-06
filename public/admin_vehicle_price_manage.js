@@ -70,8 +70,8 @@ window.addEventListener("DOMContentLoaded", async () => {
   filterSelect.addEventListener("change", renderTable);
 
   addBtn.addEventListener("click", async () => {
-    const country = countrySelect.value;
-    const course = courseSelect.value;
+    const country = document.getElementById("country").value;
+    const course = document.getElementById("course").value;
     const minPeople = parseInt(document.getElementById("minPeople").value);
     const maxPeople = parseInt(document.getElementById("maxPeople").value);
     const van = parseFloat(document.getElementById("van").value) || 0;
@@ -106,8 +106,13 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 function resetForm() {
-  document.getElementById("country").value = "";
-  document.getElementById("course").innerHTML = "<option value=''>코스 선택</option>";
+  const countryEl = document.getElementById("country");
+  const courseEl = document.getElementById("course");
+  countryEl.disabled = false;
+  courseEl.disabled = false;
+  countryEl.value = "";
+  courseEl.innerHTML = "<option value=''>코스 선택</option>";
+
   document.getElementById("minPeople").value = "";
   document.getElementById("maxPeople").value = "";
   document.getElementById("van").value = "";
@@ -132,7 +137,6 @@ async function renderTable() {
     }
   });
 
-  // ✅ 정렬: 국가 → 코스 → 최소 인원
   dataList.sort((a, b) => {
     const countryCompare = a.country.localeCompare(b.country, 'ko');
     if (countryCompare !== 0) return countryCompare;
@@ -170,21 +174,25 @@ window.deleteVehicle = async function (id) {
 };
 
 window.editVehicle = async function (id) {
-  const docSnap = await getDocs(collection(db, "vehicle_prices"));
-  for (const doc of docSnap.docs) {
+  const snapshot = await getDocs(collection(db, "vehicle_prices"));
+  for (const doc of snapshot.docs) {
     if (doc.id === id) {
       const data = doc.data();
       editingId = id;
 
-      // 국가 설정
-      document.getElementById("country").value = data.country;
+      // 국가 설정 + 비활성화
+      const countryEl = document.getElementById("country");
+      countryEl.innerHTML = `<option value="${data.country}">${data.country}</option>`;
+      countryEl.value = data.country;
+      countryEl.disabled = true;
 
-      // 코스 강제 설정
-      const courseSelect = document.getElementById("course");
-      courseSelect.innerHTML = `<option value="${data.course}">${data.course}</option>`;
-      courseSelect.value = data.course;
+      // 코스 설정 + 비활성화
+      const courseEl = document.getElementById("course");
+      courseEl.innerHTML = `<option value="${data.course}">${data.course}</option>`;
+      courseEl.value = data.course;
+      courseEl.disabled = true;
 
-      // 입력값 세팅
+      // 값 채우기
       document.getElementById("minPeople").value = data.minPeople;
       document.getElementById("maxPeople").value = data.maxPeople;
       document.getElementById("van").value = data.van || 0;
