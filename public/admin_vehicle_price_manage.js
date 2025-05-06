@@ -157,8 +157,8 @@ async function renderTable() {
       <td>${data.bus || 0}</td>
       <td>$${total}</td>
       <td>
-        <button onclick="editVehicle('${data.id}')">수정</button>
-        <button onclick="deleteVehicle('${data.id}')">삭제</button>
+        <button onclick="window.editVehicle('${data.id}')">수정</button>
+        <button onclick="window.deleteVehicle('${data.id}')">삭제</button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -174,25 +174,23 @@ window.deleteVehicle = async function (id) {
 };
 
 window.editVehicle = async function (id) {
+  console.log("✅ editVehicle triggered with ID:", id); // 디버깅 로그
   const snapshot = await getDocs(collection(db, "vehicle_prices"));
   for (const doc of snapshot.docs) {
     if (doc.id === id) {
       const data = doc.data();
       editingId = id;
 
-      // 국가 설정 + 비활성화
       const countryEl = document.getElementById("country");
       countryEl.innerHTML = `<option value="${data.country}">${data.country}</option>`;
       countryEl.value = data.country;
       countryEl.disabled = true;
 
-      // 코스 설정 + 비활성화
       const courseEl = document.getElementById("course");
       courseEl.innerHTML = `<option value="${data.course}">${data.course}</option>`;
       courseEl.value = data.course;
       courseEl.disabled = true;
 
-      // 값 채우기
       document.getElementById("minPeople").value = data.minPeople;
       document.getElementById("maxPeople").value = data.maxPeople;
       document.getElementById("van").value = data.van || 0;
