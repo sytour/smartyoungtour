@@ -9,11 +9,11 @@
       font-family: Arial, sans-serif;
       background-color: #fdfcf9;
       padding: 40px;
-      line-height: 1.6;
+      line-height: 1.4;
     }
     h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
     .form-container, .list-container {
       background: white;
@@ -21,22 +21,24 @@
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       max-width: 1000px;
-      margin: 0 auto 30px auto;
+      margin: 0 auto 20px auto;
     }
     input, select {
-      padding: 8px;
-      margin: 6px;
+      padding: 6px 8px;
+      margin: 4px;
       border: 1px solid #ccc;
       border-radius: 6px;
+      font-size: 14px;
     }
     button {
-      padding: 8px 16px;
+      padding: 6px 14px;
       background-color: #ff944d;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      margin: 6px;
+      font-size: 14px;
+      margin: 4px;
     }
     button:hover {
       background-color: #e67e22;
@@ -44,54 +46,58 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 16px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 8px;
+      padding: 6px;
       text-align: center;
+      font-size: 14px;
     }
     th {
       background-color: #f4f4f4;
+    }
+    .filter-container {
+      margin: 10px 0 0;
     }
   </style>
   <script type="module" src="./admin_hotel_price_manage.js"></script>
 </head>
 <body>
   <h2>호텔 요금 관리</h2>
+
   <div class="form-container">
-    <select id="country">
-      <option value="">국가 선택</option>
-    </select>
-    <select id="course">
-      <option value="">코스 선택</option>
-    </select>
+    <select id="country"><option value="">국가 선택</option></select>
+    <select id="course"><option value="">코스 선택</option></select>
     <select id="grade">
       <option value="4성급">4성급</option>
       <option value="5성급">5성급</option>
     </select>
-    <input type="number" id="single" placeholder="싱글 요금 (USD)">
-    <input type="number" id="twin_double" placeholder="트윈/더블 요금 (USD)">
-    <input type="number" id="triple" placeholder="트리플 요금 (USD)">
+    <input type="number" id="single" placeholder="싱글 (USD)">
+    <input type="number" id="twin_double" placeholder="트윈/더블 (USD)">
+    <input type="number" id="triple" placeholder="트리플 (USD)">
     <button id="addBtn">추가</button>
+  </div>
+
+  <div class="form-container filter-container">
+    <label>국가별 보기:</label>
+    <select id="countryFilter"><option value="">전체 보기</option></select>
   </div>
 
   <div class="list-container">
     <table id="hotelTable">
       <thead>
         <tr>
-          <th>국가명</th>
-          <th>코스명</th>
-          <th>호텔 등급</th>
-          <th>싱글 (USD)</th>
-          <th>트윈/더블 (USD)</th>
-          <th>트리플 (USD)</th>
+          <th>국가</th>
+          <th>코스</th>
+          <th>등급</th>
+          <th>싱글</th>
+          <th>트윈/더블</th>
+          <th>트리플</th>
           <th>관리</th>
         </tr>
       </thead>
-      <tbody>
-        <!-- 데이터 표시 -->
-      </tbody>
+      <tbody></tbody>
     </table>
   </div>
 </body>
