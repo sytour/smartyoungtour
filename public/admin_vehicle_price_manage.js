@@ -1,202 +1,97 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  doc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
-  authDomain: "smartyoungtour.firebaseapp.com",
-  projectId: "smartyoungtour",
-  storageBucket: "smartyoungtour.firebasestorage.app",
-  messagingSenderId: "615207664322",
-  appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-  measurementId: "G-KN3EQNZWLN"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-let courseMap = new Map();
-let editingId = null;
-
-window.addEventListener("DOMContentLoaded", async () => {
-  const countrySelect = document.getElementById("country");
-  const courseSelect = document.getElementById("course");
-  const addBtn = document.getElementById("addBtn");
-  const filterSelect = document.getElementById("countryFilter");
-
-  const courseSnap = await getDocs(collection(db, "courses"));
-  courseMap = new Map();
-
-  courseSnap.forEach(doc => {
-    const data = doc.data();
-    if (data.country && data.course) {
-      if (!courseMap.has(data.country)) courseMap.set(data.country, new Set());
-      courseMap.get(data.country).add(data.course);
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>차량 요금 관리</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fdfcf9;
+      padding: 40px;
+      line-height: 1.6;
     }
-  });
-
-  const countries = [...courseMap.keys()].sort((a, b) => a.localeCompare(b, 'ko'));
-  countries.forEach(country => {
-    const opt1 = document.createElement("option");
-    const opt2 = document.createElement("option");
-    opt1.value = country;
-    opt1.textContent = country;
-    opt2.value = country;
-    opt2.textContent = country;
-    countrySelect.appendChild(opt1);
-    filterSelect.appendChild(opt2);
-  });
-
-  countrySelect.addEventListener("change", () => {
-    const selectedCountry = countrySelect.value;
-    courseSelect.innerHTML = "<option value=''>코스 선택</option>";
-    if (courseMap.has(selectedCountry)) {
-      [...courseMap.get(selectedCountry)].sort((a, b) => a.localeCompare(b, 'ko')).forEach(course => {
-        const option = document.createElement("option");
-        option.value = course;
-        option.textContent = course;
-        courseSelect.appendChild(option);
-      });
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
     }
-  });
-
-  filterSelect.addEventListener("change", renderTable);
-
-  addBtn.addEventListener("click", async () => {
-    const country = document.getElementById("country").value;
-    const course = document.getElementById("course").value;
-    const minPeople = parseInt(document.getElementById("minPeople").value);
-    const maxPeople = parseInt(document.getElementById("maxPeople").value);
-    const van = parseFloat(document.getElementById("van").value) || 0;
-    const minibus = parseFloat(document.getElementById("minibus").value) || 0;
-    const bus = parseFloat(document.getElementById("bus").value) || 0;
-
-    if (!country || !course || isNaN(minPeople) || isNaN(maxPeople)) {
-      alert("모든 항목을 입력해주세요.");
-      return;
+    .form-container, .list-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
     }
-
-    const data = { country, course, minPeople, maxPeople, van, minibus, bus };
-
-    try {
-      if (editingId) {
-        await updateDoc(doc(db, "vehicle_prices", editingId), data);
-        alert("수정 완료");
-        editingId = null;
-      } else {
-        await addDoc(collection(db, "vehicle_prices"), data);
-        alert("등록 완료");
-      }
-      resetForm();
-      await renderTable();
-    } catch (e) {
-      console.error("저장 실패", e);
-      alert("저장 실패");
+    input, select {
+      padding: 8px;
+      margin: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
-  });
-
-  await renderTable();
-});
-
-function resetForm() {
-  const countryEl = document.getElementById("country");
-  const courseEl = document.getElementById("course");
-  countryEl.disabled = false;
-  courseEl.disabled = false;
-  countryEl.value = "";
-  courseEl.innerHTML = "<option value=''>코스 선택</option>";
-
-  document.getElementById("minPeople").value = "";
-  document.getElementById("maxPeople").value = "";
-  document.getElementById("van").value = "";
-  document.getElementById("minibus").value = "";
-  document.getElementById("bus").value = "";
-  editingId = null;
-}
-
-async function renderTable() {
-  const tableBody = document.getElementById("vehicleTable");
-  tableBody.innerHTML = "";
-
-  const filter = document.getElementById("countryFilter").value;
-  const snapshot = await getDocs(collection(db, "vehicle_prices"));
-  const dataList = [];
-
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    data.id = docSnap.id;
-    if (!filter || data.country === filter) {
-      dataList.push(data);
+    button {
+      padding: 8px 16px;
+      background-color: #ff944d;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 6px;
     }
-  });
-
-  dataList.sort((a, b) => {
-    const countryCompare = a.country.localeCompare(b.country, 'ko');
-    if (countryCompare !== 0) return countryCompare;
-    const courseCompare = a.course.localeCompare(b.course, 'ko');
-    if (courseCompare !== 0) return courseCompare;
-    return a.minPeople - b.minPeople;
-  });
-
-  dataList.forEach(data => {
-    const total = (data.van || 0) + (data.minibus || 0) + (data.bus || 0);
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${data.country}</td>
-      <td>${data.course}</td>
-      <td>${data.minPeople}~${data.maxPeople}명</td>
-      <td>${data.van || 0}</td>
-      <td>${data.minibus || 0}</td>
-      <td>${data.bus || 0}</td>
-      <td>$${total}</td>
-      <td>
-        <button onclick="window.editVehicle('${data.id}')">수정</button>
-        <button onclick="window.deleteVehicle('${data.id}')">삭제</button>
-      </td>
-    `;
-    tableBody.appendChild(row);
-  });
-}
-
-window.deleteVehicle = async function (id) {
-  if (confirm("삭제하시겠습니까?")) {
-    await deleteDoc(doc(db, "vehicle_prices", id));
-    alert("삭제 완료");
-    await renderTable();
-  }
-};
-
-window.editVehicle = async function (id) {
-  console.log("✅ editVehicle triggered with ID:", id); // 디버깅 로그
-  const snapshot = await getDocs(collection(db, "vehicle_prices"));
-  for (const doc of snapshot.docs) {
-    if (doc.id === id) {
-      const data = doc.data();
-      editingId = id;
-
-      const countryEl = document.getElementById("country");
-      countryEl.innerHTML = `<option value="${data.country}">${data.country}</option>`;
-      countryEl.value = data.country;
-      countryEl.disabled = true;
-
-      const courseEl = document.getElementById("course");
-      courseEl.innerHTML = `<option value="${data.course}">${data.course}</option>`;
-      courseEl.value = data.course;
-      courseEl.disabled = true;
-
-      document.getElementById("minPeople").value = data.minPeople;
-      document.getElementById("maxPeople").value = data.maxPeople;
-      document.getElementById("van").value = data.van || 0;
-      document.getElementById("minibus").value = data.minibus || 0;
-      document.getElementById("bus").value = data.bus || 0;
-      break;
+    button:hover {
+      background-color: #e67e22;
     }
-  }
-};
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h2>차량 요금 관리</h2>
+  <div class="form-container">
+    <select id="country" disabled><option value="">국가 선택</option></select>
+    <select id="course" disabled><option value="">코스 선택</option></select>
+    <input type="number" id="minPeople" placeholder="최소 인원" />
+    <input type="number" id="maxPeople" placeholder="최대 인원" />
+    <input type="number" id="van" placeholder="벤 (USD)" />
+    <input type="number" id="minibus" placeholder="미니버스 (USD)" />
+    <input type="number" id="bus" placeholder="버스 (USD)" />
+    <button id="addBtn">추가</button>
+  </div>
+
+  <div class="form-container">
+    <label>국가별 보기:</label>
+    <select id="countryFilter"><option value="">전체 보기</option></select>
+  </div>
+
+  <div class="list-container">
+    <table>
+      <thead>
+        <tr>
+          <th>국가</th>
+          <th>코스</th>
+          <th>인원</th>
+          <th>벤</th>
+          <th>미니버스</th>
+          <th>버스</th>
+          <th>합계</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody id="vehicleTable"></tbody>
+    </table>
+  </div>
+
+  <script type="module" src="./admin_vehicle_price_manage.js"></script>
+</body>
+</html>
