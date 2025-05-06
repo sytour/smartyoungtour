@@ -27,6 +27,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   const countrySelect = document.getElementById("country");
   const courseSelect = document.getElementById("course");
   const addBtn = document.getElementById("addBtn");
+  const filterSelect = document.getElementById("countryFilter");
 
   const snapshot = await getDocs(collection(db, "courses"));
   courseMap = new Map();
@@ -41,20 +42,28 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  countrySelect.innerHTML = "<option value=''>국가 선택</option>";
-  [...courseMap.keys()].sort((a, b) => a.localeCompare(b, 'ko')).forEach(country => {
-    const option = document.createElement("option");
-    option.value = country;
-    option.textContent = country;
-    countrySelect.appendChild(option);
+  // Populate country dropdowns (등록용 + 필터용)
+  const sortedCountries = [...courseMap.keys()].sort((a, b) => a.localeCompare(b, 'ko'));
+  sortedCountries.forEach(country => {
+    const option1 = document.createElement("option");
+    option1.value = country;
+    option1.textContent = country;
+    countrySelect.appendChild(option1);
+
+    const option2 = document.createElement("option");
+    option2.value = country;
+    option2.textContent = country;
+    filterSelect.appendChild(option2);
   });
 
+  // 기본 선택: 첫 국가에 대한 코스 보여주기
   if (countrySelect.options.length > 1) {
     countrySelect.selectedIndex = 1;
     updateCourseOptions();
   }
 
   countrySelect.addEventListener("change", updateCourseOptions);
+  filterSelect.addEventListener("change", renderTable);
   addBtn.addEventListener("click", addHotelPrice);
 
   await renderTable();
@@ -101,6 +110,7 @@ async function addHotelPrice() {
 
 async function renderTable() {
   const tableBody = document.querySelector("#hotelTable tbody");
+  const filter = document.getElementById("countryFilter").value;
   tableBody.innerHTML = "";
 
   const snapshot = await getDocs(collection(db, "hotel_prices"));
@@ -109,10 +119,12 @@ async function renderTable() {
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
     data.id = docSnap.id;
-    dataList.push(data);
+    if (!filter || data.country === filter) {
+      dataList.push(data);
+    }
   });
 
-  // ✅ 가나다순 정렬: 국가 + 코스
+  // 정렬: 국가 > 코스
   dataList.sort((a, b) => {
     const aKey = `${a.country}${a.course}`;
     const bKey = `${b.country}${b.course}`;
