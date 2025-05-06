@@ -132,10 +132,15 @@ async function renderTable() {
     }
   });
 
+  // ✅ 국가 → 코스 → 최소 인원 기준 정렬
   dataList.sort((a, b) => {
-    const aKey = `${a.country}${a.course}${a.minPeople}`;
-    const bKey = `${b.country}${b.course}${b.minPeople}`;
-    return aKey.localeCompare(bKey, 'ko');
+    const countryCompare = a.country.localeCompare(b.country, 'ko');
+    if (countryCompare !== 0) return countryCompare;
+
+    const courseCompare = a.course.localeCompare(b.course, 'ko');
+    if (courseCompare !== 0) return courseCompare;
+
+    return a.minPeople - b.minPeople;
   });
 
   dataList.forEach(data => {
