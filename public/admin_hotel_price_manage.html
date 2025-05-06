@@ -58,7 +58,16 @@
       background-color: #f4f4f4;
     }
     .filter-container {
-      margin: 10px 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+      gap: 10px;
+      padding: 10px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
   </style>
   <script type="module" src="./admin_hotel_price_manage.js"></script>
@@ -79,8 +88,8 @@
     <button id="addBtn">추가</button>
   </div>
 
-  <div class="form-container filter-container">
-    <label>국가별 보기:</label>
+  <div class="filter-container">
+    <label for="countryFilter">국가별 보기:</label>
     <select id="countryFilter"><option value="">전체 보기</option></select>
   </div>
 
