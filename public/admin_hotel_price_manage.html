@@ -1,183 +1,103 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>국가 및 코스 등록</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>호텔 요금 관리</title>
   <style>
     body {
-      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #fdfcf9;
       padding: 40px;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      line-height: 1.4;
     }
     h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-    input, select, button {
-      padding: 8px;
-      margin: 6px 0;
+    .form-container, .list-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+    }
+    input, select {
+      padding: 6px 8px;
+      margin: 4px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 14px;
     }
-    input, select {
-      width: 100%;
-    }
     button {
-      background-color: #ffa94d;
+      padding: 6px 14px;
+      background-color: #ff944d;
       color: white;
-      font-weight: bold;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      width: 100%;
+      font-size: 14px;
+      margin: 4px;
     }
     button:hover {
-      background-color: #ff862e;
+      background-color: #e67e22;
     }
     table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
+      margin-top: 16px;
     }
     th, td {
-      padding: 6px 8px;
-      border: 1px solid #ddd;
+      border: 1px solid #ccc;
+      padding: 6px;
       text-align: center;
       font-size: 14px;
     }
     th {
-      background-color: #f5f5f5;
+      background-color: #f4f4f4;
     }
-    .filter {
-      margin-top: 20px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      gap: 10px;
-    }
-    .filter select {
-      width: 200px;
+    .filter-container {
+      margin: 10px 0 0;
     }
   </style>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-    import {
-      getFirestore, collection, getDocs, addDoc, deleteDoc, doc
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvrhTfLaqtqR1Bva_pIbskWl5Ah0CE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-      measurementId: "G-KN3EQNZWLN"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const countryInput = document.getElementById("country");
-    const courseInput = document.getElementById("course");
-    const addBtn = document.getElementById("addBtn");
-    const tableBody = document.getElementById("courseTable");
-    const filterSelect = document.getElementById("countryFilter");
-
-    addBtn.addEventListener("click", async () => {
-      const country = countryInput.value.trim();
-      const course = courseInput.value.trim();
-      if (!country || !course) {
-        alert("국가와 코스를 모두 입력해주세요.");
-        return;
-      }
-      await addDoc(collection(db, "courses"), { country, course });
-      countryInput.value = "";
-      courseInput.value = "";
-      renderTable();
-    });
-
-    async function renderTable() {
-      tableBody.innerHTML = "";
-      filterSelect.innerHTML = '<option value="">전체 보기</option>';
-
-      const snapshot = await getDocs(collection(db, "courses"));
-      const allData = [];
-      const countrySet = new Set();
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        data.id = docSnap.id;
-        allData.push(data);
-        countrySet.add(data.country);
-      });
-
-      [...countrySet].sort((a,b)=>a.localeCompare(b,'ko')).forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c;
-        opt.textContent = c;
-        filterSelect.appendChild(opt);
-      });
-
-      const selectedFilter = filterSelect.value;
-      const filtered = selectedFilter ? allData.filter(d => d.country === selectedFilter) : allData;
-
-      filtered.sort((a,b)=> {
-        const c = a.country.localeCompare(b.country,'ko');
-        if(c !== 0) return c;
-        return a.course.localeCompare(b.course,'ko');
-      });
-
-      filtered.forEach(d => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${d.country}</td>
-          <td>${d.course}</td>
-          <td><button onclick="deleteCourse('${d.id}')">삭제</button></td>
-        `;
-        tableBody.appendChild(row);
-      });
-    }
-
-    window.deleteCourse = async (id) => {
-      if (confirm("삭제하시겠습니까?")) {
-        await deleteDoc(doc(db, "courses", id));
-        renderTable();
-      }
-    };
-
-    document.getElementById("countryFilter").addEventListener("change", renderTable);
-    renderTable();
-  </script>
+  <script type="module" src="./admin_hotel_price_manage.js"></script>
 </head>
 <body>
-  <div class="container">
-    <h2>국가 및 코스 등록</h2>
-    <input type="text" id="country" placeholder="국가명 입력">
-    <input type="text" id="course" placeholder="코스명 입력">
-    <button id="addBtn">등록</button>
-    <div class="filter">
-      <label for="countryFilter">국가별 보기:</label>
-      <select id="countryFilter">
-        <option value="">전체 보기</option>
-      </select>
-    </div>
-    <table>
+  <h2>호텔 요금 관리</h2>
+
+  <div class="form-container">
+    <select id="country"><option value="">국가 선택</option></select>
+    <select id="course"><option value="">코스 선택</option></select>
+    <select id="grade">
+      <option value="4성급">4성급</option>
+      <option value="5성급">5성급</option>
+    </select>
+    <input type="number" id="single" placeholder="싱글 (USD)">
+    <input type="number" id="twin_double" placeholder="트윈/더블 (USD)">
+    <input type="number" id="triple" placeholder="트리플 (USD)">
+    <button id="addBtn">추가</button>
+  </div>
+
+  <div class="form-container filter-container">
+    <label>국가별 보기:</label>
+    <select id="countryFilter"><option value="">전체 보기</option></select>
+  </div>
+
+  <div class="list-container">
+    <table id="hotelTable">
       <thead>
         <tr>
           <th>국가</th>
           <th>코스</th>
+          <th>등급</th>
+          <th>싱글</th>
+          <th>트윈/더블</th>
+          <th>트리플</th>
           <th>관리</th>
         </tr>
       </thead>
-      <tbody id="courseTable"></tbody>
+      <tbody></tbody>
     </table>
   </div>
 </body>
