@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   });
 
   countrySelect.innerHTML = "<option value=''>국가 선택</option>";
-  [...courseMap.keys()].sort().forEach(country => {
+  [...courseMap.keys()].sort((a, b) => a.localeCompare(b, 'ko')).forEach(country => {
     const option = document.createElement("option");
     option.value = country;
     option.textContent = country;
@@ -63,7 +63,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const selectedCountry = countrySelect.value;
     courseSelect.innerHTML = "<option value=''>코스 선택</option>";
     if (courseMap.has(selectedCountry)) {
-      [...courseMap.get(selectedCountry)].sort().forEach(course => {
+      [...courseMap.get(selectedCountry)].sort((a, b) => a.localeCompare(b, 'ko')).forEach(course => {
         const option = document.createElement("option");
         option.value = course;
         option.textContent = course;
@@ -104,8 +104,22 @@ async function renderTable() {
   tableBody.innerHTML = "";
 
   const snapshot = await getDocs(collection(db, "hotel_prices"));
+  const dataList = [];
+
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
+    data.id = docSnap.id;
+    dataList.push(data);
+  });
+
+  // ✅ 가나다순 정렬: 국가 + 코스
+  dataList.sort((a, b) => {
+    const aKey = `${a.country}${a.course}`;
+    const bKey = `${b.country}${b.course}`;
+    return aKey.localeCompare(bKey, 'ko');
+  });
+
+  dataList.forEach(data => {
     const row = `
       <tr>
         <td>${data.country}</td>
@@ -114,7 +128,7 @@ async function renderTable() {
         <td>${data.single}</td>
         <td>${data.twin_double}</td>
         <td>${data.triple}</td>
-        <td><button onclick="deleteHotel('${docSnap.id}')">삭제</button></td>
+        <td><button onclick="deleteHotel('${data.id}')">삭제</button></td>
       </tr>
     `;
     tableBody.innerHTML += row;
