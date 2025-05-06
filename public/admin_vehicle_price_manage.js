@@ -127,13 +127,15 @@ async function renderTable() {
     row.innerHTML = `
       <td>${data.country}</td>
       <td>${data.course}</td>
-      <td><input type="number" id="min_${data.id}" value="${data.minPeople}" style="width:60px"/> ~ 
-          <input type="number" id="max_${data.id}" value="${data.maxPeople}" style="width:60px"/></td>
-      <td><input type="number" id="van_${data.id}" value="${data.van}" style="width:80px"/></td>
-      <td><input type="number" id="minibus_${data.id}" value="${data.minibus}" style="width:80px"/></td>
-      <td><input type="number" id="bus_${data.id}" value="${data.bus}" style="width:80px"/></td>
-      <td>$${total}</td>
       <td>
+        <input type="number" id="min_${data.id}" value="${data.minPeople}" /> ~
+        <input type="number" id="max_${data.id}" value="${data.maxPeople}" />
+      </td>
+      <td><input type="number" id="van_${data.id}" value="${data.van}" /></td>
+      <td><input type="number" id="minibus_${data.id}" value="${data.minibus}" /></td>
+      <td><input type="number" id="bus_${data.id}" value="${data.bus}" /></td>
+      <td>$${total}</td>
+      <td class="control-buttons">
         <button onclick="window.saveVehicle('${data.id}', '${data.country}', '${data.course}')">저장</button>
         <button onclick="window.deleteVehicle('${data.id}')">삭제</button>
       </td>
