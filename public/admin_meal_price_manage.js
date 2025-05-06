@@ -71,7 +71,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   async function generateMealInputs() {
     const days = parseInt(daysSelect.value);
     mealInputs.innerHTML = "";
-    for (let i = 1; i <= days + 1; i++) {
+    for (let i = 1; i <= 6; i++) {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${i}일차</td>
@@ -97,7 +97,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     let totalDinner = 0;
     let firstDinnerValue = 0;
 
-    for (let i = 1; i <= days + 1; i++) {
+    for (let i = 1; i <= 6; i++) {
       const lunchVal = parseFloat(document.getElementById(`lunch${i}`).value) || 0;
       const dinnerVal = parseFloat(document.getElementById(`dinner${i}`).value) || 0;
       if (i === 1) {
