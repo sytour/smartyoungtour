@@ -57,7 +57,7 @@ async function loadCourses() {
   countrySelect.dispatchEvent(new Event("change"));
 }
 
-function addCourse() {
+window.addCourse = function() {
   const country = document.getElementById("countrySelect").value;
   const course = document.getElementById("courseSelect").value;
   const option = document.querySelector("input[name='optionType']:checked");
@@ -72,7 +72,7 @@ function addCourse() {
 
   coursesData[key] = []; // 빈 관광지 목록으로 시작
   renderCourseList();
-}
+};
 
 function renderCourseList() {
   const container = document.getElementById("courseListContainer");
@@ -113,10 +113,11 @@ function renderCourseList() {
   });
 }
 
-function addAttraction(key) {
+window.addAttraction = function(key) {
   coursesData[key].push({ name: "", fee: 0 });
   renderCourseList();
-}
+};
+
 function updateAttractionName(key, idx, value) {
   coursesData[key][idx].name = value;
 }
