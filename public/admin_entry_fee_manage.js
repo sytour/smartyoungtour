@@ -145,6 +145,9 @@ function updateAttraction(safeKey, idx) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key) return;
 
+  const course = coursesData[key];
+  if (!course || !Array.isArray(course.attractions) || !course.attractions[idx]) return;
+
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
@@ -152,10 +155,13 @@ function updateAttraction(safeKey, idx) {
   const name = nameInput.value.trim();
   const fee = parseFloat(feeInput.value);
 
-  if (!isNaN(fee)) {
-    coursesData[key].attractions[idx].name = name;
-    coursesData[key].attractions[idx].fee = fee;
+  if (name === '' || isNaN(fee)) {
+    alert("관광지 이름과 유효한 입장료를 입력해주세요.");
+    return;
   }
+
+  course.attractions[idx].name = name;
+  course.attractions[idx].fee = fee;
 
   renderCourseList();
 }
@@ -163,6 +169,10 @@ function updateAttraction(safeKey, idx) {
 function deleteAttraction(safeKey, idx) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key) return;
-  coursesData[key].attractions.splice(idx, 1);
+
+  const course = coursesData[key];
+  if (!course || !Array.isArray(course.attractions) || !course.attractions[idx]) return;
+
+  course.attractions.splice(idx, 1);
   renderCourseList();
 }
