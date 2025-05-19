@@ -1,33 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>입장료 요금 관리</title>
   <script type="module" src="admin_entry_fee_manage.js"></script>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #fffdf9;
+      margin: 0;
       padding: 40px;
     }
     h2 {
       text-align: center;
       margin-bottom: 24px;
     }
-    .form-container, .list-container {
+    .container {
+      display: flex;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .course-list, .entry-section {
       background: #fff;
       padding: 20px;
       border-radius: 12px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      max-width: 1000px;
-      margin: 0 auto 20px auto;
+      flex: 1;
+    }
+    .course-list ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .course-list li {
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    .course-list li:hover {
+      background-color: #f0f0f0;
     }
     input, select {
       padding: 6px 10px;
-      margin: 6px;
+      margin: 6px 0;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 14px;
+      width: 100%;
     }
     button {
       padding: 8px 14px;
@@ -36,42 +55,60 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      margin-top: 8px;
     }
     button:hover {
       background-color: #e67e22;
     }
-    ul {
-      list-style: none;
-      padding-left: 0;
+    .entry-list {
+      margin-top: 20px;
     }
-    li {
+    .entry-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       padding: 6px 0;
       border-bottom: 1px solid #eee;
+    }
+    .entry-list li span {
+      flex: 1;
+    }
+    .entry-list li button {
+      margin-left: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .total {
+      font-weight: bold;
+      margin-top: 10px;
+      text-align: right;
     }
   </style>
 </head>
 <body>
   <h2>입장료 요금 관리</h2>
+  <div class="container">
+    <div class="course-list">
+      <label>국가:</label>
+      <select id="countrySelect"></select>
 
-  <div class="form-container">
-    <label>국가:</label>
-    <select id="countrySelect"></select>
+      <label>코스:</label>
+      <select id="courseSelect"></select>
 
-    <label>코스:</label>
-    <select id="courseSelect"></select>
+      <button id="addCourseBtn">코스 추가</button>
 
-    <label>관광지 이름:</label>
-    <input type="text" id="placeInput" placeholder="예: 왓푸 사원" />
+      <ul id="courseList"></ul>
+    </div>
 
-    <label>입장료(₩):</label>
-    <input type="number" id="feeInput" placeholder="예: 10000" />
+    <div class="entry-section">
+      <h3 id="selectedCourseTitle">선택된 코스: 없음</h3>
+      <input type="text" id="placeInput" placeholder="관광지 이름 입력" />
+      <input type="number" id="feeInput" placeholder="입장료 (₩)" />
+      <button id="addEntryFeeBtn">관광지 추가</button>
 
-    <button id="addEntryFeeBtn">입장료 추가</button>
-  </div>
-
-  <div class="list-container">
-    <h3>등록된 입장료 목록</h3>
-    <ul id="entryFeeList"></ul>
+      <ul id="entryFeeList" class="entry-list"></ul>
+      <div class="total" id="totalFee">총 합계: ₩0</div>
+    </div>
   </div>
 </body>
 </html>
