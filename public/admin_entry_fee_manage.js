@@ -142,12 +142,6 @@ window.addAttraction = function(safeKey) {
 };
 
 function updateAttraction(safeKey, idx) {
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key) return;
-
-  const course = coursesData[key];
-  if (!course || !Array.isArray(course.attractions) || !course.attractions[idx]) return;
-
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
@@ -160,19 +154,19 @@ function updateAttraction(safeKey, idx) {
     return;
   }
 
-  course.attractions[idx].name = name;
-  course.attractions[idx].fee = fee;
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
+
+  coursesData[key].attractions[idx].name = name;
+  coursesData[key].attractions[idx].fee = fee;
 
   renderCourseList();
 }
 
 function deleteAttraction(safeKey, idx) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key) return;
+  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
-  const course = coursesData[key];
-  if (!course || !Array.isArray(course.attractions) || !course.attractions[idx]) return;
-
-  course.attractions.splice(idx, 1);
+  coursesData[key].attractions.splice(idx, 1);
   renderCourseList();
 }
