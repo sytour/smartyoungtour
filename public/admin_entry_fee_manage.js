@@ -1,6 +1,6 @@
 // ✅ Firebase 연동 (실제 설정 적용)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
@@ -151,7 +151,7 @@ function handleSaveClick(button) {
   nameInput.blur();
   feeInput.blur();
 
-  requestAnimationFrame(() => {
+  requestAnimationFrame(async () => {
     const name = nameInput.value.trim();
     const fee = parseFloat(feeInput.value);
 
@@ -165,6 +165,8 @@ function handleSaveClick(button) {
 
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
+
+    await setDoc(doc(db, "entryFees", key), coursesData[key]);
 
     button.textContent = "✔ 저장됨";
     setTimeout(() => {
