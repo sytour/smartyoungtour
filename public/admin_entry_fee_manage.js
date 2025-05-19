@@ -160,27 +160,21 @@ function handleSaveClick(button) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
+  // ✅ 값 반영
   coursesData[key].attractions[idx].name = name;
   coursesData[key].attractions[idx].fee = fee;
 
-  // ✅ UI 피드백
+  // ✅ 버튼 피드백
   button.textContent = "✔ 저장됨";
   setTimeout(() => {
     button.textContent = "저장/수정";
   }, 1000);
 
-  // ✅ 총 입장료 업데이트만 따로
-  const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
-  const totalCell = button.closest("table").querySelector("tr:last-child td");
-  if (totalCell) {
-    totalCell.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
+  // ✅ 총 입장료 셀 정확히 찾아서 업데이트
+  const allRows = Array.from(button.closest("table").rows);
+  const lastRow = allRows.find(r => r.innerHTML.includes("총 입장료"));
+  if (lastRow) {
+    const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
+    lastRow.cells[0].innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
   }
-}
-
-function deleteAttraction(safeKey, idx) {
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
-
-  coursesData[key].attractions.splice(idx, 1);
-  renderCourseList();
 }
