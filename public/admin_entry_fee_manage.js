@@ -160,13 +160,8 @@ function updateAttraction(safeKey, idx) {
   coursesData[key].attractions[idx].name = name;
   coursesData[key].attractions[idx].fee = fee;
 
-  renderCourseList();
-}
-
-function deleteAttraction(safeKey, idx) {
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
-
-  coursesData[key].attractions.splice(idx, 1);
-  renderCourseList();
+  // ✅ 렌더링을 DOM 이벤트 루프 다음으로 미루기
+  setTimeout(() => {
+    renderCourseList();
+  }, 0);
 }
