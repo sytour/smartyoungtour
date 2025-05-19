@@ -111,8 +111,8 @@ function renderCourseList() {
           <td>${idx === 0 ? country : ''}</td>
           <td>${idx === 0 ? course : ''}</td>
           <td>${idx === 0 ? courseData.option : ''}</td>
-          <td><input type='text' value='${attraction.name}' onchange='updateAttractionName("${key}", ${idx}, this.value)'/></td>
-          <td><input type='number' value='${attraction.fee}' onchange='updateAttractionFee("${key}", ${idx}, this.value)'/></td>
+          <td><input id='name_${key}_${idx}' type='text' value='${attraction.name}' /></td>
+          <td><input id='fee_${key}_${idx}' type='number' value='${attraction.fee}' /></td>
           <td><button onclick='updateAttraction("${key}", ${idx})'>수정</button></td>
           <td><button onclick='deleteAttraction("${key}", ${idx})'>삭제</button></td>
         `;
@@ -138,15 +138,15 @@ window.addAttraction = function(key) {
   renderCourseList();
 };
 
-function updateAttractionName(key, idx, value) {
-  coursesData[key].attractions[idx].name = value;
-}
-function updateAttractionFee(key, idx, value) {
-  coursesData[key].attractions[idx].fee = parseFloat(value);
-}
 function updateAttraction(key, idx) {
+  const nameInput = document.getElementById(`name_${key}_${idx}`);
+  const feeInput = document.getElementById(`fee_${key}_${idx}`);
+  if (!nameInput || !feeInput) return;
+  coursesData[key].attractions[idx].name = nameInput.value;
+  coursesData[key].attractions[idx].fee = parseFloat(feeInput.value) || 0;
   renderCourseList();
 }
+
 function deleteAttraction(key, idx) {
   coursesData[key].attractions.splice(idx, 1);
   renderCourseList();
