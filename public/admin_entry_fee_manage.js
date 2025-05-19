@@ -11,9 +11,13 @@ const countrySelect = document.getElementById('countrySelect');
 const courseSelect = document.getElementById('courseSelect');
 const tableBody = document.getElementById('entryTableBody');
 
+const addCourseBtn = document.createElement("button");
+addCourseBtn.textContent = "코스 추가";
+addCourseBtn.style.marginLeft = "10px";
+courseSelect.after(addCourseBtn);
+
 let allCourses = [];
-let currentKey = '';
-let currentEntries = [];
+let courseEntriesMap = {};
 
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
@@ -32,111 +36,109 @@ function updateCourseSelect() {
   const selectedCountry = countrySelect.value;
   const filtered = allCourses.filter(c => c.country === selectedCountry);
   courseSelect.innerHTML = filtered.map(c => `<option value="${c.course}">${c.course}</option>`).join('');
-  loadEntries();
 }
 
-function getFirestoreKey() {
+addCourseBtn.addEventListener("click", async () => {
   const country = countrySelect.value;
   const course = courseSelect.value;
-  return `${country}__${course}`;
-}
+  const key = `${country}__${course}`;
+  if (courseEntriesMap[key]) return; // 이미 추가된 코스는 무시
 
-async function loadEntries() {
-  currentKey = getFirestoreKey();
-  const ref = doc(db, "entry_fees", currentKey);
+  const ref = doc(db, "entry_fees", key);
   const snap = await getDoc(ref);
-  currentEntries = snap.exists() ? snap.data().entries || [] : [];
-  renderEntries();
-}
+  courseEntriesMap[key] = snap.exists() ? snap.data().entries || [] : [];
+  renderAllCourses();
+});
 
-function renderEntries() {
+function renderAllCourses() {
   tableBody.innerHTML = '';
-  let total = 0;
-  currentEntries.forEach((item, idx) => total += item.fee);
 
-  currentEntries.forEach((item, idx) => {
-    const tr = document.createElement('tr');
+  const sortedKeys = Object.keys(courseEntriesMap).sort((a, b) => a.localeCompare(b, 'ko-KR'));
 
-    if (idx === 0) {
-      const tdCourse = document.createElement('td');
-      tdCourse.rowSpan = currentEntries.length + 2;
-      tdCourse.textContent = currentKey.replace(/__/g, ' - ');
-      tr.appendChild(tdCourse);
-    }
+  sortedKeys.forEach(key => {
+    const entries = courseEntriesMap[key];
+    const total = entries.reduce((sum, item) => sum + item.fee, 0);
 
-    const tdPlace = document.createElement('td');
-    tdPlace.textContent = item.place;
-    const tdFee = document.createElement('td');
-    tdFee.textContent = `$${item.fee.toLocaleString()}`;
+    entries.forEach((entry, idx) => {
+      const tr = document.createElement('tr');
 
-    if (idx === 0) {
-      const tdTotal = document.createElement('td');
-      tdTotal.rowSpan = currentEntries.length + 2;
-      tdTotal.textContent = `$${total.toLocaleString()}`;
-      tr.appendChild(tdPlace);
-      tr.appendChild(tdFee);
-      tr.appendChild(tdTotal);
-    } else {
-      tr.appendChild(tdPlace);
-      tr.appendChild(tdFee);
-    }
+      if (idx === 0) {
+        const tdCourse = document.createElement('td');
+        tdCourse.rowSpan = entries.length + 2;
+        tdCourse.textContent = key.replace(/__/g, ' - ');
+        tr.appendChild(tdCourse);
+      }
 
-    const tdEdit = document.createElement('td');
-    tdEdit.innerHTML = `<button onclick="editEntry(${idx})">✏️</button>`;
-    const tdDelete = document.createElement('td');
-    tdDelete.innerHTML = `<button onclick="deleteEntry(${idx})">🗑️</button>`;
+      const tdPlace = document.createElement('td');
+      tdPlace.textContent = entry.place;
+      const tdFee = document.createElement('td');
+      tdFee.textContent = `$${entry.fee.toLocaleString()}`;
 
-    tr.appendChild(tdEdit);
-    tr.appendChild(tdDelete);
-    tableBody.appendChild(tr);
+      if (idx === 0) {
+        const tdTotal = document.createElement('td');
+        tdTotal.rowSpan = entries.length + 2;
+        tdTotal.textContent = `$${total.toLocaleString()}`;
+        tr.appendChild(tdPlace);
+        tr.appendChild(tdFee);
+        tr.appendChild(tdTotal);
+      } else {
+        tr.appendChild(tdPlace);
+        tr.appendChild(tdFee);
+      }
+
+      const tdEdit = document.createElement('td');
+      tdEdit.innerHTML = `<button onclick="editEntry('${key}', ${idx})">✏️</button>`;
+      const tdDelete = document.createElement('td');
+      tdDelete.innerHTML = `<button onclick="deleteEntry('${key}', ${idx})">🗑️</button>`;
+
+      tr.appendChild(tdEdit);
+      tr.appendChild(tdDelete);
+      tableBody.appendChild(tr);
+    });
+
+    const trInput = document.createElement('tr');
+    trInput.innerHTML = `
+      <td><input id="place-${key}" placeholder="새 관광지 입력란" /></td>
+      <td><input id="fee-${key}" type="number" placeholder="$ 입력칸" /></td>
+      <td></td>
+      <td colspan="2"><button onclick="addEntry('${key}')">관광지 추가</button></td>
+    `;
+    tableBody.appendChild(trInput);
   });
-
-  const trInput = document.createElement('tr');
-  trInput.innerHTML = `
-    <td><input id="placeInput" placeholder="새 관광지 입력란" /></td>
-    <td><input id="feeInput" type="number" placeholder="$ 입력칸" /></td>
-    <td></td>
-    <td colspan="2"><button onclick="addEntry()">관광지 추가</button></td>
-  `;
-  tableBody.appendChild(trInput);
 }
 
-window.addEntry = async function () {
-  const place = document.getElementById("placeInput").value.trim();
-  const fee = parseFloat(document.getElementById("feeInput").value);
+window.addEntry = async function (key) {
+  const place = document.getElementById(`place-${key}`).value.trim();
+  const fee = parseFloat(document.getElementById(`fee-${key}`).value);
   if (!place || isNaN(fee)) return alert("정확히 입력해주세요.");
-  currentEntries.push({ place, fee });
-  await saveEntries();
-  document.getElementById("placeInput").value = "";
-  document.getElementById("feeInput").value = "";
+  courseEntriesMap[key].push({ place, fee });
+  await saveEntries(key);
 };
 
-window.editEntry = function (idx) {
-  const item = currentEntries[idx];
+window.editEntry = function (key, idx) {
+  const item = courseEntriesMap[key][idx];
   const newPlace = prompt("관광지 이름", item.place);
   const newFee = parseFloat(prompt("입장료 ($)", item.fee));
   if (!newPlace || isNaN(newFee)) return;
-  currentEntries[idx] = { place: newPlace, fee: newFee };
-  saveEntries();
+  courseEntriesMap[key][idx] = { place: newPlace, fee: newFee };
+  saveEntries(key);
 };
 
-window.deleteEntry = function (idx) {
+window.deleteEntry = function (key, idx) {
   if (!confirm("정말 삭제하시겠습니까?")) return;
-  currentEntries.splice(idx, 1);
-  saveEntries();
+  courseEntriesMap[key].splice(idx, 1);
+  saveEntries(key);
 };
 
-async function saveEntries() {
-  const [country, course] = currentKey.split("__");
-  await setDoc(doc(db, "entry_fees", currentKey), {
+async function saveEntries(key) {
+  const [country, course] = key.split("__");
+  await setDoc(doc(db, "entry_fees", key), {
     country,
     course,
-    entries: currentEntries
+    entries: courseEntriesMap[key]
   });
-  renderEntries();
+  renderAllCourses();
 }
 
 countrySelect.addEventListener("change", updateCourseSelect);
-courseSelect.addEventListener("change", loadEntries);
-
 loadCourses();
