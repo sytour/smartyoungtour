@@ -9,19 +9,10 @@ const db = getFirestore(app);
 
 const countrySelect = document.getElementById("countrySelect");
 const courseSelect = document.getElementById("courseSelect");
-const addCourseBtn = document.getElementById("addCourseBtn");
-const courseList = document.getElementById("courseList");
-
-const placeInput = document.getElementById("placeInput");
-const feeInput = document.getElementById("feeInput");
-const addEntryFeeBtn = document.getElementById("addEntryFeeBtn");
-const entryFeeList = document.getElementById("entryFeeList");
-const selectedCourseTitle = document.getElementById("selectedCourseTitle");
-const totalFeeDiv = document.getElementById("totalFee");
+const addCourseBtn = document.querySelector("button");
 
 let allCourses = [];
-let selectedCourseKey = null;
-let currentEntries = [];
+let addedCourses = {}; // { "라오스__루앙프라방 일반 3박": [...] }
 
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
@@ -34,121 +25,126 @@ async function loadCourses() {
     allCourses.push(data);
   });
 
-  countrySelect.innerHTML = [...countries]
-    .map(c => `<option value="${c}">${c}</option>`)
-    .join("");
+  countrySelect.innerHTML = [...countries].map(c => `<option value="${c}">${c}</option>`).join('');
   updateCourseSelect();
 }
 
 function updateCourseSelect() {
   const selectedCountry = countrySelect.value;
   const filtered = allCourses.filter(c => c.country === selectedCountry);
-  courseSelect.innerHTML = filtered
-    .map(c => `<option value="${c.course}">${c.course}</option>`)
-    .join("");
+  courseSelect.innerHTML = filtered.map(c => `<option value="${c.course}">${c.course}</option>`).join('');
 }
 
-addCourseBtn.addEventListener("click", () => {
+addCourseBtn.addEventListener("click", async () => {
   const country = countrySelect.value;
   const course = courseSelect.value;
   const key = `${country}__${course}`;
 
-  if ([...courseList.children].some(li => li.dataset.key === key)) {
-    alert("이미 추가된 코스입니다.");
-    return;
-  }
+  if (addedCourses[key]) return; // 중복 방지
 
-  const li = document.createElement("li");
-  li.innerText = `${country} - ${course}`;
-  li.dataset.key = key;
-  li.addEventListener("click", () => selectCourse(country, course));
-  courseList.appendChild(li);
-  selectCourse(country, course);
+  const docRef = doc(db, "entry_fees", key);
+  const docSnap = await getDoc(docRef);
+  addedCourses[key] = docSnap.exists() ? docSnap.data().entries : [];
+
+  renderCourseTable();
 });
 
-async function selectCourse(country, course) {
-  selectedCourseKey = `${country}__${course}`;
-  selectedCourseTitle.innerText = `선택된 코스: ${country} - ${course}`;
-  const docRef = doc(db, "entry_fees", selectedCourseKey);
-  const docSnap = await getDoc(docRef);
+function renderCourseTable() {
+  const sortedKeys = Object.keys(addedCourses).sort((a, b) => a.localeCompare(b, 'ko-KR'));
+  const tableBody = document.querySelector("tbody");
+  tableBody.innerHTML = '';
 
-  if (docSnap.exists()) {
-    currentEntries = docSnap.data().entries || [];
-  } else {
-    currentEntries = [];
-  }
+  sortedKeys.forEach(key => {
+    const [country, course] = key.split("__");
+    const entries = addedCourses[key];
+    let total = entries.reduce((sum, e) => sum + e.fee, 0);
 
-  renderEntries();
+    entries.forEach((entry, index) => {
+      const tr = document.createElement("tr");
+
+      if (index === 0) {
+        const tdCourse = document.createElement("td");
+        tdCourse.rowSpan = entries.length + 1;
+        tdCourse.textContent = `${country} - ${course}`;
+        tr.appendChild(tdCourse);
+      }
+
+      const tdPlace = document.createElement("td");
+      tdPlace.textContent = entry.place;
+      const tdFee = document.createElement("td");
+      tdFee.textContent = `$${entry.fee.toLocaleString()}`;
+      const tdTotal = document.createElement("td");
+      if (index === 0) {
+        tdTotal.rowSpan = entries.length + 1;
+        tdTotal.textContent = `$${total.toLocaleString()}`;
+        tr.appendChild(tdPlace);
+        tr.appendChild(tdFee);
+        tr.appendChild(tdTotal);
+      } else {
+        tr.appendChild(tdPlace);
+        tr.appendChild(tdFee);
+      }
+
+      const tdEdit = document.createElement("td");
+      const tdDelete = document.createElement("td");
+      tdEdit.innerHTML = `<button onclick="editEntry('${key}', ${index})">✏️</button>`;
+      tdDelete.innerHTML = `<button onclick="deleteEntry('${key}', ${index})">🗑️</button>`;
+      tr.appendChild(tdEdit);
+      tr.appendChild(tdDelete);
+
+      tableBody.appendChild(tr);
+    });
+
+    // 추가 입력 행
+    const trInput = document.createElement("tr");
+    trInput.innerHTML = `
+      <td><input id="place-${key}" placeholder="새 관광지 입력란" /></td>
+      <td><input id="fee-${key}" type="number" placeholder="$ 입력칸" /></td>
+      <td colspan="2"><button onclick="addEntry('${key}')">관광지 추가</button></td>
+    `;
+    tableBody.appendChild(trInput);
+  });
 }
 
-addEntryFeeBtn.addEventListener("click", async () => {
-  const place = placeInput.value.trim();
-  const fee = parseInt(feeInput.value);
+window.addEntry = async function (key) {
+  const place = document.getElementById(`place-${key}`).value.trim();
+  const fee = parseFloat(document.getElementById(`fee-${key}`).value);
 
-  if (!place || isNaN(fee)) {
-    alert("관광지 이름과 입장료를 정확히 입력해주세요.");
-    return;
-  }
+  if (!place || isNaN(fee)) return alert("정확히 입력해주세요.");
 
-  currentEntries.push({ place, fee });
-  await saveEntries();
-  placeInput.value = "";
-  feeInput.value = "";
-});
+  addedCourses[key].push({ place, fee });
+  await saveEntries(key);
+};
 
-async function saveEntries() {
-  if (!selectedCourseKey) return;
+window.editEntry = function (key, index) {
+  const entry = addedCourses[key][index];
+  const newPlace = prompt("관광지 이름 수정", entry.place);
+  const newFee = prompt("입장료 수정", entry.fee);
+  if (!newPlace || isNaN(parseFloat(newFee))) return;
 
-  const [country, course] = selectedCourseKey.split("__");
-  const docRef = doc(db, "entry_fees", selectedCourseKey);
+  addedCourses[key][index] = {
+    place: newPlace,
+    fee: parseFloat(newFee)
+  };
+  saveEntries(key);
+};
+
+window.deleteEntry = function (key, index) {
+  if (!confirm("정말 삭제하시겠습니까?")) return;
+  addedCourses[key].splice(index, 1);
+  saveEntries(key);
+};
+
+async function saveEntries(key) {
+  const [country, course] = key.split("__");
+  const docRef = doc(db, "entry_fees", key);
   await setDoc(docRef, {
     country,
     course,
-    entries: currentEntries
+    entries: addedCourses[key]
   });
-
-  renderEntries();
+  renderCourseTable();
 }
-
-function renderEntries() {
-  entryFeeList.innerHTML = "";
-  let total = 0;
-
-  currentEntries.forEach((entry, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span>${entry.place} - ₩${entry.fee.toLocaleString()}</span>
-      <div>
-        <button onclick="editEntry(${index})">✏️</button>
-        <button onclick="deleteEntry(${index})">🗑️</button>
-      </div>
-    `;
-    entryFeeList.appendChild(li);
-    total += entry.fee;
-  });
-
-  totalFeeDiv.innerText = `총 합계: ₩${total.toLocaleString()}`;
-}
-
-window.editEntry = (index) => {
-  const entry = currentEntries[index];
-  const newPlace = prompt("관광지 이름 수정:", entry.place);
-  const newFee = prompt("입장료 수정 (숫자):", entry.fee);
-
-  if (!newPlace || isNaN(parseInt(newFee))) return;
-
-  currentEntries[index] = {
-    place: newPlace,
-    fee: parseInt(newFee)
-  };
-  saveEntries();
-};
-
-window.deleteEntry = (index) => {
-  if (!confirm("정말 삭제하시겠습니까?")) return;
-  currentEntries.splice(index, 1);
-  saveEntries();
-};
 
 countrySelect.addEventListener("change", updateCourseSelect);
 
