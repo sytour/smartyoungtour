@@ -60,6 +60,13 @@ async function loadCourses() {
 function addCourse() {
   const country = document.getElementById("countrySelect").value;
   const course = document.getElementById("courseSelect").value;
+  const option = document.querySelector("input[name='optionType']:checked");
+
+  if (!option) {
+    alert("옵션 유 또는 옵션 무를 선택해주세요.");
+    return;
+  }
+
   const key = `${country}_${course}`;
   if (coursesData[key]) return;
 
