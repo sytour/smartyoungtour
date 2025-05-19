@@ -161,7 +161,7 @@ function updateAttraction(safeKey, idx) {
   coursesData[key].attractions[idx].fee = fee;
 
   // ✅ 렌더링을 DOM 이벤트 루프 다음으로 미루기
-  setTimeout(() => {
+  setTimeout(function() {
     renderCourseList();
   }, 0);
 }
