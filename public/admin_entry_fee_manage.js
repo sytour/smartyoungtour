@@ -149,39 +149,40 @@ function handleSaveClick(button) {
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
 
-  const name = nameInput.value.trim();
-  const fee = parseFloat(feeInput.value);
+  // ✅ 최신 값 반영 강제 blur
+  nameInput.blur();
+  feeInput.blur();
 
-  if (!name || isNaN(fee)) {
-    alert("관광지 이름과 유효한 입장료를 입력해주세요.");
-    return;
-  }
+  // ✅ 값을 프레임 이후에 읽도록 처리
+  requestAnimationFrame(() => {
+    const name = nameInput.value.trim();
+    const fee = parseFloat(feeInput.value);
 
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
+    if (!name || isNaN(fee)) {
+      alert("관광지 이름과 유효한 입장료를 입력해주세요.");
+      return;
+    }
 
-  coursesData[key].attractions[idx].name = name;
-  coursesData[key].attractions[idx].fee = fee;
+    const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+    if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
-  button.textContent = "✔ 저장됨";
-  setTimeout(() => {
-    button.textContent = "저장/수정";
-  }, 1000);
+    coursesData[key].attractions[idx].name = name;
+    coursesData[key].attractions[idx].fee = fee;
 
-  const table = button.closest("table");
-  const rows = Array.from(table.querySelectorAll("tr"));
-  const totalRow = rows.find(r => r.innerText.includes("총 입장료"));
-  if (totalRow) {
-    const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
-    const td = totalRow.querySelector("td");
-    if (td) td.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
-  }
-}
+    // ✅ 저장 피드백
+    button.textContent = "✔ 저장됨";
+    setTimeout(() => {
+      button.textContent = "저장/수정";
+    }, 1000);
 
-function deleteAttraction(safeKey, idx) {
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
-
-  coursesData[key].attractions.splice(idx, 1);
-  renderCourseList();
+    // ✅ 총 입장료 갱신
+    const table = button.closest("table");
+    const rows = Array.from(table.querySelectorAll("tr"));
+    const totalRow = rows.find(r => r.innerText.includes("총 입장료"));
+    if (totalRow) {
+      const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
+      const td = totalRow.querySelector("td");
+      if (td) td.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
+    }
+  });
 }
