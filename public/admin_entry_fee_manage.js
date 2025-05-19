@@ -59,7 +59,7 @@ function renderEntries() {
 
     if (idx === 0) {
       const tdCourse = document.createElement('td');
-      tdCourse.rowSpan = currentEntries.length + 1;
+      tdCourse.rowSpan = currentEntries.length + 2;
       tdCourse.textContent = currentKey.replace(/__/g, ' - ');
       tr.appendChild(tdCourse);
     }
@@ -71,7 +71,7 @@ function renderEntries() {
 
     if (idx === 0) {
       const tdTotal = document.createElement('td');
-      tdTotal.rowSpan = currentEntries.length + 1;
+      tdTotal.rowSpan = currentEntries.length + 2;
       tdTotal.textContent = `$${total.toLocaleString()}`;
       tr.appendChild(tdPlace);
       tr.appendChild(tdFee);
@@ -95,6 +95,7 @@ function renderEntries() {
   trInput.innerHTML = `
     <td><input id="placeInput" placeholder="새 관광지 입력란" /></td>
     <td><input id="feeInput" type="number" placeholder="$ 입력칸" /></td>
+    <td></td>
     <td colspan="2"><button onclick="addEntry()">관광지 추가</button></td>
   `;
   tableBody.appendChild(trInput);
