@@ -1,3 +1,15 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "...",
+  authDomain: "...",
+  projectId: "...",
+  // 생략된 설정들
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 let coursesData = {}; // { "라오스_비엔티안 골프": [{name: "Pha That Luang", fee: 5}, ...] }
 
 window.onload = async function() {
