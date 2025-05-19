@@ -86,12 +86,13 @@ function renderCourseList() {
     <th>옵션</th>
     <th>관광지 이름</th>
     <th>입장료 (USD)</th>
-    <th>수정</th>
+    <th>저장/수정</th>
     <th>삭제</th>
   `;
   table.appendChild(header);
 
   Object.keys(coursesData).sort().forEach(key => {
+    const safeKey = key.replace(/\s+/g, '_');
     const [country, course] = key.split("_");
     const courseData = coursesData[key];
 
@@ -111,10 +112,10 @@ function renderCourseList() {
           <td>${idx === 0 ? country : ''}</td>
           <td>${idx === 0 ? course : ''}</td>
           <td>${idx === 0 ? courseData.option : ''}</td>
-          <td><input id='name_${key}_${idx}' type='text' value='${attraction.name}' /></td>
-          <td><input id='fee_${key}_${idx}' type='number' value='${attraction.fee}' /></td>
-          <td><button onclick='updateAttraction("${key}", ${idx})'>저장/수정</button></td>
-          <td><button onclick='deleteAttraction("${key}", ${idx})'>삭제</button></td>
+          <td><input id='name_${safeKey}_${idx}' type='text' value='${attraction.name}' /></td>
+          <td><input id='fee_${safeKey}_${idx}' type='number' value='${attraction.fee}' /></td>
+          <td><button onclick='updateAttraction("${safeKey}", ${idx})'>저장/수정</button></td>
+          <td><button onclick='deleteAttraction("${safeKey}", ${idx})'>삭제</button></td>
         `;
         table.appendChild(row);
       });
@@ -126,28 +127,34 @@ function renderCourseList() {
     table.appendChild(totalRow);
 
     const addRow = document.createElement("tr");
-    addRow.innerHTML = `<td colspan='7'><button onclick='addAttraction("${key}")'>관광지 추가</button></td>`;
+    addRow.innerHTML = `<td colspan='7'><button onclick='addAttraction("${safeKey}")'>관광지 추가</button></td>`;
     table.appendChild(addRow);
   });
 
   container.appendChild(table);
 }
 
-window.addAttraction = function(key) {
+window.addAttraction = function(safeKey) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key) return;
   coursesData[key].attractions.push({ name: "", fee: 0 });
   renderCourseList();
 };
 
-function updateAttraction(key, idx) {
-  const nameInput = document.getElementById(`name_${key}_${idx}`);
-  const feeInput = document.getElementById(`fee_${key}_${idx}`);
+function updateAttraction(safeKey, idx) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key) return;
+  const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
+  const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
   coursesData[key].attractions[idx].name = nameInput.value;
   coursesData[key].attractions[idx].fee = parseFloat(feeInput.value) || 0;
   renderCourseList();
 }
 
-function deleteAttraction(key, idx) {
+function deleteAttraction(safeKey, idx) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key) return;
   coursesData[key].attractions.splice(idx, 1);
   renderCourseList();
 }
