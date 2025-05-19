@@ -1,27 +1,30 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, doc, setDoc, getDoc
+  getFirestore, collection, getDocs, doc, getDoc, setDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 import { firebaseConfig } from './firebaseConfig.js';
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const countrySelect = document.getElementById("countrySelect");
-const courseSelect = document.getElementById("courseSelect");
-const addCourseBtn = document.getElementById("addCourseBtn");
-const tableBody = document.querySelector("tbody");
+const countrySelect = document.getElementById('countrySelect');
+const courseSelect = document.getElementById('courseSelect');
+const tableBody = document.getElementById('entryTableBody');
 
 let allCourses = [];
-let addedCourses = {}; // key: 국가__코스, value: entries[]
+let currentKey = '';
+let currentEntries = [];
 
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
+  const countries = new Set();
   allCourses = [];
-  snapshot.forEach(doc => allCourses.push(doc.data()));
-
-  const countries = [...new Set(allCourses.map(c => c.country))];
-  countrySelect.innerHTML = countries.map(c => `<option value="${c}">${c}</option>`).join('');
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    countries.add(data.country);
+    allCourses.push(data);
+  });
+  countrySelect.innerHTML = [...countries].sort().map(c => `<option value="${c}">${c}</option>`).join('');
   updateCourseSelect();
 }
 
@@ -29,128 +32,110 @@ function updateCourseSelect() {
   const selectedCountry = countrySelect.value;
   const filtered = allCourses.filter(c => c.country === selectedCountry);
   courseSelect.innerHTML = filtered.map(c => `<option value="${c.course}">${c.course}</option>`).join('');
+  loadEntries();
 }
 
-addCourseBtn.addEventListener("click", async () => {
+function getFirestoreKey() {
   const country = countrySelect.value;
   const course = courseSelect.value;
-  const key = `${country}__${course}`;
-
-  if (addedCourses[key]) return;
-
-  const docRef = doc(db, "entry_fees", key);
-  const docSnap = await getDoc(docRef);
-  addedCourses[key] = docSnap.exists() ? docSnap.data().entries : [];
-
-  renderTable();
-});
-
-function renderTable() {
-  tableBody.innerHTML = "";
-
-  const sortedKeys = Object.keys(addedCourses).sort((a, b) => a.localeCompare(b, 'ko-KR'));
-
-  sortedKeys.forEach(key => {
-    const [country, course] = key.split("__");
-    const entries = addedCourses[key];
-    const total = entries.reduce((sum, e) => sum + e.fee, 0);
-
-    entries.forEach((entry, index) => {
-      const tr = document.createElement("tr");
-
-      // 국가+코스 열 (첫 줄만 rowspan)
-      if (index === 0) {
-        const tdCourse = document.createElement("td");
-        tdCourse.rowSpan = entries.length + 1;
-        tdCourse.textContent = `${country} - ${course}`;
-        tr.appendChild(tdCourse);
-      }
-
-      // 관광지 이름
-      const tdPlace = document.createElement("td");
-      tdPlace.textContent = entry.place;
-
-      // 입장료 ($)
-      const tdFee = document.createElement("td");
-      tdFee.textContent = `$${entry.fee.toLocaleString()}`;
-
-      // 합계 열 (첫 줄만 rowspan)
-      if (index === 0) {
-        const tdTotal = document.createElement("td");
-        tdTotal.rowSpan = entries.length + 1;
-        tdTotal.textContent = `$${total.toLocaleString()}`;
-        tr.appendChild(tdPlace);
-        tr.appendChild(tdFee);
-        tr.appendChild(tdTotal);
-      } else {
-        tr.appendChild(tdPlace);
-        tr.appendChild(tdFee);
-      }
-
-      // 수정 버튼
-      const tdEdit = document.createElement("td");
-      tdEdit.innerHTML = `<button onclick="editEntry('${key}', ${index})">✏️</button>`;
-
-      // 삭제 버튼
-      const tdDelete = document.createElement("td");
-      tdDelete.innerHTML = `<button onclick="deleteEntry('${key}', ${index})">🗑️</button>`;
-
-      tr.appendChild(tdEdit);
-      tr.appendChild(tdDelete);
-      tableBody.appendChild(tr);
-    });
-
-    // 입력 행 추가
-    const trInput = document.createElement("tr");
-    trInput.innerHTML = `
-      <td><input id="place-${key}" placeholder="새 관광지 입력란" /></td>
-      <td><input id="fee-${key}" type="number" placeholder="$ 입력칸" /></td>
-      <td colspan="2"><button onclick="addEntry('${key}')">관광지 추가</button></td>
-    `;
-    tableBody.appendChild(trInput);
-  });
+  return `${country}__${course}`;
 }
 
-window.addEntry = async function (key) {
-  const place = document.getElementById(`place-${key}`).value.trim();
-  const fee = parseFloat(document.getElementById(`fee-${key}`).value);
+async function loadEntries() {
+  currentKey = getFirestoreKey();
+  const ref = doc(db, "entry_fees", currentKey);
+  const snap = await getDoc(ref);
+  currentEntries = snap.exists() ? snap.data().entries || [] : [];
+  renderEntries();
+}
 
-  if (!place || isNaN(fee)) {
-    alert("정확한 관광지 이름과 금액을 입력해주세요.");
-    return;
-  }
+function renderEntries() {
+  tableBody.innerHTML = '';
+  let total = 0;
+  currentEntries.forEach((item, idx) => total += item.fee);
 
-  addedCourses[key].push({ place, fee });
-  await saveToFirestore(key);
+  currentEntries.forEach((item, idx) => {
+    const tr = document.createElement('tr');
+
+    if (idx === 0) {
+      const tdCourse = document.createElement('td');
+      tdCourse.rowSpan = currentEntries.length + 1;
+      tdCourse.textContent = currentKey.replace(/__/g, ' - ');
+      tr.appendChild(tdCourse);
+    }
+
+    const tdPlace = document.createElement('td');
+    tdPlace.textContent = item.place;
+    const tdFee = document.createElement('td');
+    tdFee.textContent = `$${item.fee.toLocaleString()}`;
+
+    if (idx === 0) {
+      const tdTotal = document.createElement('td');
+      tdTotal.rowSpan = currentEntries.length + 1;
+      tdTotal.textContent = `$${total.toLocaleString()}`;
+      tr.appendChild(tdPlace);
+      tr.appendChild(tdFee);
+      tr.appendChild(tdTotal);
+    } else {
+      tr.appendChild(tdPlace);
+      tr.appendChild(tdFee);
+    }
+
+    const tdEdit = document.createElement('td');
+    tdEdit.innerHTML = `<button onclick="editEntry(${idx})">✏️</button>`;
+    const tdDelete = document.createElement('td');
+    tdDelete.innerHTML = `<button onclick="deleteEntry(${idx})">🗑️</button>`;
+
+    tr.appendChild(tdEdit);
+    tr.appendChild(tdDelete);
+    tableBody.appendChild(tr);
+  });
+
+  const trInput = document.createElement('tr');
+  trInput.innerHTML = `
+    <td><input id="placeInput" placeholder="새 관광지 입력란" /></td>
+    <td><input id="feeInput" type="number" placeholder="$ 입력칸" /></td>
+    <td colspan="2"><button onclick="addEntry()">관광지 추가</button></td>
+  `;
+  tableBody.appendChild(trInput);
+}
+
+window.addEntry = async function () {
+  const place = document.getElementById("placeInput").value.trim();
+  const fee = parseFloat(document.getElementById("feeInput").value);
+  if (!place || isNaN(fee)) return alert("정확히 입력해주세요.");
+  currentEntries.push({ place, fee });
+  await saveEntries();
+  document.getElementById("placeInput").value = "";
+  document.getElementById("feeInput").value = "";
 };
 
-window.editEntry = function (key, index) {
-  const entry = addedCourses[key][index];
-  const newPlace = prompt("관광지 이름 수정", entry.place);
-  const newFee = parseFloat(prompt("입장료 수정 ($)", entry.fee));
-
+window.editEntry = function (idx) {
+  const item = currentEntries[idx];
+  const newPlace = prompt("관광지 이름", item.place);
+  const newFee = parseFloat(prompt("입장료 ($)", item.fee));
   if (!newPlace || isNaN(newFee)) return;
-
-  addedCourses[key][index] = { place: newPlace, fee: newFee };
-  saveToFirestore(key);
+  currentEntries[idx] = { place: newPlace, fee: newFee };
+  saveEntries();
 };
 
-window.deleteEntry = function (key, index) {
+window.deleteEntry = function (idx) {
   if (!confirm("정말 삭제하시겠습니까?")) return;
-  addedCourses[key].splice(index, 1);
-  saveToFirestore(key);
+  currentEntries.splice(idx, 1);
+  saveEntries();
 };
 
-async function saveToFirestore(key) {
-  const [country, course] = key.split("__");
-  const docRef = doc(db, "entry_fees", key);
-  await setDoc(docRef, {
+async function saveEntries() {
+  const [country, course] = currentKey.split("__");
+  await setDoc(doc(db, "entry_fees", currentKey), {
     country,
     course,
-    entries: addedCourses[key]
+    entries: currentEntries
   });
-  renderTable();
+  renderEntries();
 }
 
 countrySelect.addEventListener("change", updateCourseSelect);
+courseSelect.addEventListener("change", loadEntries);
+
 loadCourses();
