@@ -144,11 +144,18 @@ window.addAttraction = function(safeKey) {
 function updateAttraction(safeKey, idx) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key) return;
+
+  // ✅ 값 읽기 전에 DOM에서 수동으로 읽어옴
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
-  coursesData[key].attractions[idx].name = nameInput.value;
-  coursesData[key].attractions[idx].fee = parseFloat(feeInput.value) || 0;
+
+  const name = nameInput.value.trim();
+  const fee = parseFloat(feeInput.value) || 0;
+
+  // ✅ 데이터 저장 후 렌더링
+  coursesData[key].attractions[idx].name = name;
+  coursesData[key].attractions[idx].fee = fee;
   renderCourseList();
 }
 
