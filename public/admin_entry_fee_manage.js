@@ -114,7 +114,7 @@ function renderCourseList() {
           <td>${idx === 0 ? courseData.option : ''}</td>
           <td><input id='name_${safeKey}_${idx}' type='text' value='${attraction.name}' /></td>
           <td><input id='fee_${safeKey}_${idx}' type='number' value='${attraction.fee}' /></td>
-          <td><button onclick='updateAttraction("${safeKey}", ${idx})'>저장/수정</button></td>
+          <td><button onclick='handleSaveClick(this)' data-key='${safeKey}' data-idx='${idx}'>저장/수정</button></td>
           <td><button onclick='deleteAttraction("${safeKey}", ${idx})'>삭제</button></td>
         `;
         table.appendChild(row);
@@ -141,7 +141,9 @@ window.addAttraction = function(safeKey) {
   renderCourseList();
 };
 
-function updateAttraction(safeKey, idx) {
+function handleSaveClick(button) {
+  const safeKey = button.getAttribute('data-key');
+  const idx = parseInt(button.getAttribute('data-idx'));
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
@@ -160,8 +162,13 @@ function updateAttraction(safeKey, idx) {
   coursesData[key].attractions[idx].name = name;
   coursesData[key].attractions[idx].fee = fee;
 
-  // ✅ 렌더링을 DOM 이벤트 루프 다음으로 미루기
-  setTimeout(function() {
-    renderCourseList();
-  }, 0);
+  renderCourseList();
+}
+
+function deleteAttraction(safeKey, idx) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
+
+  coursesData[key].attractions.splice(idx, 1);
+  renderCourseList();
 }
