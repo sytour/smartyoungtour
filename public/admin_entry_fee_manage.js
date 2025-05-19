@@ -1,12 +1,15 @@
-// ✅ Firebase 연동 추가
+// ✅ Firebase 연동 (실제 설정 적용)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  // 기타 필요한 설정
+  apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.appspot.com",
+  messagingSenderId: "615207664322",
+  appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+  measurementId: "G-KN3EQNZWLN"
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
