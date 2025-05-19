@@ -13,15 +13,12 @@ const addCourseBtn = document.getElementById("addCourseBtn");
 const tableBody = document.querySelector("tbody");
 
 let allCourses = [];
-let addedCourses = {}; // { "라오스__루앙프라방 일반 3박": [ {place, fee} ] }
+let addedCourses = {}; // key: 국가__코스, value: entries[]
 
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   allCourses = [];
-
-  snapshot.forEach(doc => {
-    allCourses.push(doc.data());
-  });
+  snapshot.forEach(doc => allCourses.push(doc.data()));
 
   const countries = [...new Set(allCourses.map(c => c.country))];
   countrySelect.innerHTML = countries.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -38,40 +35,47 @@ addCourseBtn.addEventListener("click", async () => {
   const country = countrySelect.value;
   const course = courseSelect.value;
   const key = `${country}__${course}`;
+
   if (addedCourses[key]) return;
 
   const docRef = doc(db, "entry_fees", key);
   const docSnap = await getDoc(docRef);
   addedCourses[key] = docSnap.exists() ? docSnap.data().entries : [];
+
   renderTable();
 });
 
 function renderTable() {
-  const sortedKeys = Object.keys(addedCourses).sort((a, b) => a.localeCompare(b, 'ko-KR'));
   tableBody.innerHTML = "";
+
+  const sortedKeys = Object.keys(addedCourses).sort((a, b) => a.localeCompare(b, 'ko-KR'));
 
   sortedKeys.forEach(key => {
     const [country, course] = key.split("__");
     const entries = addedCourses[key];
-    const total = entries.reduce((sum, item) => sum + item.fee, 0);
+    const total = entries.reduce((sum, e) => sum + e.fee, 0);
 
-    entries.forEach((entry, idx) => {
+    entries.forEach((entry, index) => {
       const tr = document.createElement("tr");
 
-      if (idx === 0) {
+      // 국가+코스 열 (첫 줄만 rowspan)
+      if (index === 0) {
         const tdCourse = document.createElement("td");
         tdCourse.rowSpan = entries.length + 1;
         tdCourse.textContent = `${country} - ${course}`;
         tr.appendChild(tdCourse);
       }
 
+      // 관광지 이름
       const tdPlace = document.createElement("td");
       tdPlace.textContent = entry.place;
 
+      // 입장료 ($)
       const tdFee = document.createElement("td");
       tdFee.textContent = `$${entry.fee.toLocaleString()}`;
 
-      if (idx === 0) {
+      // 합계 열 (첫 줄만 rowspan)
+      if (index === 0) {
         const tdTotal = document.createElement("td");
         tdTotal.rowSpan = entries.length + 1;
         tdTotal.textContent = `$${total.toLocaleString()}`;
@@ -83,19 +87,20 @@ function renderTable() {
         tr.appendChild(tdFee);
       }
 
+      // 수정 버튼
       const tdEdit = document.createElement("td");
-      const tdDelete = document.createElement("td");
+      tdEdit.innerHTML = `<button onclick="editEntry('${key}', ${index})">✏️</button>`;
 
-      tdEdit.innerHTML = `<button onclick="editEntry('${key}', ${idx})">✏️</button>`;
-      tdDelete.innerHTML = `<button onclick="deleteEntry('${key}', ${idx})">🗑️</button>`;
+      // 삭제 버튼
+      const tdDelete = document.createElement("td");
+      tdDelete.innerHTML = `<button onclick="deleteEntry('${key}', ${index})">🗑️</button>`;
 
       tr.appendChild(tdEdit);
       tr.appendChild(tdDelete);
-
       tableBody.appendChild(tr);
     });
 
-    // 새 입력 줄
+    // 입력 행 추가
     const trInput = document.createElement("tr");
     trInput.innerHTML = `
       <td><input id="place-${key}" placeholder="새 관광지 입력란" /></td>
@@ -111,12 +116,12 @@ window.addEntry = async function (key) {
   const fee = parseFloat(document.getElementById(`fee-${key}`).value);
 
   if (!place || isNaN(fee)) {
-    alert("관광지 이름과 금액을 정확히 입력해주세요.");
+    alert("정확한 관광지 이름과 금액을 입력해주세요.");
     return;
   }
 
   addedCourses[key].push({ place, fee });
-  await saveEntries(key);
+  await saveToFirestore(key);
 };
 
 window.editEntry = function (key, index) {
@@ -127,16 +132,16 @@ window.editEntry = function (key, index) {
   if (!newPlace || isNaN(newFee)) return;
 
   addedCourses[key][index] = { place: newPlace, fee: newFee };
-  saveEntries(key);
+  saveToFirestore(key);
 };
 
 window.deleteEntry = function (key, index) {
   if (!confirm("정말 삭제하시겠습니까?")) return;
   addedCourses[key].splice(index, 1);
-  saveEntries(key);
+  saveToFirestore(key);
 };
 
-async function saveEntries(key) {
+async function saveToFirestore(key) {
   const [country, course] = key.split("__");
   const docRef = doc(db, "entry_fees", key);
   await setDoc(docRef, {
