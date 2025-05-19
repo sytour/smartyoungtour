@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>선택관광별 입장료 관리</title>
+  <script type="module" src="admin_entry_option_manage.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffdf9;
+      padding: 40px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .form-container, .list-container {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      margin: 0 auto 30px auto;
+    }
+    label {
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    select, input {
+      padding: 6px 10px;
+      margin: 6px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      padding: 8px 14px;
+      background-color: #ff944d;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e67e22;
+    }
+    .entry-list {
+      margin-top: 16px;
+    }
+    .entry-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 6px 0;
+    }
+    .entry-list li span {
+      flex: 1;
+    }
+    .entry-list li button {
+      font-size: 12px;
+      margin-left: 6px;
+    }
+    .total {
+      text-align: right;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>선택관광별 입장료 관리</h2>
+
+  <div class="form-container">
+    <label>국가:</label>
+    <select id="countrySelect"></select>
+
+    <label>코스:</label>
+    <select id="courseSelect"></select>
+
+    <label>옵션 여부:</label>
+    <select id="optionSelect">
+      <option value="옵션유">옵션 유</option>
+      <option value="옵션무">옵션 무</option>
+    </select>
+
+    <div style="margin-top: 20px;">
+      <input type="text" id="placeInput" placeholder="관광지 이름" />
+      <input type="number" id="feeInput" placeholder="$ 입장료" />
+      <button id="addEntryBtn">관광지 추가</button>
+    </div>
+  </div>
+
+  <div class="list-container">
+    <h3 id="entryTitle">등록된 관광지 목록</h3>
+    <ul id="entryList" class="entry-list"></ul>
+    <div class="total" id="entryTotal">합계: $0</div>
+  </div>
+</body>
+</html>
