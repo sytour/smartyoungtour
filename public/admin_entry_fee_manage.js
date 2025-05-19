@@ -11,27 +11,27 @@ const countrySelect = document.getElementById('countrySelect');
 const courseSelect = document.getElementById('courseSelect');
 const addBtn = document.getElementById('addEntryFeeBtn');
 
+let allCourses = [];
+
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   const countries = new Set();
+  allCourses = [];
   snapshot.forEach(doc => {
-    countries.add(doc.data().country);
+    const data = doc.data();
+    countries.add(data.country);
+    allCourses.push(data); // 전체 코스 리스트 저장
   });
 
   countrySelect.innerHTML = [...countries].map(c => `<option value="${c}">${c}</option>`).join('');
-  updateCourseSelect();
+  updateCourseSelect(); // 국가 선택 시 코스 업데이트
 }
 
-async function updateCourseSelect() {
+function updateCourseSelect() {
   const selectedCountry = countrySelect.value;
-  const snapshot = await getDocs(query(collection(db, "courses"), where("country", "==", selectedCountry)));
+  const filtered = allCourses.filter(c => c.country === selectedCountry);
 
-  courseSelect.innerHTML = "";
-  snapshot.forEach(doc => {
-    const { course } = doc.data();
-    courseSelect.innerHTML += `<option value="${course}">${course}</option>`;
-  });
-
+  courseSelect.innerHTML = filtered.map(c => `<option value="${c.course}">${c.course}</option>`).join('');
   loadEntryFees();
 }
 
