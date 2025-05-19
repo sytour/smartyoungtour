@@ -157,20 +157,19 @@ function handleSaveClick(button) {
     return;
   }
 
-  // 👉 coursesData에 바로 반영 (렌더링 없음)
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
   coursesData[key].attractions[idx].name = name;
   coursesData[key].attractions[idx].fee = fee;
 
-  // ✅ UI 피드백 (저장됨 표시)
+  // ✅ UI 피드백
   button.textContent = "✔ 저장됨";
   setTimeout(() => {
     button.textContent = "저장/수정";
   }, 1000);
 
-  // 👉 총 입장료만 다시 표시
+  // ✅ 총 입장료 업데이트만 따로
   const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
   const totalCell = button.closest("table").querySelector("tr:last-child td");
   if (totalCell) {
@@ -178,3 +177,10 @@ function handleSaveClick(button) {
   }
 }
 
+function deleteAttraction(safeKey, idx) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
+
+  coursesData[key].attractions.splice(idx, 1);
+  renderCourseList();
+}
