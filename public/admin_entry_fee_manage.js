@@ -144,16 +144,13 @@ window.addAttraction = function(safeKey) {
 function handleSaveClick(button) {
   const safeKey = button.getAttribute('data-key');
   const idx = parseInt(button.getAttribute('data-idx'), 10);
-
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
 
-  // ✅ 최신 값 반영 강제 blur
   nameInput.blur();
   feeInput.blur();
 
-  // ✅ 값을 프레임 이후에 읽도록 처리
   requestAnimationFrame(() => {
     const name = nameInput.value.trim();
     const fee = parseFloat(feeInput.value);
@@ -169,13 +166,11 @@ function handleSaveClick(button) {
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
 
-    // ✅ 저장 피드백
     button.textContent = "✔ 저장됨";
     setTimeout(() => {
       button.textContent = "저장/수정";
     }, 1000);
 
-    // ✅ 총 입장료 갱신
     const table = button.closest("table");
     const rows = Array.from(table.querySelectorAll("tr"));
     const totalRow = rows.find(r => r.innerText.includes("총 입장료"));
@@ -185,4 +180,12 @@ function handleSaveClick(button) {
       if (td) td.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
     }
   });
+}
+
+function deleteAttraction(safeKey, idx) {
+  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
+  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
+
+  coursesData[key].attractions.splice(idx, 1);
+  renderCourseList();
 }
