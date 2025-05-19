@@ -143,32 +143,38 @@ window.addAttraction = function(safeKey) {
 
 function handleSaveClick(button) {
   const safeKey = button.getAttribute('data-key');
-  const idx = parseInt(button.getAttribute('data-idx'));
+  const idx = parseInt(button.getAttribute('data-idx'), 10);
+
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
 
-  // 🔄 최신 값 확보
   const name = nameInput.value.trim();
   const fee = parseFloat(feeInput.value);
 
-  if (name === '' || isNaN(fee)) {
+  if (!name || isNaN(fee)) {
     alert("관광지 이름과 유효한 입장료를 입력해주세요.");
     return;
   }
 
-  // 🧠 저장
+  // 👉 coursesData에 바로 반영 (렌더링 없음)
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
-  coursesData[key].attractions[idx] = {
-    name,
-    fee
-  };
+  coursesData[key].attractions[idx].name = name;
+  coursesData[key].attractions[idx].fee = fee;
 
-  // ✅ 저장 메시지 출력 (또는 비주얼 피드백)
-  button.innerText = "✔ 저장됨";
+  // ✅ UI 피드백 (저장됨 표시)
+  button.textContent = "✔ 저장됨";
   setTimeout(() => {
-    button.innerText = "저장/수정";
+    button.textContent = "저장/수정";
   }, 1000);
+
+  // 👉 총 입장료만 다시 표시
+  const total = coursesData[key].attractions.reduce((sum, a) => sum + a.fee, 0);
+  const totalCell = button.closest("table").querySelector("tr:last-child td");
+  if (totalCell) {
+    totalCell.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
+  }
 }
+
