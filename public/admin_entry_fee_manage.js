@@ -113,7 +113,7 @@ function renderCourseList() {
           <td>${idx === 0 ? courseData.option : ''}</td>
           <td><input id='name_${key}_${idx}' type='text' value='${attraction.name}' /></td>
           <td><input id='fee_${key}_${idx}' type='number' value='${attraction.fee}' /></td>
-          <td><button onclick='updateAttraction("${key}", ${idx})'>수정</button></td>
+          <td><button onclick='updateAttraction("${key}", ${idx})'>저장/수정</button></td>
           <td><button onclick='deleteAttraction("${key}", ${idx})'>삭제</button></td>
         `;
         table.appendChild(row);
