@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let coursesData = {}; // { "라오스_비엔티안 골프": [{name: "Pha That Luang", fee: 5}, ...] }
+let coursesData = {}; // { "라오스_비엔티안 골프": { option: "유", attractions: [...] } }
 
 window.onload = async function() {
   await loadCourses();
@@ -78,47 +78,59 @@ function renderCourseList() {
   const container = document.getElementById("courseListContainer");
   container.innerHTML = "";
 
+  const table = document.createElement("table");
+  const header = document.createElement("tr");
+  header.innerHTML = `
+    <th>국가</th>
+    <th>코스</th>
+    <th>옵션</th>
+    <th>관광지 이름</th>
+    <th>입장료 (USD)</th>
+    <th>수정</th>
+    <th>삭제</th>
+  `;
+  table.appendChild(header);
+
   Object.keys(coursesData).sort().forEach(key => {
     const [country, course] = key.split("_");
     const courseData = coursesData[key];
-    const list = document.createElement("div");
-    list.style.marginBottom = "24px";
 
-    const table = document.createElement("table");
-    const header = document.createElement("tr");
-    header.innerHTML = `
-      <th style='min-width:150px;'>${country}</th>
-      <th style='min-width:200px;'>${course}</th>
-      <th colspan='2'>옵션: ${courseData.option}</th>
-    `;
-    table.appendChild(header);
-
-    const subHeader = document.createElement("tr");
-    subHeader.innerHTML = `<th>관광지 이름</th><th>입장료 (USD)</th><th>수정</th><th>삭제</th>`;
-    table.appendChild(subHeader);
-
-    let total = 0;
-    courseData.attractions.forEach((attraction, idx) => {
-      total += attraction.fee;
+    if (courseData.attractions.length === 0) {
       const row = document.createElement("tr");
       row.innerHTML = `
-        <td><input type='text' value='${attraction.name}' onchange='updateAttractionName("${key}", ${idx}, this.value)'/></td>
-        <td><input type='number' value='${attraction.fee}' onchange='updateAttractionFee("${key}", ${idx}, this.value)'/></td>
-        <td><button onclick='updateAttraction("${key}", ${idx})'>수정</button></td>
-        <td><button onclick='deleteAttraction("${key}", ${idx})'>삭제</button></td>
+        <td>${country}</td>
+        <td>${course}</td>
+        <td>${courseData.option}</td>
+        <td colspan='4'><em>아직 입력된 관광지가 없습니다</em></td>
       `;
       table.appendChild(row);
-    });
+    } else {
+      courseData.attractions.forEach((attraction, idx) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${idx === 0 ? country : ''}</td>
+          <td>${idx === 0 ? course : ''}</td>
+          <td>${idx === 0 ? courseData.option : ''}</td>
+          <td><input type='text' value='${attraction.name}' onchange='updateAttractionName("${key}", ${idx}, this.value)'/></td>
+          <td><input type='number' value='${attraction.fee}' onchange='updateAttractionFee("${key}", ${idx}, this.value)'/></td>
+          <td><button onclick='updateAttraction("${key}", ${idx})'>수정</button></td>
+          <td><button onclick='deleteAttraction("${key}", ${idx})'>삭제</button></td>
+        `;
+        table.appendChild(row);
+      });
+    }
 
     const totalRow = document.createElement("tr");
-    totalRow.innerHTML = `<td colspan='4'><strong>총 입장료: ${total.toFixed(2)} USD</strong></td>`;
+    const total = courseData.attractions.reduce((sum, a) => sum + a.fee, 0);
+    totalRow.innerHTML = `<td colspan='7'><strong>총 입장료: ${total.toFixed(2)} USD</strong></td>`;
     table.appendChild(totalRow);
 
-    list.appendChild(table);
-    list.innerHTML += `<button onclick='addAttraction("${key}")' style='margin-top:10px;'>관광지 추가</button>`;
-
-    container.appendChild(list);
+    const addRow = document.createElement("tr");
+    addRow.innerHTML = `<td colspan='7'><button onclick='addAttraction("${key}")'>관광지 추가</button></td>`;
+    table.appendChild(addRow);
   });
+
+  container.appendChild(table);
 }
 
 window.addAttraction = function(key) {
