@@ -162,7 +162,9 @@ function handleSaveClick(button) {
   coursesData[key].attractions[idx].name = name;
   coursesData[key].attractions[idx].fee = fee;
 
-  renderCourseList();
+  setTimeout(() => {
+    renderCourseList();
+  }, 0);
 }
 
 function deleteAttraction(safeKey, idx) {
