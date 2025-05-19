@@ -8,107 +8,75 @@
     body {
       font-family: Arial, sans-serif;
       background-color: #fffdf9;
-      margin: 0;
       padding: 40px;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .container {
+    .top-form {
       display: flex;
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 30px;
     }
-    .course-list, .entry-section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      flex: 1;
-    }
-    .course-list ul {
-      list-style: none;
-      padding-left: 0;
-    }
-    .course-list li {
+    select, button {
       padding: 8px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
-    .course-list li:hover {
-      background-color: #f0f0f0;
-    }
-    input, select {
-      padding: 6px 10px;
-      margin: 6px 0;
-      border: 1px solid #ccc;
       border-radius: 6px;
+      border: 1px solid #ccc;
       font-size: 14px;
-      width: 100%;
     }
     button {
-      padding: 8px 14px;
       background-color: #ff944d;
       color: white;
       border: none;
-      border-radius: 6px;
       cursor: pointer;
-      margin-top: 8px;
     }
     button:hover {
       background-color: #e67e22;
     }
-    .entry-list {
-      margin-top: 20px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
     }
-    .entry-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
     }
-    .entry-list li span {
-      flex: 1;
+    th {
+      background-color: #f7f7f7;
     }
-    .entry-list li button {
-      margin-left: 6px;
-      padding: 4px 8px;
-      font-size: 12px;
-    }
-    .total {
-      font-weight: bold;
-      margin-top: 10px;
-      text-align: right;
+    td input {
+      padding: 6px;
+      width: 90%;
     }
   </style>
 </head>
 <body>
   <h2>입장료 요금 관리</h2>
-  <div class="container">
-    <div class="course-list">
-      <label>국가:</label>
-      <select id="countrySelect"></select>
 
-      <label>코스:</label>
-      <select id="courseSelect"></select>
+  <div class="top-form">
+    <label for="countrySelect">국가:</label>
+    <select id="countrySelect"></select>
 
-      <button id="addCourseBtn">코스 추가</button>
+    <label for="courseSelect">코스:</label>
+    <select id="courseSelect"></select>
 
-      <ul id="courseList"></ul>
-    </div>
-
-    <div class="entry-section">
-      <h3 id="selectedCourseTitle">선택된 코스: 없음</h3>
-      <input type="text" id="placeInput" placeholder="관광지 이름 입력" />
-      <input type="number" id="feeInput" placeholder="입장료 (₩)" />
-      <button id="addEntryFeeBtn">관광지 추가</button>
-
-      <ul id="entryFeeList" class="entry-list"></ul>
-      <div class="total" id="totalFee">총 합계: ₩0</div>
-    </div>
+    <button id="addCourseBtn">코스 추가</button>
   </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>국가+코스</th>
+        <th>관광지 이름</th>
+        <th>입장료</th>
+        <th>합계</th>
+        <th>수정</th>
+        <th>삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- JS가 동적으로 코스와 관광지를 추가합니다 -->
+    </tbody>
+  </table>
 </body>
 </html>
