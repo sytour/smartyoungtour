@@ -70,7 +70,7 @@ window.addCourse = function() {
   const key = `${country}_${course}`;
   if (coursesData[key]) return;
 
-  coursesData[key] = []; // 빈 관광지 목록으로 시작
+  coursesData[key] = { option: option.value, attractions: [] };
   renderCourseList();
 };
 
@@ -80,18 +80,25 @@ function renderCourseList() {
 
   Object.keys(coursesData).sort().forEach(key => {
     const [country, course] = key.split("_");
+    const courseData = coursesData[key];
     const list = document.createElement("div");
-    list.innerHTML = `<h3>${country} - ${course}</h3>`;
-
-    const addRowBtn = `<button onclick='addAttraction("${key}")'>관광지 추가</button>`;
+    list.style.marginBottom = "24px";
 
     const table = document.createElement("table");
     const header = document.createElement("tr");
-    header.innerHTML = `<th>관광지 이름</th><th>입장료 (USD)</th><th>수정</th><th>삭제</th>`;
+    header.innerHTML = `
+      <th style='min-width:150px;'>${country}</th>
+      <th style='min-width:200px;'>${course}</th>
+      <th colspan='2'>옵션: ${courseData.option}</th>
+    `;
     table.appendChild(header);
 
+    const subHeader = document.createElement("tr");
+    subHeader.innerHTML = `<th>관광지 이름</th><th>입장료 (USD)</th><th>수정</th><th>삭제</th>`;
+    table.appendChild(subHeader);
+
     let total = 0;
-    coursesData[key].forEach((attraction, idx) => {
+    courseData.attractions.forEach((attraction, idx) => {
       total += attraction.fee;
       const row = document.createElement("tr");
       row.innerHTML = `
@@ -108,26 +115,27 @@ function renderCourseList() {
     table.appendChild(totalRow);
 
     list.appendChild(table);
-    list.innerHTML += addRowBtn;
+    list.innerHTML += `<button onclick='addAttraction("${key}")' style='margin-top:10px;'>관광지 추가</button>`;
+
     container.appendChild(list);
   });
 }
 
 window.addAttraction = function(key) {
-  coursesData[key].push({ name: "", fee: 0 });
+  coursesData[key].attractions.push({ name: "", fee: 0 });
   renderCourseList();
 };
 
 function updateAttractionName(key, idx, value) {
-  coursesData[key][idx].name = value;
+  coursesData[key].attractions[idx].name = value;
 }
 function updateAttractionFee(key, idx, value) {
-  coursesData[key][idx].fee = parseFloat(value);
+  coursesData[key].attractions[idx].fee = parseFloat(value);
 }
 function updateAttraction(key, idx) {
   renderCourseList();
 }
 function deleteAttraction(key, idx) {
-  coursesData[key].splice(idx, 1);
+  coursesData[key].attractions.splice(idx, 1);
   renderCourseList();
 }
