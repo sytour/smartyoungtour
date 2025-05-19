@@ -148,34 +148,27 @@ function handleSaveClick(button) {
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
 
-  // ✅ 강제 blur 처리로 최신 값 반영 유도
-  nameInput.blur();
-  feeInput.blur();
+  // 🔄 최신 값 확보
+  const name = nameInput.value.trim();
+  const fee = parseFloat(feeInput.value);
 
-  // ✅ 최신 값을 다음 프레임에서 안전하게 읽기
-  requestAnimationFrame(() => {
-    const name = nameInput.value.trim();
-    const fee = parseFloat(feeInput.value);
+  if (name === '' || isNaN(fee)) {
+    alert("관광지 이름과 유효한 입장료를 입력해주세요.");
+    return;
+  }
 
-    if (name === '' || isNaN(fee)) {
-      alert("관광지 이름과 유효한 입장료를 입력해주세요.");
-      return;
-    }
-
-    const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-    if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
-
-    coursesData[key].attractions[idx].name = name;
-    coursesData[key].attractions[idx].fee = fee;
-
-    renderCourseList();
-  });
-}
-
-function deleteAttraction(safeKey, idx) {
+  // 🧠 저장
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
 
-  coursesData[key].attractions.splice(idx, 1);
-  renderCourseList();
+  coursesData[key].attractions[idx] = {
+    name,
+    fee
+  };
+
+  // ✅ 저장 메시지 출력 (또는 비주얼 피드백)
+  button.innerText = "✔ 저장됨";
+  setTimeout(() => {
+    button.innerText = "저장/수정";
+  }, 1000);
 }
