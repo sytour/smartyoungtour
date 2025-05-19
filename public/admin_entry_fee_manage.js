@@ -144,9 +144,14 @@ window.addAttraction = function(safeKey) {
 function handleSaveClick(button) {
   const safeKey = button.getAttribute('data-key');
   const idx = parseInt(button.getAttribute('data-idx'));
+
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
+
+  // ✅ 입력값 강제 반영 (focus → blur 트리거)
+  nameInput.blur();
+  feeInput.blur();
 
   const name = nameInput.value.trim();
   const fee = parseFloat(feeInput.value);
@@ -165,12 +170,4 @@ function handleSaveClick(button) {
   setTimeout(() => {
     renderCourseList();
   }, 0);
-}
-
-function deleteAttraction(safeKey, idx) {
-  const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
-  if (!key || !coursesData[key] || !coursesData[key].attractions[idx]) return;
-
-  coursesData[key].attractions.splice(idx, 1);
-  renderCourseList();
 }
