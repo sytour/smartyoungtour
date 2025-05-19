@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>입장료 요금 관리</title>
   <script type="module" src="admin_entry_fee_manage.js"></script>
   <style>
@@ -10,22 +11,34 @@
       background-color: #fffdf9;
       padding: 40px;
     }
-    .top-form {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 30px;
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
     }
-    select, button {
-      padding: 8px;
-      border-radius: 6px;
+    .form-container, .list-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+    }
+    label {
+      font-weight: bold;
+    }
+    select, input {
+      padding: 6px 10px;
+      margin: 6px;
       border: 1px solid #ccc;
+      border-radius: 6px;
       font-size: 14px;
     }
     button {
+      padding: 8px 14px;
       background-color: #ff944d;
       color: white;
       border: none;
+      border-radius: 6px;
       cursor: pointer;
     }
     button:hover {
@@ -34,49 +47,49 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      margin-top: 20px;
     }
     th, td {
       padding: 12px;
       text-align: center;
-      border-bottom: 1px solid #ddd;
+      border: 1px solid #ccc;
     }
     th {
       background-color: #f7f7f7;
     }
-    td input {
-      padding: 6px;
+    input[type="text"], input[type="number"] {
       width: 90%;
+      padding: 6px;
     }
   </style>
 </head>
 <body>
   <h2>입장료 요금 관리</h2>
 
-  <div class="top-form">
-    <label for="countrySelect">국가:</label>
+  <div class="form-container">
+    <label>국가:</label>
     <select id="countrySelect"></select>
 
-    <label for="courseSelect">코스:</label>
+    <label>코스:</label>
     <select id="courseSelect"></select>
-
-    <button id="addCourseBtn">코스 추가</button>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>국가+코스</th>
-        <th>관광지 이름</th>
-        <th>입장료</th>
-        <th>합계</th>
-        <th>수정</th>
-        <th>삭제</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- JS가 동적으로 코스와 관광지를 추가합니다 -->
-    </tbody>
-  </table>
+  <div class="list-container">
+    <table>
+      <thead>
+        <tr>
+          <th>국가+코스</th>
+          <th>관광지 이름</th>
+          <th>입장료</th>
+          <th>합계</th>
+          <th>수정</th>
+          <th>삭제</th>
+        </tr>
+      </thead>
+      <tbody id="entryTableBody">
+        <!-- 자바스크립트로 채워짐 -->
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
