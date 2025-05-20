@@ -75,66 +75,7 @@
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
-    authDomain: "smartyoungtour.firebaseapp.com",
-    projectId: "smartyoungtour",
-    storageBucket: "smartyoungtour.appspot.com",
-    messagingSenderId: "615207664322",
-    appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-    measurementId: "G-KN3EQNZWLN"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  window.onload = async function () {
-    await renderAllSavedGuideCosts();
-
-    const countrySelect = document.getElementById("countrySelect");
-    const courseSelect = document.getElementById("courseSelect");
-    const filterSelect = document.getElementById("filterCountry");
-    filterSelect.innerHTML = '<option value="">전체</option>';
-
-    const snapshot = await getDocs(collection(db, 'courses'));
-    const countryMap = {};
-
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      if (!countryMap[data.country]) countryMap[data.country] = [];
-      countryMap[data.country].push(data.course);
-    });
-
-    Object.keys(countryMap).sort().forEach(country => {
-      const opt1 = document.createElement("option");
-      opt1.value = country;
-      opt1.textContent = country;
-      countrySelect.appendChild(opt1);
-
-      const opt2 = document.createElement("option");
-      opt2.value = country;
-      opt2.textContent = country;
-      filterSelect.appendChild(opt2);
-    });
-
-    countrySelect.onchange = () => {
-      const selected = countrySelect.value;
-      courseSelect.innerHTML = "";
-      (countryMap[selected] || []).sort().forEach(course => {
-        const opt = document.createElement("option");
-        opt.value = course;
-        opt.textContent = course;
-        courseSelect.appendChild(opt);
-      });
-    };
-
-    countrySelect.dispatchEvent(new Event("change"));
-  };
-</script>
+<script type="module" src="admin_guide_cost_manage.js"></script>
 <script>
   window.updateTotal = function (key, nights) {
     const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
