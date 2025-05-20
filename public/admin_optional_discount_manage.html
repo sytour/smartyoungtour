@@ -22,19 +22,25 @@
       text-align: center;
       margin-bottom: 30px;
     }
+    .row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
     label {
-      display: block;
-      margin-top: 20px;
       font-weight: bold;
+      min-width: 60px;
     }
     select, input[type="number"] {
       padding: 6px;
-      width: 100%;
-      margin-top: 6px;
+      font-size: 14px;
+      width: auto;
+      max-width: 300px;
     }
     button {
-      margin-top: 20px;
-      padding: 8px 20px;
+      margin-top: 12px;
+      padding: 6px 16px;
       font-weight: bold;
     }
     table {
@@ -54,20 +60,26 @@
   <div class="container">
     <h2>선택관광 할인 관리</h2>
 
-    <label>국가</label>
-    <select id="country"><option value="">선택</option></select>
+    <div class="row">
+      <label for="country">국가</label>
+      <select id="country"><option value="">선택</option></select>
 
-    <label>코스</label>
-    <select id="course"><option value="">선택</option></select>
+      <label for="course">코스</label>
+      <select id="course"><option value="">선택</option></select>
+    </div>
 
-    <label>옵션 여부</label>
-    <select id="optionType">
-      <option value="옵션 유">옵션 유</option>
-      <option value="옵션 무">옵션 무</option>
-    </select>
+    <div class="row">
+      <label for="optionType">옵션</label>
+      <select id="optionType">
+        <option value="옵션 유">옵션 유</option>
+        <option value="옵션 무">옵션 무</option>
+      </select>
+    </div>
 
-    <label>기본 할인 (1인)</label>
-    <input type="number" id="baseDiscount" placeholder="USD">
+    <div class="row">
+      <label for="baseDiscount">기본 할인</label>
+      <input type="number" id="baseDiscount" placeholder="USD" style="width: 100px;">
+    </div>
 
     <div id="groupDiscountContainer">
       <h4>인원별 추가 할인</h4>
@@ -78,11 +90,14 @@
     <hr/>
 
     <h3>저장된 할인 목록</h3>
-    <label>국가 필터</label>
-    <select id="filterCountry"><option value="">전체</option></select>
 
-    <label>코스 필터</label>
-    <select id="filterCourse"><option value="">전체</option></select>
+    <div class="row">
+      <label for="filterCountry">국가</label>
+      <select id="filterCountry"><option value="">전체</option></select>
+
+      <label for="filterCourse">코스</label>
+      <select id="filterCourse"><option value="">전체</option></select>
+    </div>
     <button onclick="loadDiscounts()">조회</button>
 
     <table>
