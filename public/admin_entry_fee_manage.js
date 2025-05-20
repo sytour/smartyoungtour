@@ -14,7 +14,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let coursesData = {}; // { "라오스_비엔티안골프": { option: "유", attractions: [...] } }
+let coursesData = {}; // { "라오스_비엔티안골프_유": { option: "유", attractions: [...] } }
 
 window.onload = async function () {
   await loadCourses();
@@ -70,8 +70,11 @@ window.addCourse = function () {
     return;
   }
 
-  const key = `${country}_${course}`;
-  if (coursesData[key]) return;
+  const key = `${country}_${course}_${option.value}`; // ✅ 옵션까지 포함
+  if (coursesData[key]) {
+    alert("이미 동일한 국가/코스/옵션 조합이 추가되었습니다.");
+    return;
+  }
 
   coursesData[key] = { option: option.value, attractions: [] };
   renderCourseList();
@@ -96,7 +99,7 @@ function renderCourseList() {
 
   Object.keys(coursesData).sort().forEach(key => {
     const safeKey = key.replace(/\s+/g, '_');
-    const [country, course] = key.split("_");
+    const [country, course, optionValue] = key.split("_");
     const courseData = coursesData[key];
 
     if (courseData.attractions.length === 0) {
@@ -169,7 +172,6 @@ window.handleSaveClick = function(button) {
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
 
-    // ✅ 로그 추가
     console.log("🚀 저장 시작:", safeKey, coursesData[key]);
     await setDoc(doc(db, "entryFees", safeKey), coursesData[key]);
     console.log("✅ Firestore 저장 완료");
