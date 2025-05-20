@@ -18,6 +18,7 @@ let coursesData = {}; // { "라오스_비엔티안골프_유": { option: "유", 
 
 window.onload = async function () {
   await loadCourses();
+  await loadSavedEntryFees(); // ✅ 저장된 entryFees 불러오기
   renderCourseList();
 };
 
@@ -60,6 +61,15 @@ async function loadCourses() {
   countrySelect.dispatchEvent(new Event("change"));
 }
 
+async function loadSavedEntryFees() {
+  const snapshot = await getDocs(collection(db, 'entryFees'));
+  snapshot.forEach(docSnap => {
+    const key = docSnap.id.replace(/\s+/g, '_'); // safeKey와 맞추기
+    const data = docSnap.data();
+    coursesData[key] = data;
+  });
+}
+
 window.addCourse = function () {
   const country = document.getElementById("countrySelect").value;
   const course = document.getElementById("courseSelect").value;
@@ -70,7 +80,7 @@ window.addCourse = function () {
     return;
   }
 
-  const key = `${country}_${course}_${option.value}`; // ✅ 옵션까지 포함
+  const key = `${country}_${course}_${option.value}`;
   if (coursesData[key]) {
     alert("이미 동일한 국가/코스/옵션 조합이 추가되었습니다.");
     return;
