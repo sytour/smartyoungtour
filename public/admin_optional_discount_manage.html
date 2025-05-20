@@ -2,22 +2,58 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>SMARTYOUNG TOUR - 선택관광 할인 관리</title>
+  <title>선택관광 할인 관리</title>
   <style>
-    body { font-family: Arial, sans-serif; background-color: #fdfaf5; padding: 40px; }
-    h2 { font-size: 24px; margin-bottom: 24px; }
-    label { display: block; margin-top: 12px; font-weight: bold; }
-    select, input[type="number"] { padding: 6px; margin-top: 4px; width: 300px; }
-    button { margin-top: 16px; padding: 6px 14px; }
-    table { margin-top: 24px; border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffdf7;
+      padding: 40px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.06);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    select, input[type="number"] {
+      padding: 6px;
+      width: 100%;
+      margin-top: 6px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 8px 20px;
+      font-weight: bold;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
   </style>
   <script type="module" src="admin_optional_discount_manage.js"></script>
 </head>
 <body>
-  <h2>선택관광 할인 관리</h2>
+  <div class="container">
+    <h2>선택관광 할인 관리</h2>
 
-  <div>
     <label>국가</label>
     <select id="country"><option value="">선택</option></select>
 
@@ -36,21 +72,17 @@
     <div id="groupDiscountContainer">
       <h4>인원별 추가 할인</h4>
     </div>
-
-    <button onclick="addGroupDiscountField()">+ 인원별 할인 추가</button><br>
+    <button onclick="addGroupDiscountField()">+ 인원별 할인 추가</button>
     <button onclick="saveDiscount()">저장</button>
-  </div>
 
-  <hr/>
+    <hr/>
 
-  <div>
     <h3>저장된 할인 목록</h3>
     <label>국가 필터</label>
     <select id="filterCountry"><option value="">전체</option></select>
 
     <label>코스 필터</label>
     <select id="filterCourse"><option value="">전체</option></select>
-
     <button onclick="loadDiscounts()">조회</button>
 
     <table>
@@ -61,7 +93,7 @@
           <th>옵션</th>
           <th>기본 할인</th>
           <th>인원별 추가 할인</th>
-          <th>관리</th>
+          <th>삭제</th>
         </tr>
       </thead>
       <tbody id="discountTable"></tbody>
