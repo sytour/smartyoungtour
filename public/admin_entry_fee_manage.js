@@ -14,11 +14,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let coursesData = {}; // { "라오스_비엔티안골프_유": { option: "유", attractions: [...] } }
+let coursesData = {}; // 전체 데이터
+let selectedFilterCountry = "전체"; // 필터 국가
 
 window.onload = async function () {
   await loadCourses();
-  await loadSavedEntryFees(); // ✅ 저장된 entryFees 불러오기
+  await loadSavedEntryFees();
+  renderCountryFilterDropdown(); // ✅ 필터 드롭다운 생성
   renderCourseList();
 };
 
@@ -64,10 +66,39 @@ async function loadCourses() {
 async function loadSavedEntryFees() {
   const snapshot = await getDocs(collection(db, 'entryFees'));
   snapshot.forEach(docSnap => {
-    const key = docSnap.id.replace(/\s+/g, '_'); // safeKey와 맞추기
+    const key = docSnap.id.replace(/\s+/g, '_');
     const data = docSnap.data();
     coursesData[key] = data;
   });
+}
+
+function renderCountryFilterDropdown() {
+  const filterContainer = document.getElementById("filterContainer");
+  if (!filterContainer) return;
+
+  const countries = new Set(["전체"]);
+  Object.keys(coursesData).forEach(key => {
+    const parts = key.split("_");
+    if (parts.length >= 1) countries.add(parts[0]);
+  });
+
+  const select = document.createElement("select");
+  select.id = "entryFeesCountryFilter";
+  select.style.marginBottom = "20px";
+  countries.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c;
+    opt.innerText = c;
+    select.appendChild(opt);
+  });
+
+  select.onchange = () => {
+    selectedFilterCountry = select.value;
+    renderCourseList();
+  };
+
+  filterContainer.innerHTML = "<label><strong>국가별 보기:</strong></label> ";
+  filterContainer.appendChild(select);
 }
 
 window.addCourse = function () {
@@ -111,6 +142,10 @@ function renderCourseList() {
     const safeKey = key.replace(/\s+/g, '_');
     const [country, course, optionValue] = key.split("_");
     const courseData = coursesData[key];
+
+    if (selectedFilterCountry !== "전체" && selectedFilterCountry !== country) {
+      return; // 국가 필터 조건과 불일치 → 스킵
+    }
 
     if (courseData.attractions.length === 0) {
       const row = document.createElement("tr");
@@ -157,9 +192,9 @@ window.addAttraction = function (safeKey) {
   renderCourseList();
 };
 
-window.handleSaveClick = function(button) {
-  const safeKey = button.getAttribute('data-key');
-  const idx = parseInt(button.getAttribute('data-idx'), 10);
+window.handleSaveClick = function (button) {
+  const safeKey = button.getAttribute("data-key");
+  const idx = parseInt(button.getAttribute("data-idx"), 10);
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
   const feeInput = document.getElementById(`fee_${safeKey}_${idx}`);
   if (!nameInput || !feeInput) return;
