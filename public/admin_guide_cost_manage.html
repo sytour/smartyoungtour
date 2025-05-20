@@ -47,6 +47,9 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    #savedTables {
+      margin-top: 40px;
+    }
   </style>
 </head>
 <body>
@@ -59,8 +62,17 @@
     <select id="courseSelect"></select>
     <button onclick="addGuideCostRows()">코스 추가</button>
   </div>
+
   <div id="tableContainer"></div>
+
+  <div id="savedTables">
+    <h3>📌 저장된 국가별 가이드 비용 보기</h3>
+    <label>국가 선택:</label>
+    <select id="filterCountry" onchange="filterSavedByCountry()"></select>
+    <div id="savedView"></div>
+  </div>
 </div>
+
 <script type="module" src="admin_guide_cost_manage.js"></script>
 <script>
   window.updateTotal = function (key, nights) {
