@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, addDoc, deleteDoc, doc
+  getFirestore, collection, getDocs, setDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 // ✅ 실제 Firebase 설정
@@ -87,7 +87,7 @@ function resetFormFields() {
 }
 
 async function saveDiscount() {
-  console.log("✅ saveDiscount 함수 실행됨");  // 🔍 함수 실행 여부 확인 로그
+  console.log("✅ saveDiscount 함수 실행됨");
 
   const country = countrySelect.value;
   const course = courseSelect.value;
@@ -110,7 +110,10 @@ async function saveDiscount() {
   }
 
   try {
-    await addDoc(collection(db, "optional_discounts"), {
+    const docId = `${country}_${course}_${option}`; // 예: 라오스_방비엥 일반_옵션 유
+    const ref = doc(db, "optional_discounts", docId);
+
+    await setDoc(ref, {
       country,
       course,
       option,
@@ -122,7 +125,7 @@ async function saveDiscount() {
     await loadDiscounts();
     resetFormFields();
   } catch (e) {
-    console.error("저장 오류:", e);
+    console.error("❌ 저장 오류:", e);
     alert("저장에 실패했습니다. 콘솔을 확인해주세요.");
   }
 }
