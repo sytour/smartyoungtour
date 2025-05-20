@@ -20,6 +20,7 @@ let courses = [];
 window.onload = async function () {
   const countrySelect = document.getElementById("countrySelect");
   const courseSelect = document.getElementById("courseSelect");
+  const filterSelect = document.getElementById("filterCountry");
   const snapshot = await getDocs(collection(db, 'courses'));
   const countryMap = {};
 
@@ -30,10 +31,15 @@ window.onload = async function () {
   });
 
   Object.keys(countryMap).sort().forEach(country => {
-    const opt = document.createElement("option");
-    opt.value = country;
-    opt.textContent = country;
-    countrySelect.appendChild(opt);
+    const opt1 = document.createElement("option");
+    opt1.value = country;
+    opt1.textContent = country;
+    countrySelect.appendChild(opt1);
+
+    const opt2 = document.createElement("option");
+    opt2.value = country;
+    opt2.textContent = country;
+    filterSelect.appendChild(opt2);
   });
 
   countrySelect.onchange = () => {
@@ -102,7 +108,7 @@ window.addGuideCostRows = function () {
 window.updateTotal = function (key, nights) {
   const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
   const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel')) * 1;
-  document.getElementById(`${key}_sum_${nights}`).innerText = sum.toFixed(2) + ' USD';
+  document.getElementById(`${key}_sum_${nights}`).innerText = `총합이 ${sum.toFixed(2)}$`;
 };
 
 window.saveGuideCost = async function (country, course, nights) {
@@ -123,4 +129,48 @@ window.saveGuideCost = async function (country, course, nights) {
 
   await setDoc(ref, data);
   alert(`${nights}박 저장 완료`);
+
+  // 하단에 표시도 갱신
+  if (document.getElementById("filterCountry").value === country) {
+    filterSavedByCountry();
+  }
+};
+
+window.filterSavedByCountry = async function () {
+  const selected = document.getElementById("filterCountry").value;
+  const view = document.getElementById("savedView");
+  view.innerHTML = "";
+
+  const snapshot = await getDocs(collection(db, 'guideCosts'));
+  snapshot.forEach(docSnap => {
+    const [country, course] = docSnap.id.split("_");
+    if (country !== selected) return;
+
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    thead.innerHTML = `
+      <tr><th colspan="7">${country} - ${course}</th></tr>
+      <tr><th>박수</th><th>🇰🇷 일비</th><th>🇰🇷 숙박비</th><th>🇱🇦 일비</th><th>🇱🇦 숙박비</th><th>총합</th></tr>
+    `;
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    const data = docSnap.data();
+    Object.keys(data).sort().forEach(dayKey => {
+      const val = data[dayKey];
+      const sum = (val.korean.daily + val.korean.hotel + val.local.daily + val.local.hotel).toFixed(2);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${dayKey}</td>
+        <td>${val.korean.daily}</td>
+        <td>${val.korean.hotel}</td>
+        <td>${val.local.daily}</td>
+        <td>${val.local.hotel}</td>
+        <td>${sum} USD</td>
+      `;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    view.appendChild(table);
+  });
 };
