@@ -18,6 +18,7 @@ const db = getFirestore(app);
 let courses = [];
 
 window.onload = async function () {
+  await renderAllSavedGuideCosts();
   const countrySelect = document.getElementById("countrySelect");
   const courseSelect = document.getElementById("courseSelect");
   const filterSelect = document.getElementById("filterCountry");
@@ -130,6 +131,9 @@ window.saveGuideCost = async function (country, course, nights) {
   await setDoc(ref, data);
   alert(`${nights}박 저장 완료`);
 
+  await renderAllSavedGuideCosts();
+  alert(`${nights}박 저장 완료`);
+
   if (document.getElementById("filterCountry").value === country) {
     filterSavedByCountry();
   }
@@ -145,20 +149,32 @@ window.deleteGuideCost = async function (country, course, nightKey) {
   delete data[nightKey];
   await setDoc(ref, data);
   alert(`${nightKey} 삭제 완료`);
+  await renderAllSavedGuideCosts();
+  alert(`${nightKey} 삭제 완료`);
   filterSavedByCountry();
 };
 
 window.filterSavedByCountry = async function () {
   const selected = document.getElementById("filterCountry").value;
   const view = document.getElementById("savedView");
-  view.innerHTML = "";
+  const allTables = view.querySelectorAll("table");
+  allTables.forEach(table => {
+    if (!selected || table.getAttribute("data-country") === selected) {
+      table.style.display = "table";
+    } else {
+      table.style.display = "none";
+    }
+  });
+};
 
+window.renderAllSavedGuideCosts = async function () {
+  const view = document.getElementById("savedView");
+  view.innerHTML = "";
   const snapshot = await getDocs(collection(db, 'guideCosts'));
   snapshot.forEach(docSnap => {
     const [country, course] = docSnap.id.split("_");
-    if (country !== selected) return;
-
     const table = document.createElement("table");
+    table.setAttribute("data-country", country);
     const thead = document.createElement("thead");
     thead.innerHTML = `
       <tr><th colspan="8">${country} - ${course}</th></tr>
@@ -206,6 +222,8 @@ window.saveEdited = async function (country, course, dayKey) {
     local: { daily: locd, hotel: loch }
   };
   await setDoc(ref, data);
+  alert(`${dayKey} 수정 완료`);
+  await renderAllSavedGuideCosts();
   alert(`${dayKey} 수정 완료`);
   filterSavedByCountry();
 };
