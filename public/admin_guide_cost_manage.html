@@ -68,7 +68,9 @@
   <div id="savedTables">
     <h3>📌 저장된 국가별 가이드 비용 보기</h3>
     <label>국가 선택:</label>
-    <select id="filterCountry" onchange="filterSavedByCountry()"></select>
+    <select id="filterCountry" onchange="filterSavedByCountry()">
+      <option value="">전체</option>
+    </select>
     <div id="savedView"></div>
   </div>
 </div>
