@@ -87,6 +87,8 @@ function resetFormFields() {
 }
 
 async function saveDiscount() {
+  console.log("✅ saveDiscount 함수 실행됨");  // 🔍 함수 실행 여부 확인 로그
+
   const country = countrySelect.value;
   const course = courseSelect.value;
   const option = document.getElementById("optionType").value;
