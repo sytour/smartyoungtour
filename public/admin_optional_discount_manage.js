@@ -1,7 +1,6 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot
+  getFirestore, collection, getDocs, addDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -18,35 +17,50 @@ const db = getFirestore(app);
 
 const countrySelect = document.getElementById("country");
 const courseSelect = document.getElementById("course");
+const filterCountry = document.getElementById("filterCountry");
+const filterCourse = document.getElementById("filterCourse");
 const discountTable = document.querySelector("#discountTable tbody");
 const groupDiscountContainer = document.getElementById("groupDiscountContainer");
 
+let countryCourseMap = {};
+
 async function loadCountryAndCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
-  const map = {};
+  countryCourseMap = {};
+
   snapshot.forEach(doc => {
     const data = doc.data();
-    if (!map[data.country]) map[data.country] = [];
-    map[data.country].push(data.course);
+    if (!countryCourseMap[data.country]) countryCourseMap[data.country] = [];
+    countryCourseMap[data.country].push(data.course);
   });
 
-  countrySelect.innerHTML = "<option value=''>국가 선택</option>";
-  Object.keys(map).sort().forEach(c => {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    countrySelect.appendChild(opt);
+  [countrySelect, filterCountry].forEach(sel => {
+    sel.innerHTML = "<option value=''>국가 선택</option>";
+    Object.keys(countryCourseMap).sort().forEach(c => {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      sel.appendChild(opt);
+    });
   });
 
   countrySelect.addEventListener("change", () => {
-    const selected = countrySelect.value;
-    courseSelect.innerHTML = "<option value=''>코스 선택</option>";
-    (map[selected] || []).forEach(course => {
-      const opt = document.createElement("option");
-      opt.value = course;
-      opt.textContent = course;
-      courseSelect.appendChild(opt);
-    });
+    updateCourseSelect(countrySelect, courseSelect);
+  });
+
+  filterCountry.addEventListener("change", () => {
+    updateCourseSelect(filterCountry, filterCourse);
+  });
+}
+
+function updateCourseSelect(countryDropdown, courseDropdown) {
+  const selected = countryDropdown.value;
+  courseDropdown.innerHTML = "<option value=''>코스 선택</option>";
+  (countryCourseMap[selected] || []).forEach(course => {
+    const opt = document.createElement("option");
+    opt.value = course;
+    opt.textContent = course;
+    courseDropdown.appendChild(opt);
   });
 }
 
@@ -82,14 +96,22 @@ async function saveDiscount() {
     baseDiscountPerPerson: baseDiscount,
     customGroupDiscounts: groupDiscounts
   });
+
+  alert("저장되었습니다.");
+  loadDiscounts();
 }
 
 function loadDiscounts() {
-  const q = collection(db, "optional_discounts");
-  onSnapshot(q, snapshot => {
+  const selectedCountry = filterCountry.value;
+  const selectedCourse = filterCourse.value;
+
+  getDocs(collection(db, "optional_discounts")).then(snapshot => {
     discountTable.innerHTML = "";
     snapshot.forEach(doc => {
       const d = doc.data();
+      if ((selectedCountry && d.country !== selectedCountry) || (selectedCourse && d.course !== selectedCourse)) {
+        return;
+      }
       const row = document.createElement("tr");
       const extra = d.customGroupDiscounts?.map(g => `${g.minPeople}명 이상: ${g.discountPerPerson} USD`).join("<br>") || "-";
       row.innerHTML = `
@@ -107,6 +129,7 @@ function loadDiscounts() {
 
 window.deleteDiscount = async function(id) {
   await deleteDoc(doc(db, "optional_discounts", id));
+  loadDiscounts();
 };
 
 loadCountryAndCourses();
