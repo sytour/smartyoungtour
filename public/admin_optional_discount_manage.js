@@ -3,6 +3,7 @@ import {
   getFirestore, collection, getDocs, addDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+// 🔧 여기에 본인의 Firebase 설정으로 교체하세요
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -34,9 +35,11 @@ async function loadCountryAndCourses() {
     countryCourseMap[data.country].push(data.course);
   });
 
+  const countryList = Object.keys(countryCourseMap).sort();
+
   [countrySelect, filterCountry].forEach(sel => {
-    sel.innerHTML = "<option value=''>국가 선택</option>";
-    Object.keys(countryCourseMap).sort().forEach(c => {
+    sel.innerHTML = "<option value=''>선택</option>";
+    countryList.forEach(c => {
       const opt = document.createElement("option");
       opt.value = c;
       opt.textContent = c;
@@ -45,18 +48,17 @@ async function loadCountryAndCourses() {
   });
 
   countrySelect.addEventListener("change", () => {
-    updateCourseSelect(countrySelect, courseSelect);
+    updateCourseSelect(countrySelect.value, courseSelect);
   });
 
   filterCountry.addEventListener("change", () => {
-    updateCourseSelect(filterCountry, filterCourse);
+    updateCourseSelect(filterCountry.value, filterCourse);
   });
 }
 
-function updateCourseSelect(countryDropdown, courseDropdown) {
-  const selected = countryDropdown.value;
-  courseDropdown.innerHTML = "<option value=''>코스 선택</option>";
-  (countryCourseMap[selected] || []).forEach(course => {
+function updateCourseSelect(country, courseDropdown) {
+  courseDropdown.innerHTML = "<option value=''>선택</option>";
+  (countryCourseMap[country] || []).forEach(course => {
     const opt = document.createElement("option");
     opt.value = course;
     opt.textContent = course;
