@@ -14,9 +14,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let coursesData = {}; // { "라오스_비엔티안 골프": { option: "유", attractions: [...] } }
+let coursesData = {}; // { "라오스_비엔티안골프": { option: "유", attractions: [...] } }
 
-window.onload = async function() {
+window.onload = async function () {
   await loadCourses();
   renderCourseList();
 };
@@ -46,18 +46,21 @@ async function loadCourses() {
   countrySelect.onchange = () => {
     courseSelect.innerHTML = "";
     const selected = countrySelect.value;
-    courses.filter(c => c.country === selected).sort((a,b)=>a.course.localeCompare(b.course)).forEach(item => {
-      const opt = document.createElement("option");
-      opt.value = item.course;
-      opt.innerText = item.course;
-      courseSelect.appendChild(opt);
-    });
+    courses
+      .filter(c => c.country === selected)
+      .sort((a, b) => a.course.localeCompare(b.course))
+      .forEach(item => {
+        const opt = document.createElement("option");
+        opt.value = item.course;
+        opt.innerText = item.course;
+        courseSelect.appendChild(opt);
+      });
   };
 
   countrySelect.dispatchEvent(new Event("change"));
 }
 
-window.addCourse = function() {
+window.addCourse = function () {
   const country = document.getElementById("countrySelect").value;
   const course = document.getElementById("courseSelect").value;
   const option = document.querySelector("input[name='optionType']:checked");
@@ -134,7 +137,7 @@ function renderCourseList() {
   container.appendChild(table);
 }
 
-window.addAttraction = function(safeKey) {
+window.addAttraction = function (safeKey) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
   if (!key) return;
   coursesData[key].attractions.push({ name: "", fee: 0 });
@@ -166,7 +169,8 @@ function handleSaveClick(button) {
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
 
-    await setDoc(doc(db, "entryFees", key), coursesData[key]);
+    // ✅ Firestore에 safeKey로 저장
+    await setDoc(doc(db, "entryFees", safeKey), coursesData[key]);
 
     button.textContent = "✔ 저장됨";
     setTimeout(() => {
