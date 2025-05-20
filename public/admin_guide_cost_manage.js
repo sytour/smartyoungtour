@@ -1,6 +1,6 @@
 // admin_guide_cost_manage.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
@@ -15,10 +15,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let courses = [];
-
 window.onload = async function () {
   await renderAllSavedGuideCosts();
+
   const countrySelect = document.getElementById("countrySelect");
   const courseSelect = document.getElementById("courseSelect");
   const filterSelect = document.getElementById("filterCountry");
@@ -63,13 +62,55 @@ window.onload = async function () {
   countrySelect.dispatchEvent(new Event("change"));
 };
 
-// (이하 나머지 코드 동일)
+window.addGuideCostRows = function () {
+  const country = document.getElementById("countrySelect").value;
+  const course = document.getElementById("courseSelect").value;
+  const container = document.getElementById("tableContainer");
 
-// 👇 아래 나머지 코드는 기존과 동일하게 유지됩니다
-// window.addGuideCostRows = ...
-// window.updateTotal = ...
-// window.saveGuideCost = ...
-// window.deleteGuideCost = ...
-// window.filterSavedByCountry = ...
-// window.renderAllSavedGuideCosts = ...
-// window.saveEdited = ...
+  const key = `${country}_${course}`;
+  const tableId = `table_${key.replace(/\s+/g, '_')}`;
+  if (document.getElementById(tableId)) return;
+
+  const table = document.createElement("table");
+  table.id = tableId;
+
+  const thead = document.createElement("thead");
+  thead.innerHTML = `
+    <tr><th colspan="9">${country} - ${course}</th></tr>
+    <tr>
+      <th>박수</th>
+      <th>한국가이드 일비</th>
+      <th>한국가이드 숙박비</th>
+      <th>현지가이드 일비</th>
+      <th>현지가이드 숙박비</th>
+      <th>총합</th>
+      <th>저장</th>
+    </tr>
+  `;
+  table.appendChild(thead);
+
+  const tbody = document.createElement("tbody");
+
+  for (let nights = 3; nights <= 7; nights++) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${nights}박</td>
+      <td><input type="number" id="${key}_kr_daily_${nights}" oninput="updateTotal('${key}', ${nights})"></td>
+      <td><input type="number" id="${key}_kr_hotel_${nights}" oninput="updateTotal('${key}', ${nights})"></td>
+      <td><input type="number" id="${key}_local_daily_${nights}" oninput="updateTotal('${key}', ${nights})"></td>
+      <td><input type="number" id="${key}_local_hotel_${nights}" oninput="updateTotal('${key}', ${nights})"></td>
+      <td id="${key}_sum_${nights}">-</td>
+      <td><button onclick="saveGuideCost('${country}', '${course}', ${nights})">저장</button></td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  table.appendChild(tbody);
+  container.appendChild(table);
+};
+
+window.updateTotal = function (key, nights) {
+  const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
+  const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel')) * 1;
+  document.getElementById(`${key}_sum_${nights}`).innerText = `총합이 ${sum.toFixed(2)}$`;
+};
