@@ -1,6 +1,6 @@
 // admin_guide_cost_manage.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getFirestore, collection, getDocs, setDoc, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
@@ -130,10 +130,22 @@ window.saveGuideCost = async function (country, course, nights) {
   await setDoc(ref, data);
   alert(`${nights}박 저장 완료`);
 
-  // 하단에 표시도 갱신
   if (document.getElementById("filterCountry").value === country) {
     filterSavedByCountry();
   }
+};
+
+window.deleteGuideCost = async function (country, course, nightKey) {
+  const key = `${country}_${course}`;
+  const ref = doc(db, 'guideCosts', key);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+
+  const data = snap.data();
+  delete data[nightKey];
+  await setDoc(ref, data);
+  alert(`${nightKey} 삭제 완료`);
+  filterSavedByCountry();
 };
 
 window.filterSavedByCountry = async function () {
@@ -149,8 +161,10 @@ window.filterSavedByCountry = async function () {
     const table = document.createElement("table");
     const thead = document.createElement("thead");
     thead.innerHTML = `
-      <tr><th colspan="7">${country} - ${course}</th></tr>
-      <tr><th>박수</th><th>🇰🇷 일비</th><th>🇰🇷 숙박비</th><th>🇱🇦 일비</th><th>🇱🇦 숙박비</th><th>총합</th></tr>
+      <tr><th colspan="8">${country} - ${course}</th></tr>
+      <tr>
+        <th>박수</th><th>🇰🇷 일비</th><th>🇰🇷 숙박비</th><th>🇱🇦 일비</th><th>🇱🇦 숙박비</th><th>총합</th><th>수정</th><th>삭제</th>
+      </tr>
     `;
     table.appendChild(thead);
 
@@ -162,15 +176,36 @@ window.filterSavedByCountry = async function () {
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${dayKey}</td>
-        <td>${val.korean.daily}</td>
-        <td>${val.korean.hotel}</td>
-        <td>${val.local.daily}</td>
-        <td>${val.local.hotel}</td>
+        <td><input value="${val.korean.daily}" id="edit_${country}_${course}_${dayKey}_krd" /></td>
+        <td><input value="${val.korean.hotel}" id="edit_${country}_${course}_${dayKey}_krh" /></td>
+        <td><input value="${val.local.daily}" id="edit_${country}_${course}_${dayKey}_locd" /></td>
+        <td><input value="${val.local.hotel}" id="edit_${country}_${course}_${dayKey}_loch" /></td>
         <td>${sum} USD</td>
+        <td><button onclick="saveEdited('${country}', '${course}', '${dayKey}')">💾</button></td>
+        <td><button onclick="deleteGuideCost('${country}', '${course}', '${dayKey}')">🗑</button></td>
       `;
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
     view.appendChild(table);
   });
+};
+
+window.saveEdited = async function (country, course, dayKey) {
+  const key = `${country}_${course}`;
+  const krd = parseFloat(document.getElementById(`edit_${country}_${course}_${dayKey}_krd`).value) || 0;
+  const krh = parseFloat(document.getElementById(`edit_${country}_${course}_${dayKey}_krh`).value) || 0;
+  const locd = parseFloat(document.getElementById(`edit_${country}_${course}_${dayKey}_locd`).value) || 0;
+  const loch = parseFloat(document.getElementById(`edit_${country}_${course}_${dayKey}_loch`).value) || 0;
+
+  const ref = doc(db, 'guideCosts', key);
+  const snap = await getDoc(ref);
+  let data = snap.exists() ? snap.data() : {};
+  data[dayKey] = {
+    korean: { daily: krd, hotel: krh },
+    local: { daily: locd, hotel: loch }
+  };
+  await setDoc(ref, data);
+  alert(`${dayKey} 수정 완료`);
+  filterSavedByCountry();
 };
