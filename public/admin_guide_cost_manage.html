@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>가이드 비용 관리</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      padding: 30px;
+    }
+    .container {
+      max-width: 1200px;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 0 auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    select, input {
+      padding: 6px;
+      font-size: 14px;
+      margin: 4px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    button {
+      padding: 6px 12px;
+      background-color: #ff9900;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>가이드 비용 관리</h2>
+  <div>
+    <label>국가:</label>
+    <select id="countrySelect"></select>
+    <label>코스:</label>
+    <select id="courseSelect"></select>
+    <button onclick="addGuideCostRows()">코스 추가</button>
+  </div>
+  <div id="tableContainer"></div>
+</div>
+<script type="module" src="admin_guide_cost_manage.js"></script>
+</body>
+</html>
