@@ -45,6 +45,11 @@ window.onload = async function () {
     filterSelect.appendChild(opt2);
   });
 
+  const allOpt = document.createElement("option");
+  allOpt.value = "";
+  allOpt.textContent = "전체";
+  filterSelect.insertBefore(allOpt, filterSelect.firstChild);
+
   countrySelect.onchange = () => {
     const selected = countrySelect.value;
     courseSelect.innerHTML = "";
@@ -59,7 +64,7 @@ window.onload = async function () {
   countrySelect.dispatchEvent(new Event("change"));
 };
 
-window.addGuideCostRows = function (clearBeforeAdd = false) {
+window.addGuideCostRows = function (clearBeforeAdd = true) {
   if (clearBeforeAdd) document.getElementById("tableContainer").innerHTML = "";
 
   const country = document.getElementById("countrySelect").value;
@@ -179,7 +184,7 @@ window.renderAllSavedGuideCosts = async function () {
     thead.innerHTML = `
       <tr><th colspan="8">${country} - ${course}</th></tr>
       <tr>
-        <th>박수</th><th>🇰🇷 일비</th><th>🇰🇷 숙박비</th><th>🇱🇦 일비</th><th>🇱🇦 숙박비</th><th>총합</th><th>수정</th><th>삭제</th>
+        <th>박수</th><th>한국가이드 일비</th><th>한국가이드 숙박비</th><th>현지가이드 일비</th><th>현지가이드 숙박비</th><th>총합</th><th>수정</th><th>삭제</th>
       </tr>
     `;
     table.appendChild(thead);
@@ -196,7 +201,7 @@ window.renderAllSavedGuideCosts = async function () {
         <td><input value="${val.korean.hotel}" id="edit_${country}_${course}_${dayKey}_krh" /></td>
         <td><input value="${val.local.daily}" id="edit_${country}_${course}_${dayKey}_locd" /></td>
         <td><input value="${val.local.hotel}" id="edit_${country}_${course}_${dayKey}_loch" /></td>
-        <td>${sum} USD</td>
+        <td>${sum} $</td>
         <td><button onclick="saveEdited('${country}', '${course}', '${dayKey}')">💾</button></td>
         <td><button onclick="deleteGuideCost('${country}', '${course}', '${dayKey}')">🗑</button></td>
       `;
