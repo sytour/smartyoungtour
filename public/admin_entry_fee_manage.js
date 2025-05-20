@@ -169,8 +169,10 @@ function handleSaveClick(button) {
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
 
-    // ✅ Firestore에 safeKey로 저장
+    // ✅ 로그 추가: 저장 시도 확인
+    console.log("🚀 저장 시작:", safeKey, coursesData[key]);
     await setDoc(doc(db, "entryFees", safeKey), coursesData[key]);
+    console.log("✅ Firestore 저장 완료");
 
     button.textContent = "✔ 저장됨";
     setTimeout(() => {
