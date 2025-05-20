@@ -68,12 +68,12 @@ function updateCourseSelect(country, courseDropdown) {
 
 function addGroupDiscountField() {
   const div = document.createElement("div");
-  div.innerHTML = \`
+  div.innerHTML = `
     <label>인원 수 이상</label>
     <input type="number" placeholder="예: 8" class="minPeople"/>
     <label>1인당 추가 할인</label>
     <input type="number" placeholder="USD" class="additionalDiscount"/>
-  \`;
+  `;
   groupDiscountContainer.appendChild(div);
 }
 
@@ -109,7 +109,7 @@ async function saveDiscount() {
   }
 
   try {
-    const docId = \`\${country}_\${course}_\${option}\`;
+    const docId = `${country}_${course}_${option}`;
     const ref = doc(db, "optional_discounts", docId);
 
     await setDoc(ref, {
@@ -142,15 +142,15 @@ async function loadDiscounts() {
       return;
     }
     const row = document.createElement("tr");
-    const extra = d.customGroupDiscounts?.map(g => \`\${g.minPeople}명 이상: \${g.discountPerPerson} USD\`).join("<br>") || "-";
-    row.innerHTML = \`
-      <td>\${d.country}</td>
-      <td>\${d.course}</td>
-      <td>\${d.option}</td>
-      <td>\${d.baseDiscountPerPerson} USD</td>
-      <td>\${extra}</td>
-      <td><button onclick="deleteDiscount('\${doc.id}')">삭제</button></td>
-    \`;
+    const extra = d.customGroupDiscounts?.map(g => `${g.minPeople}명 이상: ${g.discountPerPerson} USD`).join("<br>") || "-";
+    row.innerHTML = `
+      <td>${d.country}</td>
+      <td>${d.course}</td>
+      <td>${d.option}</td>
+      <td>${d.baseDiscountPerPerson} USD</td>
+      <td>${extra}</td>
+      <td><button onclick="deleteDiscount('${doc.id}')">삭제</button></td>
+    `;
     discountTable.appendChild(row);
   });
 }
