@@ -3,7 +3,7 @@ import {
   getFirestore, collection, getDocs, addDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// ✅ 실제 Firebase 프로젝트 설정값
+// ✅ 실제 Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhfTLaqgtR1Bva_iPbSkWlA5HACe",
   authDomain: "smartyoungtour.firebaseapp.com",
@@ -78,11 +78,24 @@ function addGroupDiscountField() {
   groupDiscountContainer.appendChild(div);
 }
 
+function resetFormFields() {
+  countrySelect.value = "";
+  courseSelect.innerHTML = "<option value=''>선택</option>";
+  document.getElementById("optionType").value = "옵션 유";
+  document.getElementById("baseDiscount").value = "";
+  groupDiscountContainer.innerHTML = "<h4>인원별 추가 할인</h4>";
+}
+
 async function saveDiscount() {
   const country = countrySelect.value;
   const course = courseSelect.value;
   const option = document.getElementById("optionType").value;
   const baseDiscount = parseInt(document.getElementById("baseDiscount").value || 0);
+
+  if (!country || !course || !option) {
+    alert("국가, 코스, 옵션을 모두 선택해주세요.");
+    return;
+  }
 
   const minPeople = document.querySelectorAll(".minPeople");
   const additionalDiscounts = document.querySelectorAll(".additionalDiscount");
@@ -94,45 +107,53 @@ async function saveDiscount() {
     if (mp > 0 && disc >= 0) groupDiscounts.push({ minPeople: mp, discountPerPerson: disc });
   }
 
-  await addDoc(collection(db, "optional_discounts"), {
-    country, course, option,
-    baseDiscountPerPerson: baseDiscount,
-    customGroupDiscounts: groupDiscounts
-  });
+  try {
+    await addDoc(collection(db, "optional_discounts"), {
+      country,
+      course,
+      option,
+      baseDiscountPerPerson: baseDiscount,
+      customGroupDiscounts: groupDiscounts
+    });
 
-  alert("저장되었습니다.");
-  loadDiscounts();
+    alert("저장되었습니다.");
+    await loadDiscounts();
+    resetFormFields();
+  } catch (e) {
+    console.error("저장 오류:", e);
+    alert("저장에 실패했습니다. 콘솔을 확인해주세요.");
+  }
 }
 
-function loadDiscounts() {
+async function loadDiscounts() {
   const selectedCountry = filterCountry.value;
   const selectedCourse = filterCourse.value;
 
-  getDocs(collection(db, "optional_discounts")).then(snapshot => {
-    discountTable.innerHTML = "";
-    snapshot.forEach(doc => {
-      const d = doc.data();
-      if ((selectedCountry && d.country !== selectedCountry) || (selectedCourse && d.course !== selectedCourse)) {
-        return;
-      }
-      const row = document.createElement("tr");
-      const extra = d.customGroupDiscounts?.map(g => `${g.minPeople}명 이상: ${g.discountPerPerson} USD`).join("<br>") || "-";
-      row.innerHTML = `
-        <td>${d.country}</td>
-        <td>${d.course}</td>
-        <td>${d.option}</td>
-        <td>${d.baseDiscountPerPerson} USD</td>
-        <td>${extra}</td>
-        <td><button onclick="deleteDiscount('${doc.id}')">삭제</button></td>
-      `;
-      discountTable.appendChild(row);
-    });
+  const snapshot = await getDocs(collection(db, "optional_discounts"));
+  discountTable.innerHTML = "";
+
+  snapshot.forEach(doc => {
+    const d = doc.data();
+    if ((selectedCountry && d.country !== selectedCountry) || (selectedCourse && d.course !== selectedCourse)) {
+      return;
+    }
+    const row = document.createElement("tr");
+    const extra = d.customGroupDiscounts?.map(g => `${g.minPeople}명 이상: ${g.discountPerPerson} USD`).join("<br>") || "-";
+    row.innerHTML = `
+      <td>${d.country}</td>
+      <td>${d.course}</td>
+      <td>${d.option}</td>
+      <td>${d.baseDiscountPerPerson} USD</td>
+      <td>${extra}</td>
+      <td><button onclick="deleteDiscount('${doc.id}')">삭제</button></td>
+    `;
+    discountTable.appendChild(row);
   });
 }
 
 window.deleteDiscount = async function(id) {
   await deleteDoc(doc(db, "optional_discounts", id));
-  loadDiscounts();
+  await loadDiscounts();
 };
 
 loadCountryAndCourses();
