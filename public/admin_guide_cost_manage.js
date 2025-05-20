@@ -15,6 +15,48 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+window.onload = async function () {
+  await renderAllSavedGuideCosts();
+
+  const countrySelect = document.getElementById("countrySelect");
+  const courseSelect = document.getElementById("courseSelect");
+  const filterSelect = document.getElementById("filterCountry");
+
+  const snapshot = await getDocs(collection(db, 'courses'));
+  const countryMap = {};
+
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (!countryMap[data.country]) countryMap[data.country] = [];
+    countryMap[data.country].push(data.course);
+  });
+
+  Object.keys(countryMap).sort().forEach(country => {
+    const opt1 = document.createElement("option");
+    opt1.value = country;
+    opt1.textContent = country;
+    countrySelect.appendChild(opt1);
+
+    const opt2 = document.createElement("option");
+    opt2.value = country;
+    opt2.textContent = country;
+    filterSelect.appendChild(opt2);
+  });
+
+  countrySelect.onchange = () => {
+    const selected = countrySelect.value;
+    courseSelect.innerHTML = "";
+    (countryMap[selected] || []).sort().forEach(course => {
+      const opt = document.createElement("option");
+      opt.value = course;
+      opt.textContent = course;
+      courseSelect.appendChild(opt);
+    });
+  };
+
+  countrySelect.dispatchEvent(new Event("change"));
+};
+
 window.addGuideCostRows = function () {
   const country = document.getElementById("countrySelect").value;
   const course = document.getElementById("courseSelect").value;
@@ -30,14 +72,14 @@ window.addGuideCostRows = function () {
   const thead = document.createElement("thead");
   thead.innerHTML = `
     <tr>
-      <th colspan="7">${country} - ${course}</th>
+      <th colspan="9">${country} - ${course}</th>
     </tr>
     <tr>
       <th>박수</th>
-      <th>🇰🇷 일비</th>
-      <th>🇰🇷 숙박비</th>
-      <th>🇱🇦 일비</th>
-      <th>🇱🇦 숙박비</th>
+      <th>한국가이드 일비</th>
+      <th>한국가이드 숙박비</th>
+      <th>현지가이드 일비</th>
+      <th>현지가이드 숙박비</th>
       <th>총합</th>
       <th>저장</th>
     </tr>
@@ -45,7 +87,6 @@ window.addGuideCostRows = function () {
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
-
   for (let nights = 3; nights <= 7; nights++) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -66,7 +107,7 @@ window.addGuideCostRows = function () {
 
 window.updateTotal = function (key, nights) {
   const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
-  const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel')) * 1;
+  const sum = getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel');
   document.getElementById(`${key}_sum_${nights}`).innerText = `총합이 ${sum.toFixed(2)}$`;
 };
 
@@ -88,20 +129,12 @@ window.saveGuideCost = async function (country, course, nights) {
 
   await setDoc(ref, data);
   alert(`${nights}박 저장 완료`);
-  await renderAllSavedGuideCosts();
-};
 
-window.filterSavedByCountry = async function () {
-  const selected = document.getElementById("filterCountry").value;
-  const view = document.getElementById("savedView");
-  const tables = view.querySelectorAll("table");
-  tables.forEach(t => {
-    if (!selected || t.getAttribute("data-country") === selected) {
-      t.style.display = "table";
-    } else {
-      t.style.display = "none";
-    }
-  });
+  await renderAllSavedGuideCosts();
+
+  if (document.getElementById("filterCountry").value === country) {
+    filterSavedByCountry();
+  }
 };
 
 window.renderAllSavedGuideCosts = async function () {
@@ -112,12 +145,18 @@ window.renderAllSavedGuideCosts = async function () {
     const [country, course] = docSnap.id.split("_");
     const table = document.createElement("table");
     table.setAttribute("data-country", country);
-
     const thead = document.createElement("thead");
     thead.innerHTML = `
       <tr><th colspan="8">${country} - ${course}</th></tr>
       <tr>
-        <th>박수</th><th>🇰🇷 일비</th><th>🇰🇷 숙박비</th><th>🇱🇦 일비</th><th>🇱🇦 숙박비</th><th>총합</th><th>수정</th><th>삭제</th>
+        <th>박수</th>
+        <th>🇰🇷 일비</th>
+        <th>🇰🇷 숙박비</th>
+        <th>🇱🇦 일비</th>
+        <th>🇱🇦 숙박비</th>
+        <th>총합</th>
+        <th>수정</th>
+        <th>삭제</th>
       </tr>
     `;
     table.appendChild(thead);
@@ -140,6 +179,7 @@ window.renderAllSavedGuideCosts = async function () {
       `;
       tbody.appendChild(tr);
     });
+
     table.appendChild(tbody);
     view.appendChild(table);
   });
@@ -162,17 +202,32 @@ window.saveEdited = async function (country, course, dayKey) {
   await setDoc(ref, data);
   alert(`${dayKey} 수정 완료`);
   await renderAllSavedGuideCosts();
+  filterSavedByCountry();
 };
 
-window.deleteGuideCost = async function (country, course, dayKey) {
+window.deleteGuideCost = async function (country, course, nightKey) {
   const key = `${country}_${course}`;
   const ref = doc(db, 'guideCosts', key);
   const snap = await getDoc(ref);
   if (!snap.exists()) return;
 
   const data = snap.data();
-  delete data[dayKey];
+  delete data[nightKey];
   await setDoc(ref, data);
-  alert(`${dayKey} 삭제 완료`);
+  alert(`${nightKey} 삭제 완료`);
   await renderAllSavedGuideCosts();
+  filterSavedByCountry();
+};
+
+window.filterSavedByCountry = async function () {
+  const selected = document.getElementById("filterCountry").value;
+  const view = document.getElementById("savedView");
+  const allTables = view.querySelectorAll("table");
+  allTables.forEach(table => {
+    if (!selected || table.getAttribute("data-country") === selected) {
+      table.style.display = "table";
+    } else {
+      table.style.display = "none";
+    }
+  });
 };
