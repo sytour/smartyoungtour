@@ -144,7 +144,7 @@ window.addAttraction = function (safeKey) {
   renderCourseList();
 };
 
-function handleSaveClick(button) {
+window.handleSaveClick = function(button) {
   const safeKey = button.getAttribute('data-key');
   const idx = parseInt(button.getAttribute('data-idx'), 10);
   const nameInput = document.getElementById(`name_${safeKey}_${idx}`);
@@ -169,7 +169,7 @@ function handleSaveClick(button) {
     coursesData[key].attractions[idx].name = name;
     coursesData[key].attractions[idx].fee = fee;
 
-    // ✅ 로그 추가: 저장 시도 확인
+    // ✅ 로그 추가
     console.log("🚀 저장 시작:", safeKey, coursesData[key]);
     await setDoc(doc(db, "entryFees", safeKey), coursesData[key]);
     console.log("✅ Firestore 저장 완료");
@@ -188,7 +188,7 @@ function handleSaveClick(button) {
       if (td) td.innerHTML = `<strong>총 입장료: ${total.toFixed(2)} USD</strong>`;
     }
   });
-}
+};
 
 function deleteAttraction(safeKey, idx) {
   const key = Object.keys(coursesData).find(k => k.replace(/\s+/g, '_') === safeKey);
