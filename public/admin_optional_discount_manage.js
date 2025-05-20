@@ -68,11 +68,12 @@ function updateCourseSelect(country, courseDropdown) {
 
 function addGroupDiscountField() {
   const div = document.createElement("div");
+  div.className = "row";
   div.innerHTML = `
     <label>인원 수 이상</label>
-    <input type="number" placeholder="예: 8" class="minPeople"/>
+    <input type="number" placeholder="예: 8" class="minPeople" style="width: 80px;"/>
     <label>1인당 추가 할인</label>
-    <input type="number" placeholder="USD" class="additionalDiscount"/>
+    <input type="number" placeholder="USD" class="additionalDiscount" style="width: 80px;"/>
   `;
   groupDiscountContainer.appendChild(div);
 }
