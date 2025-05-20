@@ -40,14 +40,10 @@
       border-radius: 6px;
       cursor: pointer;
     }
-    button:hover {
-      background-color: #e68a00;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 20px;
-      background: #fff;
     }
     th, td {
       padding: 8px;
@@ -60,11 +56,17 @@
     .option-box {
       margin-bottom: 10px;
     }
+    #filterContainer {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h2>입장료 요금 관리</h2>
+
+    <!-- ✅ 국가별 보기 필터 -->
+    <div id="filterContainer"></div>
 
     <div class="row">
       <select id="countrySelect"></select>
@@ -80,7 +82,11 @@
     <div id="courseListContainer"></div>
   </div>
 
-  <!-- ✅ JS 모듈로 불러오기 (중복 Firebase SDK 제거) -->
+  <!-- ✅ Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"></script>
+
+  <!-- ✅ 기능 스크립트 -->
   <script type="module" src="admin_entry_fee_manage.js"></script>
 </body>
 </html>
