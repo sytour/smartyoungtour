@@ -3,14 +3,15 @@ import {
   getFirestore, collection, getDocs, addDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// 🔧 여기에 본인의 Firebase 설정으로 교체하세요
+// ✅ 실제 Firebase 프로젝트 설정값
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDEoEvrhfTLaqgtR1Bva_iPbSkWlA5HACe",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.appspot.com",
+  messagingSenderId: "615207664322",
+  appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+  measurementId: "G-KN3EQNZWLN"
 };
 
 const app = initializeApp(firebaseConfig);
