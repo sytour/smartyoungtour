@@ -1,6 +1,8 @@
 // admin_guide_cost_manage.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs, setDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import {
+  getFirestore, collection, getDocs, setDoc, doc, getDoc
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhfTLaqtp1BVUa_iPbksW15Ah0CE",
@@ -21,6 +23,12 @@ window.onload = async function () {
   const countrySelect = document.getElementById("countrySelect");
   const courseSelect = document.getElementById("courseSelect");
   const filterSelect = document.getElementById("filterCountry");
+
+  // 🔹 "전체" 항목 먼저 추가
+  const allOption = document.createElement("option");
+  allOption.value = "";
+  allOption.textContent = "전체";
+  filterSelect.appendChild(allOption);
 
   const snapshot = await getDocs(collection(db, 'courses'));
   const countryMap = {};
@@ -131,20 +139,19 @@ window.saveGuideCost = async function (country, course, nights) {
   alert(`${nights}박 저장 완료`);
 
   await renderAllSavedGuideCosts();
-
-  if (document.getElementById("filterCountry").value === country) {
-    filterSavedByCountry();
-  }
+  filterSavedByCountry();
 };
 
 window.renderAllSavedGuideCosts = async function () {
   const view = document.getElementById("savedView");
   view.innerHTML = "";
   const snapshot = await getDocs(collection(db, 'guideCosts'));
+
   snapshot.forEach(docSnap => {
     const [country, course] = docSnap.id.split("_");
     const table = document.createElement("table");
     table.setAttribute("data-country", country);
+
     const thead = document.createElement("thead");
     thead.innerHTML = `
       <tr><th colspan="8">${country} - ${course}</th></tr>
@@ -219,7 +226,7 @@ window.deleteGuideCost = async function (country, course, nightKey) {
   filterSavedByCountry();
 };
 
-window.filterSavedByCountry = async function () {
+window.filterSavedByCountry = function () {
   const selected = document.getElementById("filterCountry").value;
   const view = document.getElementById("savedView");
   const allTables = view.querySelectorAll("table");
