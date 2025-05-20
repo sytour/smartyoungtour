@@ -60,7 +60,7 @@
     <select id="countrySelect"></select>
     <label>코스:</label>
     <select id="courseSelect"></select>
-    <button onclick="addGuideCostRows(true)">코스 추가</button>
+    <button onclick="addGuideCostRows()">코스 추가</button>
   </div>
 
   <div id="tableContainer"></div>
@@ -79,7 +79,7 @@
 <script>
   window.updateTotal = function (key, nights) {
     const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
-    const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel')) * 1;
+    const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel'));
     document.getElementById(`${key}_sum_${nights}`).innerText = `총합이 ${sum.toFixed(2)}$`;
   };
 </script>
