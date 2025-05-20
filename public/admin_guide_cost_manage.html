@@ -62,5 +62,12 @@
   <div id="tableContainer"></div>
 </div>
 <script type="module" src="admin_guide_cost_manage.js"></script>
+<script>
+  window.updateTotal = function (key, nights) {
+    const getVal = id => parseFloat(document.getElementById(`${key}_${id}_${nights}`)?.value) || 0;
+    const sum = (getVal('kr_daily') + getVal('kr_hotel') + getVal('local_daily') + getVal('local_hotel')) * 1;
+    document.getElementById(`${key}_sum_${nights}`).innerText = `총합이 ${sum.toFixed(2)}$`;
+  };
+</script>
 </body>
 </html>
