@@ -105,7 +105,9 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let i = 0; i < minPeople.length; i++) {
       const mp = parseInt(minPeople[i].value || 0);
       const disc = parseInt(additionalDiscounts[i].value || 0);
-      if (mp > 0 && disc >= 0) groupDiscounts.push({ minPeople: mp, discountPerPerson: disc });
+      if (mp > 0 && disc >= 0) {
+        groupDiscounts.push({ minPeople: mp, discountPerPerson: disc });
+      }
     }
 
     try {
