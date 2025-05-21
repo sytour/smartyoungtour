@@ -79,14 +79,12 @@ document.addEventListener("DOMContentLoaded", () => {
     groupDiscountContainer.appendChild(div);
   };
 
- function resetFormFields() {
-  countrySelect.value = "";
-  // 👇 이 줄을 없애거나 주석처리
-  // courseSelect.innerHTML = "<option value=''>선택</option>";
-  document.getElementById("optionType").value = "옵션 유";
-  document.getElementById("baseDiscount").value = "";
-  groupDiscountContainer.innerHTML = "<h4>인원별 추가 할인</h4>";
-}
+  function resetFormFields() {
+    // 국가/코스는 유지, 아래만 초기화
+    document.getElementById("optionType").value = "옵션 유";
+    document.getElementById("baseDiscount").value = "";
+    groupDiscountContainer.innerHTML = "<h4>인원별 추가 할인</h4>";
+  }
 
   window.saveDiscount = async function () {
     const country = countrySelect.value;
