@@ -4,6 +4,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ JS 실행됨 - optional_discount_manage"); // 🔥 이 줄이 실행되는지 반드시 확인
+
   const firebaseConfig = {
     apiKey: "AIzaSyDEoEvrhfTLaqgtR1Bva_iPbSkWlA5HACe",
     authDomain: "smartyoungtour.firebaseapp.com",
