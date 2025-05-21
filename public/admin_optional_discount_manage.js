@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const courseSelect = document.getElementById("course");
   const filterCountry = document.getElementById("filterCountry");
   const filterCourse = document.getElementById("filterCourse");
-  const discountTable = document.querySelector("#discountTable tbody") || document.getElementById("discountTable");
+  const discountTable = document.querySelector("#discountTable");
   const groupDiscountContainer = document.getElementById("groupDiscountContainer");
 
   let countryCourseMap = {};
@@ -162,6 +162,9 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadDiscounts();
   };
 
-  // ✅ 모든 초기화 후 실행
+  // ✅ 조회 버튼에서도 실행 가능하도록 export
+  window.loadDiscounts = loadDiscounts;
+
+  // ✅ 실행
   loadCountryAndCourses().then(loadDiscounts);
 });
