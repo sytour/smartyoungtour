@@ -4,7 +4,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ JS 실행됨 - optional_discount_manage"); // 🔥 이 줄이 실행되는지 반드시 확인
+  console.log("✅ JS 실행됨 - optional_discount_manage");
 
   const firebaseConfig = {
     apiKey: "AIzaSyDEoEvrhfTLaqgtR1Bva_iPbSkWlA5HACe",
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const courseSelect = document.getElementById("course");
   const filterCountry = document.getElementById("filterCountry");
   const filterCourse = document.getElementById("filterCourse");
-  const discountTable = document.querySelector("#discountTable tbody");
+  const discountTable = document.querySelector("#discountTable tbody") || document.getElementById("discountTable");
   const groupDiscountContainer = document.getElementById("groupDiscountContainer");
 
   let countryCourseMap = {};
@@ -91,9 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const country = countrySelect.value;
     const course = courseSelect.value;
     const option = document.getElementById("optionType").value;
-
-    console.log("🟡 선택된 값:", { country, course, option });
-
     const baseDiscount = parseInt(document.getElementById("baseDiscount").value || 0);
 
     if (!country || !course || !option) {
@@ -165,6 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
     await loadDiscounts();
   };
 
-  loadCountryAndCourses();
-  loadDiscounts();
+  // ✅ 모든 초기화 후 실행
+  loadCountryAndCourses().then(loadDiscounts);
 });
