@@ -80,7 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   function resetFormFields() {
-    // 국가/코스는 유지, 아래만 초기화
+    // 국가와 코스는 유지
+    // countrySelect.value = "";
+    // courseSelect.innerHTML = "<option value=''>선택</option>";
     document.getElementById("optionType").value = "옵션 유";
     document.getElementById("baseDiscount").value = "";
     groupDiscountContainer.innerHTML = "<h4>인원별 추가 할인</h4>";
@@ -90,6 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const country = countrySelect.value;
     const course = courseSelect.value;
     const option = document.getElementById("optionType").value;
+
+    console.log("🟡 선택된 값:", { country, course, option });
+
     const baseDiscount = parseInt(document.getElementById("baseDiscount").value || 0);
 
     if (!country || !course || !option) {
