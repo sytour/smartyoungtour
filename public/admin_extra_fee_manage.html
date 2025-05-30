@@ -10,7 +10,7 @@
       padding: 40px;
     }
     .container {
-      max-width: 600px;
+      max-width: 1000px;
       margin: 0 auto;
       background: white;
       border-radius: 12px;
@@ -21,37 +21,38 @@
       text-align: center;
       margin-bottom: 30px;
     }
-    label {
-      display: block;
-      margin-bottom: 15px;
-    }
-    select, input[type="number"] {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-    }
-    .btn {
-      background-color: #ff944d;
-      border: none;
-      color: white;
-      padding: 10px;
-      cursor: pointer;
-      border-radius: 6px;
-      width: 100%;
-      margin-top: 20px;
-    }
-    .btn:hover {
-      background-color: #e67e22;
-    }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 30px;
+      margin-bottom: 30px;
     }
     th, td {
       border: 1px solid #ddd;
       padding: 8px;
       text-align: center;
+    }
+    input[type="number"] {
+      width: 80px;
+      padding: 5px;
+    }
+    select {
+      padding: 6px;
+      min-width: 120px;
+    }
+    .btn-small {
+      background-color: #ff944d;
+      border: none;
+      color: white;
+      padding: 6px 10px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+    .btn-small:hover {
+      background-color: #e67e22;
+    }
+    .filter-box {
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -59,29 +60,40 @@
   <div class="container">
     <h2>기타 요금 관리</h2>
 
-    <label>국가
-      <select id="countrySelect"></select>
-    </label>
-    <label>코스
-      <select id="courseSelect"></select>
-    </label>
-    <label>인두세 ($)
-      <input type="number" id="tax" value="0" />
-    </label>
-    <label>핸들링차지 ($)
-      <input type="number" id="handling" value="0" />
-    </label>
-    <label>예비비 (물) ($)
-      <input type="number" id="reserve" value="0" />
-    </label>
-    <label>기타 ($)
-      <input type="number" id="etc" value="0" />
-    </label>
-    <label>합계 ($)
-      <input type="number" id="total" value="0" readonly />
-    </label>
+    <table>
+      <thead>
+        <tr>
+          <th>국가</th>
+          <th>코스</th>
+          <th>인두세 ($)</th>
+          <th>핸들링차지 ($)</th>
+          <th>예비비(물) ($)</th>
+          <th>기타 ($)</th>
+          <th>합계 ($)</th>
+          <th>저장</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><select id="countrySelect"></select></td>
+          <td><select id="courseSelect"></select></td>
+          <td><input type="number" id="tax" value="0" /></td>
+          <td><input type="number" id="handling" value="0" /></td>
+          <td><input type="number" id="reserve" value="0" /></td>
+          <td><input type="number" id="etc" value="0" /></td>
+          <td id="total">0</td>
+          <td><button class="btn-small" onclick="saveData()">저장</button></td>
+        </tr>
+      </tbody>
+    </table>
 
-    <button class="btn" onclick="saveData()">저장</button>
+    <div class="filter-box">
+      <label>국가별 보기:
+        <select id="filterCountry" onchange="filterByCountry()">
+          <option value="전체">전체</option>
+        </select>
+      </label>
+    </div>
 
     <table>
       <thead>
