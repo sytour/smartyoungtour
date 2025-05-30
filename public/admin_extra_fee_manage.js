@@ -3,14 +3,14 @@ import {
   getFirestore, collection, getDocs, setDoc, doc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// ✅ 본인의 Firebase 설정으로 교체 필요
+// ✅ 스마트영투어 프로젝트 firebase 설정
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDyoEYvTqR1TgBuPb_aVh1sNAMENC",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.appspot.com",
+  messagingSenderId: "615207648322",
+  appId: "1:615207648322:web:a205dfea55e01c1e6395b9"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -28,7 +28,6 @@ const filterCountry = document.getElementById("filterCountry");
 
 let allData = [];
 
-// ✅ 합계 자동 계산
 [tax, handling, reserve, etc].forEach(input => {
   input.addEventListener("input", () => {
     total.value = (
@@ -40,7 +39,6 @@ let allData = [];
   });
 });
 
-// ✅ 국가/코스 불러오기
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   const courseList = [];
@@ -64,7 +62,6 @@ async function loadCourses() {
   }
 }
 
-// ✅ 저장
 window.saveData = async () => {
   const data = {
     country: countrySelect.value,
@@ -80,7 +77,6 @@ window.saveData = async () => {
   loadSavedData();
 };
 
-// ✅ 저장된 목록 불러오기
 async function loadSavedData() {
   const snapshot = await getDocs(collection(db, "extra_fees"));
   allData = [];
@@ -90,7 +86,6 @@ async function loadSavedData() {
   renderDataTable(allData);
 }
 
-// ✅ 테이블 렌더링
 function renderDataTable(dataArray) {
   const selectedCountry = filterCountry.value;
   const filtered = selectedCountry === "전체"
@@ -113,12 +108,10 @@ function renderDataTable(dataArray) {
   `).join("");
 }
 
-// ✅ 국가 필터링
 window.filterByCountry = () => {
   renderDataTable(allData);
 };
 
-// ✅ 수정
 window.updateData = async (country, course) => {
   const id = `${country}_${course}`;
   const rowInputs = document.querySelectorAll(`input[data-id="${id}"]`);
@@ -136,12 +129,10 @@ window.updateData = async (country, course) => {
   loadSavedData();
 };
 
-// ✅ 삭제
 window.deleteData = async (country, course) => {
   await deleteDoc(doc(db, "extra_fees", `${country}_${course}`));
   loadSavedData();
 };
 
-// ✅ 초기 로딩
 loadCourses();
 loadSavedData();
