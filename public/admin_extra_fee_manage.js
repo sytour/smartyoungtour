@@ -1,21 +1,24 @@
 // admin_extra_fee_manage.js
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getFirestore, collection, getDocs, setDoc, doc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+// ✅ Firebase 설정 (자신의 Firebase 정보로 바꿔주세요)
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
   projectId: "YOUR_PROJECT_ID",
   storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+  messagingSenderId: "YOUR_SENDER_ID",
   appId: "YOUR_APP_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// 요소 참조
 const countrySelect = document.getElementById("countrySelect");
 const courseSelect = document.getElementById("courseSelect");
 const tax = document.getElementById("tax");
@@ -24,13 +27,23 @@ const reserve = document.getElementById("reserve");
 const etc = document.getElementById("etc");
 const total = document.getElementById("total");
 const dataBody = document.getElementById("dataBody");
+const filterCountry = document.getElementById("filterCountry");
 
+let allData = []; // 전체 데이터 저장용
+
+// 실시간 합계 계산
 [tax, handling, reserve, etc].forEach(input => {
   input.addEventListener("input", () => {
-    total.value = Number(tax.value) + Number(handling.value) + Number(reserve.value) + Number(etc.value);
+    total.innerText = (
+      Number(tax.value) +
+      Number(handling.value) +
+      Number(reserve.value) +
+      Number(etc.value)
+    ).toFixed(2);
   });
 });
 
+// 코스 불러오기
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   const courseList = [];
@@ -41,18 +54,21 @@ async function loadCourses() {
 
   const countries = [...new Set(courseList.map(c => c.country))].sort();
   countrySelect.innerHTML = countries.map(c => `<option value="${c}">${c}</option>`).join("");
+  filterCountry.innerHTML += countries.map(c => `<option value="${c}">${c}</option>`).join("");
+
   updateCourseSelect();
 
   countrySelect.addEventListener("change", updateCourseSelect);
 
   function updateCourseSelect() {
-    const selectedCountry = countrySelect.value;
-    const filtered = courseList.filter(c => c.country === selectedCountry);
+    const selected = countrySelect.value;
+    const filtered = courseList.filter(c => c.country === selected);
     courseSelect.innerHTML = filtered.map(c => `<option value="${c.course}">${c.course}</option>`).join("");
   }
 }
 
-async function saveData() {
+// 저장
+window.saveData = async () => {
   const data = {
     country: countrySelect.value,
     course: courseSelect.value,
@@ -60,59 +76,33 @@ async function saveData() {
     handling: Number(handling.value),
     reserve: Number(reserve.value),
     etc: Number(etc.value),
-    total: Number(total.value)
+    total: Number(total.innerText)
   };
   const id = `${data.country}_${data.course}`;
   await setDoc(doc(db, "extra_fees", id), data);
   loadSavedData();
-}
+};
 
+// 불러오기
 async function loadSavedData() {
   const snapshot = await getDocs(collection(db, "extra_fees"));
-  const rows = [];
+  allData = [];
   snapshot.forEach(doc => {
-    const d = doc.data();
-    rows.push(d);
+    allData.push(doc.data());
   });
-
-  rows.sort((a, b) => a.country.localeCompare(b.country));
-  dataBody.innerHTML = rows.map(r => `
-    <tr>
-      <td>${r.country}</td>
-      <td>${r.course}</td>
-      <td>${r.tax}</td>
-      <td>${r.handling}</td>
-      <td>${r.reserve}</td>
-      <td>${r.etc}</td>
-      <td>${r.total}</td>
-      <td><button onclick="editData('${r.country}', '${r.course}')">수정</button></td>
-      <td><button onclick="deleteData('${r.country}', '${r.course}')">삭제</button></td>
-    </tr>
-  `).join("");
+  renderDataTable(allData);
 }
 
-window.saveData = saveData;
-window.editData = async (country, course) => {
-  const docRef = doc(db, "extra_fees", `${country}_${course}`);
-  const snapshot = await getDocs(collection(db, "extra_fees"));
-  snapshot.forEach(docSnap => {
-    if (docSnap.id === `${country}_${course}`) {
-      const data = docSnap.data();
-      countrySelect.value = data.country;
-      courseSelect.value = data.course;
-      tax.value = data.tax;
-      handling.value = data.handling;
-      reserve.value = data.reserve;
-      etc.value = data.etc;
-      total.value = data.total;
-    }
-  });
-};
+// 테이블 렌더링
+function renderDataTable(dataArray) {
+  const selectedCountry = filterCountry.value;
+  const filtered = selectedCountry === "전체"
+    ? dataArray
+    : dataArray.filter(d => d.country === selectedCountry);
 
-window.deleteData = async (country, course) => {
-  await deleteDoc(doc(db, "extra_fees", `${country}_${course}`));
-  loadSavedData();
-};
-
-loadCourses();
-loadSavedData();
+  filtered.sort((a, b) => a.country.localeCompare(b.country));
+  dataBody.innerHTML = filtered.map(d => `
+    <tr>
+      <td>${d.country}</td>
+      <td>${d.course}</td>
+      <td><input ty
