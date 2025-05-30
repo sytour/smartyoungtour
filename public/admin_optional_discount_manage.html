@@ -101,6 +101,23 @@
       </tbody>
     </table>
     <button class="save-btn" onclick="saveDiscount()">저장</button>
+
+    <div style="margin-top:40px">
+      <label for="filterCountry">국가별 보기: </label>
+      <select id="filterCountry" onchange="renderDiscountList()">
+        <option value="">전체 보기</option>
+      </select>
+
+      <table>
+        <thead>
+          <tr>
+            <th>국가</th><th>코스</th><th>인원</th><th>옵션</th><th>쇼핑</th>
+            <th>1차</th><th>2차</th><th>합계</th><th>작업</th>
+          </tr>
+        </thead>
+        <tbody id="discountList"></tbody>
+      </table>
+    </div>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -115,13 +132,11 @@
       appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
       measurementId: "G-KN3EQNZWLN"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
     const countrySelect = document.getElementById("countrySelect");
     const courseSelect = document.getElementById("courseSelect");
-
     let courseDataMap = {};
 
     function updateCountryDropdown() {
@@ -133,7 +148,6 @@
         countrySelect.appendChild(opt);
       });
     }
-
     function updateCourseDropdown() {
       const selectedCountry = countrySelect.value;
       const courseList = courseDataMap[selectedCountry] || [];
@@ -145,7 +159,6 @@
         courseSelect.appendChild(opt);
       });
     }
-
     function subscribeToCourseUpdates() {
       db.collection("courses").onSnapshot(snapshot => {
         courseDataMap = {};
@@ -165,13 +178,11 @@
     }
 
     countrySelect.addEventListener("change", updateCourseDropdown);
-
     window.updatePreview = () => {
       const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
       const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
       document.getElementById("previewTotal").innerText = `${d1 + d2} USD`;
     };
-
     window.saveDiscount = async () => {
       const country = countrySelect.value;
       const course = courseSelect.value;
@@ -180,29 +191,70 @@
       const group = document.getElementById("groupSelect").value;
       const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
       const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
-
       if (!country || !course) {
         alert("국가와 코스를 모두 선택하세요.");
         return;
       }
-
       const key = `${country}_${course}_${option}_${shopping}_${group}`;
-
       await db.collection("optional_discounts").doc(key).set({
-        country,
-        course,
-        option,
-        shopping,
-        group,
+        country, course, option, shopping, group,
         discount_1to7: d1,
         discount_8plus: d2,
         total: d1 + d2
       });
-
       alert("저장되었습니다.");
     };
 
+    function renderDiscountList() {
+      const filter = document.getElementById("filterCountry").value;
+      const tbody = document.getElementById("discountList");
+      tbody.innerHTML = "";
+      const filtered = filter ? allDiscounts.filter(d => d.country === filter) : allDiscounts;
+      filtered.sort((a, b) => a.country.localeCompare(b.country) || a.course.localeCompare(b.course));
+      filtered.forEach(data => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.country || ""}</td>
+          <td>${data.course || ""}</td>
+          <td>${data.group || ""}</td>
+          <td>${data.option || ""}</td>
+          <td>${data.shopping || ""}</td>
+          <td>${data.discount_1to7 ?? 0}</td>
+          <td>${data.discount_8plus ?? 0}</td>
+          <td>${data.total ?? 0}</td>
+          <td>
+            <button onclick="alert('수정 기능은 추후 제공 예정입니다')">수정</button>
+            <button onclick="deleteDiscount('${data.id}')">삭제</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function loadDiscounts() {
+      db.collection("optional_discounts").onSnapshot(snapshot => {
+        allDiscounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const filterSelect = document.getElementById("filterCountry");
+        const countries = [...new Set(allDiscounts.map(d => d.country))].sort();
+        filterSelect.innerHTML = '<option value="">전체 보기</option>';
+        countries.forEach(c => {
+          const opt = document.createElement("option");
+          opt.value = c;
+          opt.textContent = c;
+          filterSelect.appendChild(opt);
+        });
+        renderDiscountList();
+      });
+    }
+    function deleteDiscount(id) {
+      if (confirm("정말 삭제하시겠습니까?")) {
+        db.collection("optional_discounts").doc(id).delete();
+      }
+    }
+
+    let allDiscounts = [];
     subscribeToCourseUpdates();
+    loadDiscounts();
   </script>
 </body>
 </html>
