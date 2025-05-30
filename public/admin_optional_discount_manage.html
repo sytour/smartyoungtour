@@ -149,8 +149,10 @@
       db.collection("courses").onSnapshot(snapshot => {
         courseDataMap = {};
         snapshot.forEach(doc => {
-          const { country, course } = doc.data();
+          let { country, course } = doc.data();
           if (!country || !course) return;
+          country = country.trim();
+          course = course.trim();
           if (!courseDataMap[country]) courseDataMap[country] = [];
           if (!courseDataMap[country].includes(course)) {
             courseDataMap[country].push(course);
