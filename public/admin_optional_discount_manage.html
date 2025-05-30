@@ -26,6 +26,7 @@
       width: 100%;
       border-collapse: collapse;
       table-layout: fixed;
+      margin-top: 20px;
     }
     th, td {
       border: 1px solid #ccc;
@@ -56,6 +57,14 @@
 <body>
   <div class="container">
     <h2>옵션/쇼핑 선택 할인 관리</h2>
+
+    <div>
+      <label for="filterCountry">국가별 보기: </label>
+      <select id="filterCountry" onchange="renderDiscountList()">
+        <option value="">전체 보기</option>
+      </select>
+    </div>
+
     <table>
       <thead>
         <tr>
@@ -64,145 +73,95 @@
           <th>인원 구분</th>
           <th>옵션</th>
           <th>쇼핑</th>
-          <th>1차 할인 (USD)</th>
-          <th>2차 할인 (USD)</th>
-          <th>합계 미리보기</th>
+          <th>1차 할인</th>
+          <th>2차 할인</th>
+          <th>총 할인</th>
+          <th>작업</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td><select id="countrySelect"><option value="">선택</option></select></td>
-          <td><select id="courseSelect"><option value="">선택</option></select></td>
-          <td>
-            <select id="groupSelect">
-              <option value="1~7명">1~7명</option>
-              <option value="8명 이상">8명 이상</option>
-            </select>
-          </td>
-          <td>
-            <select id="optionSelect">
-              <option value="유">옵션 유</option>
-              <option value="무">옵션 무</option>
-            </select>
-          </td>
-          <td>
-            <select id="shoppingSelect">
-              <option value="노쇼핑">노쇼핑</option>
-              <option value="쇼핑1">쇼핑 1회</option>
-              <option value="쇼핑2">쇼핑 2회</option>
-              <option value="쇼핑3">쇼핑 3회</option>
-            </select>
-          </td>
-          <td><input type="number" id="discountGroup1" value="0" onchange="updatePreview()" /></td>
-          <td><input type="number" id="discountGroup2" value="0" onchange="updatePreview()" /></td>
-          <td id="previewTotal">0 USD</td>
-        </tr>
-      </tbody>
+      <tbody id="discountList"></tbody>
     </table>
-    <button class="save-btn" onclick="saveDiscount()">저장</button>
-  </div>
 
-  <!-- ✅ Firebase compat CDN 버전 -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvrhfTLqagtR1bva_P1bsWk1SaH0cE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
-      measurementId: "G-KN3EQNZWLN"
-    };
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDEoEvrhfTLqagtR1bva_P1bsWk1SaH0cE",
+        authDomain: "smartyoungtour.firebaseapp.com",
+        projectId: "smartyoungtour",
+        storageBucket: "smartyoungtour.appspot.com",
+        messagingSenderId: "615207664322",
+        appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+        measurementId: "G-KN3EQNZWLN"
+      };
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
 
-    const countrySelect = document.getElementById("countrySelect");
-    const courseSelect = document.getElementById("courseSelect");
+      let allDiscounts = [];
 
-    let courseDataMap = {};
+      function renderDiscountList() {
+        const filter = document.getElementById("filterCountry").value;
+        const tbody = document.getElementById("discountList");
+        tbody.innerHTML = "";
 
-    function updateCountryDropdown() {
-      countrySelect.innerHTML = '<option value="">선택</option>';
-      Object.keys(courseDataMap).sort().forEach(country => {
-        const opt = document.createElement("option");
-        opt.value = country;
-        opt.textContent = country;
-        countrySelect.appendChild(opt);
-      });
-    }
+        const filtered = filter ? allDiscounts.filter(d => d.country === filter) : allDiscounts;
 
-    function updateCourseDropdown() {
-      const selectedCountry = countrySelect.value;
-      const courseList = courseDataMap[selectedCountry] || [];
-      courseSelect.innerHTML = '<option value="">선택</option>';
-      courseList.forEach(course => {
-        const opt = document.createElement("option");
-        opt.value = course;
-        opt.textContent = course;
-        courseSelect.appendChild(opt);
-      });
-    }
-
-    function subscribeToCourseUpdates() {
-      db.collection("courses").onSnapshot(snapshot => {
-        courseDataMap = {};
-        snapshot.forEach(doc => {
-          let { country, course } = doc.data();
-          if (!country || !course) return;
-          country = country.trim();
-          course = course.trim();
-          if (!courseDataMap[country]) courseDataMap[country] = [];
-          if (!courseDataMap[country].includes(course)) {
-            courseDataMap[country].push(course);
-          }
+        filtered.sort((a, b) => {
+          if (a.country !== b.country) return a.country.localeCompare(b.country);
+          return a.course.localeCompare(b.course);
         });
-        updateCountryDropdown();
-        updateCourseDropdown();
-      });
-    }
 
-    countrySelect.addEventListener("change", updateCourseDropdown);
-
-    window.updatePreview = () => {
-      const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
-      const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
-      document.getElementById("previewTotal").innerText = `${d1 + d2} USD`;
-    };
-
-    window.saveDiscount = async () => {
-      const country = countrySelect.value;
-      const course = courseSelect.value;
-      const option = document.getElementById("optionSelect").value;
-      const shopping = document.getElementById("shoppingSelect").value;
-      const group = document.getElementById("groupSelect").value;
-      const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
-      const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
-
-      if (!country || !course) {
-        alert("국가와 코스를 모두 선택하세요.");
-        return;
+        filtered.forEach(data => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${data.country}</td>
+            <td>${data.course}</td>
+            <td>${data.group}</td>
+            <td>${data.option}</td>
+            <td>${data.shopping}</td>
+            <td>${data.discount_1to7}</td>
+            <td>${data.discount_8plus}</td>
+            <td>${data.total}</td>
+            <td>
+              <button onclick="editDiscount('${data.id}')">수정</button>
+              <button onclick="deleteDiscount('${data.id}')">삭제</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        });
       }
 
-      const key = `${country}_${course}_${option}_${shopping}_${group}`;
+      function loadDiscounts() {
+        db.collection("optional_discounts").onSnapshot(snapshot => {
+          allDiscounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      await db.collection("optional_discounts").doc(key).set({
-        country,
-        course,
-        option,
-        shopping,
-        group,
-        discount_1to7: d1,
-        discount_8plus: d2,
-        total: d1 + d2
-      });
+          const filterSelect = document.getElementById("filterCountry");
+          const countries = [...new Set(allDiscounts.map(d => d.country))].sort();
+          filterSelect.innerHTML = '<option value="">전체 보기</option>';
+          countries.forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            filterSelect.appendChild(opt);
+          });
 
-      alert("저장되었습니다.");
-    };
+          renderDiscountList();
+        });
+      }
 
-    subscribeToCourseUpdates();
-  </script>
+      function deleteDiscount(id) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+          db.collection("optional_discounts").doc(id).delete();
+        }
+      }
+
+      function editDiscount(id) {
+        alert("수정 기능은 추후 구현 예정입니다.");
+      }
+
+      loadDiscounts();
+    </script>
+  </div>
 </body>
 </html>
