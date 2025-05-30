@@ -1,14 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, onSnapshot, setDoc, doc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// 🔧 Firebase 설정값 채워주세요
+// ✅ 반드시 아래 항목을 실제 프로젝트 설정 값으로 교체
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDEoEvrhfTLqagtR1bva_P1bsWk1SaH0cE",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.appspot.com",
+  messagingSenderId: "615207664322",
+  appId: "1:615207664322:web:ea2d05fefa56e81c43595b",
+  measurementId: "G-KN3EQNZWLN"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -46,6 +47,7 @@ function subscribeToCourseUpdates() {
     courseDataMap = {};
     snapshot.forEach(doc => {
       const { country, course } = doc.data();
+      if (!country || !course) return;
       if (!courseDataMap[country]) courseDataMap[country] = [];
       if (!courseDataMap[country].includes(course)) {
         courseDataMap[country].push(course);
@@ -69,6 +71,7 @@ window.saveDiscount = async () => {
   const course = courseSelect.value;
   const option = document.getElementById("optionSelect").value;
   const shopping = document.getElementById("shoppingSelect").value;
+  const group = document.getElementById("groupSelect").value;
   const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
   const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
 
@@ -77,13 +80,14 @@ window.saveDiscount = async () => {
     return;
   }
 
-  const key = `${country}_${course}_${option}_${shopping}`;
+  const key = `${country}_${course}_${option}_${shopping}_${group}`;
 
   await setDoc(doc(db, "optional_discounts", key), {
     country,
     course,
     option,
     shopping,
+    group,
     discount_1to7: d1,
     discount_8plus: d2,
     total: d1 + d2
