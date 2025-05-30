@@ -3,7 +3,7 @@ import {
   getFirestore, collection, getDocs, setDoc, doc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// ✅ 본인의 Firebase 정보로 교체
+// ✅ 본인의 Firebase 설정으로 교체 필요
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -28,9 +28,10 @@ const filterCountry = document.getElementById("filterCountry");
 
 let allData = [];
 
+// ✅ 합계 자동 계산
 [tax, handling, reserve, etc].forEach(input => {
   input.addEventListener("input", () => {
-    total.innerText = (
+    total.value = (
       Number(tax.value) +
       Number(handling.value) +
       Number(reserve.value) +
@@ -39,6 +40,7 @@ let allData = [];
   });
 });
 
+// ✅ 국가/코스 불러오기
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   const courseList = [];
@@ -62,6 +64,7 @@ async function loadCourses() {
   }
 }
 
+// ✅ 저장
 window.saveData = async () => {
   const data = {
     country: countrySelect.value,
@@ -70,13 +73,14 @@ window.saveData = async () => {
     handling: Number(handling.value),
     reserve: Number(reserve.value),
     etc: Number(etc.value),
-    total: Number(total.innerText)
+    total: Number(total.value)
   };
   const id = `${data.country}_${data.course}`;
   await setDoc(doc(db, "extra_fees", id), data);
   loadSavedData();
 };
 
+// ✅ 저장된 목록 불러오기
 async function loadSavedData() {
   const snapshot = await getDocs(collection(db, "extra_fees"));
   allData = [];
@@ -86,6 +90,7 @@ async function loadSavedData() {
   renderDataTable(allData);
 }
 
+// ✅ 테이블 렌더링
 function renderDataTable(dataArray) {
   const selectedCountry = filterCountry.value;
   const filtered = selectedCountry === "전체"
@@ -108,10 +113,12 @@ function renderDataTable(dataArray) {
   `).join("");
 }
 
+// ✅ 국가 필터링
 window.filterByCountry = () => {
   renderDataTable(allData);
 };
 
+// ✅ 수정
 window.updateData = async (country, course) => {
   const id = `${country}_${course}`;
   const rowInputs = document.querySelectorAll(`input[data-id="${id}"]`);
@@ -129,10 +136,12 @@ window.updateData = async (country, course) => {
   loadSavedData();
 };
 
+// ✅ 삭제
 window.deleteData = async (country, course) => {
   await deleteDoc(doc(db, "extra_fees", `${country}_${course}`));
   loadSavedData();
 };
 
+// ✅ 초기 로딩
 loadCourses();
 loadSavedData();
