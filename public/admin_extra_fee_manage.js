@@ -105,4 +105,46 @@ function renderDataTable(dataArray) {
     <tr>
       <td>${d.country}</td>
       <td>${d.course}</td>
-      <td><input ty
+      <td><input type="number" value="${d.tax}" data-field="tax" data-id="${d.country}_${d.course}"></td>
+      <td><input type="number" value="${d.handling}" data-field="handling" data-id="${d.country}_${d.course}"></td>
+      <td><input type="number" value="${d.reserve}" data-field="reserve" data-id="${d.country}_${d.course}"></td>
+      <td><input type="number" value="${d.etc}" data-field="etc" data-id="${d.country}_${d.course}"></td>
+      <td>${d.total.toFixed(2)}</td>
+      <td><button class="btn-small" onclick="updateData('${d.country}', '${d.course}')">수정</button></td>
+      <td><button class="btn-small" onclick="deleteData('${d.country}', '${d.course}')">삭제</button></td>
+    </tr>
+  `).join("");
+}
+
+// 필터
+window.filterByCountry = () => {
+  renderDataTable(allData);
+};
+
+// 수정
+window.updateData = async (country, course) => {
+  const id = `${country}_${course}`;
+  const rowInputs = document.querySelectorAll(`input[data-id="${id}"]`);
+  let newData = { country, course };
+  let total = 0;
+
+  rowInputs.forEach(input => {
+    const value = Number(input.value);
+    newData[input.dataset.field] = value;
+    total += value;
+  });
+
+  newData.total = total;
+  await setDoc(doc(db, "extra_fees", id), newData);
+  loadSavedData();
+};
+
+// 삭제
+window.deleteData = async (country, course) => {
+  await deleteDoc(doc(db, "extra_fees", `${country}_${course}`));
+  loadSavedData();
+};
+
+// 초기 로드
+loadCourses();
+loadSavedData();
