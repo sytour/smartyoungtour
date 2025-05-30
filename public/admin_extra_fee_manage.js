@@ -1,11 +1,9 @@
-// admin_extra_fee_manage.js
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
   getFirestore, collection, getDocs, setDoc, doc, deleteDoc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// ✅ Firebase 설정 (자신의 Firebase 정보로 바꿔주세요)
+// ✅ 본인의 Firebase 정보로 교체
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -18,7 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 요소 참조
 const countrySelect = document.getElementById("countrySelect");
 const courseSelect = document.getElementById("courseSelect");
 const tax = document.getElementById("tax");
@@ -29,9 +26,8 @@ const total = document.getElementById("total");
 const dataBody = document.getElementById("dataBody");
 const filterCountry = document.getElementById("filterCountry");
 
-let allData = []; // 전체 데이터 저장용
+let allData = [];
 
-// 실시간 합계 계산
 [tax, handling, reserve, etc].forEach(input => {
   input.addEventListener("input", () => {
     total.innerText = (
@@ -43,7 +39,6 @@ let allData = []; // 전체 데이터 저장용
   });
 });
 
-// 코스 불러오기
 async function loadCourses() {
   const snapshot = await getDocs(collection(db, "courses"));
   const courseList = [];
@@ -67,7 +62,6 @@ async function loadCourses() {
   }
 }
 
-// 저장
 window.saveData = async () => {
   const data = {
     country: countrySelect.value,
@@ -83,7 +77,6 @@ window.saveData = async () => {
   loadSavedData();
 };
 
-// 불러오기
 async function loadSavedData() {
   const snapshot = await getDocs(collection(db, "extra_fees"));
   allData = [];
@@ -93,7 +86,6 @@ async function loadSavedData() {
   renderDataTable(allData);
 }
 
-// 테이블 렌더링
 function renderDataTable(dataArray) {
   const selectedCountry = filterCountry.value;
   const filtered = selectedCountry === "전체"
@@ -116,12 +108,10 @@ function renderDataTable(dataArray) {
   `).join("");
 }
 
-// 필터
 window.filterByCountry = () => {
   renderDataTable(allData);
 };
 
-// 수정
 window.updateData = async (country, course) => {
   const id = `${country}_${course}`;
   const rowInputs = document.querySelectorAll(`input[data-id="${id}"]`);
@@ -139,12 +129,10 @@ window.updateData = async (country, course) => {
   loadSavedData();
 };
 
-// 삭제
 window.deleteData = async (country, course) => {
   await deleteDoc(doc(db, "extra_fees", `${country}_${course}`));
   loadSavedData();
 };
 
-// 초기 로드
 loadCourses();
 loadSavedData();
