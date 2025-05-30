@@ -61,20 +61,31 @@
         <tr>
           <th>국가</th>
           <th>코스</th>
+          <th>인원 구분</th>
           <th>옵션</th>
           <th>쇼핑</th>
-          <th>1~7명 할인 (USD)</th>
-          <th>8명 이상 할인 (USD)</th>
+          <th>1차 할인 (USD)</th>
+          <th>2차 할인 (USD)</th>
           <th>합계 미리보기</th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td>
-            <select id="countrySelect"><option value="">선택</option></select>
+            <select id="countrySelect">
+              <option value="">선택</option>
+            </select>
           </td>
           <td>
-            <select id="courseSelect"><option value="">선택</option></select>
+            <select id="courseSelect">
+              <option value="">선택</option>
+            </select>
+          </td>
+          <td>
+            <select id="groupSelect">
+              <option value="1~7명">1~7명</option>
+              <option value="8명 이상">8명 이상</option>
+            </select>
           </td>
           <td>
             <select id="optionSelect">
@@ -147,6 +158,7 @@
         courseDataMap = {};
         snapshot.forEach(doc => {
           const { country, course } = doc.data();
+          if (!country || !course) return;
           if (!courseDataMap[country]) courseDataMap[country] = [];
           if (!courseDataMap[country].includes(course)) {
             courseDataMap[country].push(course);
@@ -170,6 +182,7 @@
       const course = courseSelect.value;
       const option = document.getElementById("optionSelect").value;
       const shopping = document.getElementById("shoppingSelect").value;
+      const group = document.getElementById("groupSelect").value;
       const d1 = parseFloat(document.getElementById("discountGroup1").value) || 0;
       const d2 = parseFloat(document.getElementById("discountGroup2").value) || 0;
 
@@ -178,13 +191,14 @@
         return;
       }
 
-      const key = `${country}_${course}_${option}_${shopping}`;
+      const key = `${country}_${course}_${option}_${shopping}_${group}`;
 
       await setDoc(doc(db, "optional_discounts", key), {
         country,
         course,
         option,
         shopping,
+        group,
         discount_1to7: d1,
         discount_8plus: d2,
         total: d1 + d2
