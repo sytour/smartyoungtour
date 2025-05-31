@@ -89,44 +89,48 @@
       color: #666;
       margin-top: 4px;
     }
+
   </style>
-  <script type="module" src="user_info_form.js"></script>
 </head>
 <body>
   <div class="form-container">
     <h2>사용자 정보 입력</h2>
 
     <label for="name">상호명/이름 *</label>
-    <input type="text" id="name" placeholder="상호명 또는 이름 입력" />
+    <input type="text" id="name" placeholder="상호명 또는 이름 입력">
 
     <label for="phone">연락처 *</label>
-    <input type="tel" id="phone" placeholder="연락처 입력" />
+    <input type="tel" id="phone" placeholder="연락처 입력">
 
-    <label for="region1">지역 (시/도) *</label>
-    <select id="region1" onchange="updateSubRegion()">
+    <label for="province">지역 (시/도) *</label>
+    <select id="province">
       <option value="">시/도 선택</option>
-      <option value="서울특별시">서울특별시</option>
-      <option value="경기도">경기도</option>
-      <option value="부산광역시">부산광역시</option>
-      <option value="대구광역시">대구광역시</option>
+      <option>서울특별시</option>
+      <option>경기도</option>
+      <option>부산광역시</option>
+      <!-- ... 필요한 시/도 추가 -->
     </select>
 
-    <label for="region2">지역 (시/군/구) *</label>
-    <select id="region2">
+    <label for="district">지역 (시/군/구) *</label>
+    <select id="district">
       <option value="">시/군/구 선택</option>
+      <option>성남시</option>
+      <option>수원시</option>
+      <option>고양시</option>
+      <!-- ... 필요한 시군구 추가 -->
     </select>
 
     <label for="kakao">카카오톡 ID <span class="optional-label">(선택)</span></label>
-    <input type="text" id="kakao" placeholder="예: sytour" />
+    <input type="text" id="kakao" placeholder="예: sytour">
 
     <div class="checkbox-line">
-      <input type="checkbox" id="saveInfo" />
+      <input type="checkbox" id="saveInfo">
       <label for="saveInfo">저장</label>
     </div>
 
     <div class="btn-group">
-      <button class="btn-primary" onclick="validateAndProceed()">견적 요청 세부 내용</button>
-      <button class="btn-secondary" onclick="window.location.href='admin_login.html'">관리자용</button>
+      <button class="btn-primary">견적 요청 세부 내용</button>
+      <button class="btn-secondary">관리자용</button>
     </div>
   </div>
 </body>
