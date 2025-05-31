@@ -1,50 +1,55 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>사용자 정보 입력</title>
   <style>
     body {
-      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background-color: #fff9f3;
       margin: 0;
-      padding: 0;
-      height: 100vh;
+      background-color: #fffaf3;
+      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
+      height: 100vh;
     }
 
-    .form-container {
+    .container {
       background: white;
       padding: 40px 30px;
-      border-radius: 16px;
+      border-radius: 20px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
       width: 100%;
-      max-width: 480px;
+      max-width: 500px;
     }
 
     h2 {
       text-align: center;
-      color: #333;
-      margin-bottom: 28px;
+      font-size: 22px;
+      color: #222;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin-top: 18px;
-      font-weight: bold;
+      margin-bottom: 6px;
+      font-weight: 600;
       font-size: 15px;
     }
 
-    input, select {
+    input[type="text"],
+    input[type="tel"],
+    select {
       width: 100%;
       padding: 12px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      box-sizing: border-box;
       font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-sizing: border-box;
     }
 
     .top-row {
@@ -54,18 +59,19 @@
     }
 
     .top-row label {
-      flex: 1;
+      margin: 0;
+      font-weight: 600;
     }
 
-    .top-row .save-checkbox {
+    .save-box {
       display: flex;
       align-items: center;
-      font-weight: normal;
-      font-size: 14px;
+      gap: 4px;
     }
 
-    .top-row .save-checkbox input {
-      margin-right: 4px;
+    .save-box label {
+      font-weight: 500;
+      font-size: 14px;
     }
 
     .optional {
@@ -75,74 +81,82 @@
       margin-left: 4px;
     }
 
-    .button-row {
+    .btn-group {
       display: flex;
       justify-content: space-between;
-      margin-top: 32px;
+      margin-top: 30px;
       gap: 10px;
     }
 
-    .button-row button {
+    .btn {
       flex: 1;
       padding: 14px;
+      border: none;
+      border-radius: 12px;
       font-size: 15px;
       font-weight: bold;
-      border: none;
-      border-radius: 10px;
       cursor: pointer;
     }
 
-    .btn-main {
-      background: linear-gradient(to right, #ff9966, #ff5e62);
+    .btn-primary {
+      background: linear-gradient(to right, #ff9166, #ff7a5a);
       color: white;
     }
 
-    .btn-sub {
-      background-color: #555;
+    .btn-secondary {
+      background-color: #444;
       color: white;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
+  <div class="container">
     <h2>사용자 정보 입력</h2>
 
-    <div class="top-row">
+    <div class="top-row form-group">
       <label for="name">상호명/이름 *</label>
-      <div class="save-checkbox">
+      <div class="save-box">
         <input type="checkbox" id="saveInfo">
         <label for="saveInfo">저장</label>
       </div>
     </div>
-    <input type="text" id="name" placeholder="상호명 또는 이름 입력">
+    <div class="form-group">
+      <input type="text" id="name" placeholder="상호명 또는 이름 입력">
+    </div>
 
-    <label for="phone">연락처 *</label>
-    <input type="tel" id="phone" placeholder="연락처 입력">
+    <div class="form-group">
+      <label for="phone">연락처 *</label>
+      <input type="tel" id="phone" placeholder="연락처 입력">
+    </div>
 
-    <label for="province">지역 (시/도) *</label>
-    <select id="province">
-      <option value="">시/도 선택</option>
-      <option>서울특별시</option>
-      <option>경기도</option>
-      <option>부산광역시</option>
-      <!-- 추가 가능 -->
-    </select>
+    <div class="form-group">
+      <label for="province">지역 (시/도) *</label>
+      <select id="province">
+        <option value="">시/도 선택</option>
+        <option>서울특별시</option>
+        <option>경기도</option>
+        <option>부산광역시</option>
+      </select>
+    </div>
 
-    <label for="district">지역 (시/군/구) *</label>
-    <select id="district">
-      <option value="">시/군/구 선택</option>
-      <option>강남구</option>
-      <option>수원시</option>
-      <option>성남시</option>
-      <!-- 추가 가능 -->
-    </select>
+    <div class="form-group">
+      <label for="district">지역 (시/군/구) *</label>
+      <select id="district">
+        <option value="">시/군/구 선택</option>
+        <option>성남시</option>
+        <option>수원시</option>
+        <option>용인시</option>
+      </select>
+    </div>
 
-    <label for="kakao">카카오톡 ID<span class="optional"> (선택)</span></label>
-    <input type="text" id="kakao" placeholder="예: sytour">
+    <div class="form-group">
+      <label for="kakao">카카오톡 ID <span class="optional">(선택)</span></label>
+      <input type="text" id="kakao" placeholder="예: sytour">
+    </div>
 
-    <div class="button-row">
-      <button class="btn-main">견적 요청 세부 내용</button>
-      <button class="btn-sub">관리자용</button>
+    <div class="btn-group">
+      <button class="btn btn-primary">견적 요청 세부 내용</button>
+      <button class="btn btn-secondary">관리자용</button>
     </div>
   </div>
 </body>
