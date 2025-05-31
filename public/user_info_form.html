@@ -6,34 +6,35 @@
   <style>
     body {
       font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background-color: #fef9f4;
+      background-color: #fff9f3;
       margin: 0;
       padding: 0;
+      height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
     .form-container {
       background: white;
+      padding: 40px 30px;
       border-radius: 16px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
-      padding: 40px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
       width: 100%;
       max-width: 480px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 24px;
       color: #333;
+      margin-bottom: 28px;
     }
 
     label {
       display: block;
       margin-top: 18px;
       font-weight: bold;
+      font-size: 15px;
     }
 
     input, select {
@@ -43,60 +44,76 @@
       border: 1px solid #ccc;
       border-radius: 8px;
       box-sizing: border-box;
+      font-size: 14px;
     }
 
-    .checkbox-line {
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      margin-top: 12px;
-    }
-
-    .checkbox-line label {
-      margin-left: 6px;
-      font-weight: normal;
-    }
-
-    .btn-group {
+    .top-row {
       display: flex;
       justify-content: space-between;
-      margin-top: 30px;
+      align-items: center;
     }
 
-    .btn-group button {
-      width: 48%;
+    .top-row label {
+      flex: 1;
+    }
+
+    .top-row .save-checkbox {
+      display: flex;
+      align-items: center;
+      font-weight: normal;
+      font-size: 14px;
+    }
+
+    .top-row .save-checkbox input {
+      margin-right: 4px;
+    }
+
+    .optional {
+      font-weight: normal;
+      font-size: 13px;
+      color: #777;
+      margin-left: 4px;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 32px;
+      gap: 10px;
+    }
+
+    .button-row button {
+      flex: 1;
       padding: 14px;
+      font-size: 15px;
+      font-weight: bold;
       border: none;
       border-radius: 10px;
-      font-weight: bold;
-      font-size: 15px;
       cursor: pointer;
     }
 
-    .btn-primary {
+    .btn-main {
       background: linear-gradient(to right, #ff9966, #ff5e62);
       color: white;
     }
 
-    .btn-secondary {
-      background: #555;
+    .btn-sub {
+      background-color: #555;
       color: white;
     }
-
-    .optional-label {
-      font-weight: normal;
-      font-size: 14px;
-      color: #666;
-      margin-top: 4px;
-    }
-
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>사용자 정보 입력</h2>
 
-    <label for="name">상호명/이름 *</label>
+    <div class="top-row">
+      <label for="name">상호명/이름 *</label>
+      <div class="save-checkbox">
+        <input type="checkbox" id="saveInfo">
+        <label for="saveInfo">저장</label>
+      </div>
+    </div>
     <input type="text" id="name" placeholder="상호명 또는 이름 입력">
 
     <label for="phone">연락처 *</label>
@@ -108,29 +125,24 @@
       <option>서울특별시</option>
       <option>경기도</option>
       <option>부산광역시</option>
-      <!-- ... 필요한 시/도 추가 -->
+      <!-- 추가 가능 -->
     </select>
 
     <label for="district">지역 (시/군/구) *</label>
     <select id="district">
       <option value="">시/군/구 선택</option>
-      <option>성남시</option>
+      <option>강남구</option>
       <option>수원시</option>
-      <option>고양시</option>
-      <!-- ... 필요한 시군구 추가 -->
+      <option>성남시</option>
+      <!-- 추가 가능 -->
     </select>
 
-    <label for="kakao">카카오톡 ID <span class="optional-label">(선택)</span></label>
+    <label for="kakao">카카오톡 ID<span class="optional"> (선택)</span></label>
     <input type="text" id="kakao" placeholder="예: sytour">
 
-    <div class="checkbox-line">
-      <input type="checkbox" id="saveInfo">
-      <label for="saveInfo">저장</label>
-    </div>
-
-    <div class="btn-group">
-      <button class="btn-primary">견적 요청 세부 내용</button>
-      <button class="btn-secondary">관리자용</button>
+    <div class="button-row">
+      <button class="btn-main">견적 요청 세부 내용</button>
+      <button class="btn-sub">관리자용</button>
     </div>
   </div>
 </body>
