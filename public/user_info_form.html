@@ -55,23 +55,19 @@
     .top-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-    }
-
-    .top-row label {
-      margin: 0;
-      font-weight: 600;
+      align-items: flex-start;
+      margin-bottom: 6px;
     }
 
     .save-box {
       display: flex;
       align-items: center;
+      font-size: 14px;
       gap: 4px;
     }
 
     .save-box label {
       font-weight: 500;
-      font-size: 14px;
     }
 
     .optional {
@@ -81,31 +77,35 @@
       margin-left: 4px;
     }
 
-    .btn-group {
+    .btn-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       margin-top: 30px;
-      gap: 10px;
     }
 
-    .btn {
-      flex: 1;
+    .btn-main {
+      flex-grow: 1;
       padding: 14px;
-      border: none;
-      border-radius: 12px;
       font-size: 15px;
       font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(to right, #ff9166, #ff7a5a);
+      color: white;
+      margin-right: 10px;
       cursor: pointer;
     }
 
-    .btn-primary {
-      background: linear-gradient(to right, #ff9166, #ff7a5a);
-      color: white;
-    }
-
-    .btn-secondary {
+    .btn-sub {
+      padding: 10px 16px;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
       background-color: #444;
       color: white;
+      white-space: nowrap;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -113,7 +113,7 @@
   <div class="container">
     <h2>사용자 정보 입력</h2>
 
-    <div class="top-row form-group">
+    <div class="top-row">
       <label for="name">상호명/이름 *</label>
       <div class="save-box">
         <input type="checkbox" id="saveInfo">
@@ -154,9 +154,9 @@
       <input type="text" id="kakao" placeholder="예: sytour">
     </div>
 
-    <div class="btn-group">
-      <button class="btn btn-primary">견적 요청 세부 내용</button>
-      <button class="btn btn-secondary">관리자용</button>
+    <div class="btn-row">
+      <button class="btn-main">견적 요청 세부 내용</button>
+      <button class="btn-sub">관리자용</button>
     </div>
   </div>
 </body>
