@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>고객 관리 시스템</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fefdf8;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f3f3f3;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+
+    input[type="text"] {
+      width: 95%;
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 6px 12px;
+      margin: 0 3px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      background-color: #ffa94d;
+      color: white;
+    }
+
+    .delete-btn {
+      background-color: #ff6b6b;
+      color: white;
+    }
+
+    .empty-message {
+      text-align: center;
+      padding: 40px 0;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📋 고객 관리 시스템</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>상호명/이름</th>
+          <th>연락처</th>
+          <th>지역(시/도)</th>
+          <th>지역(시/군/구)</th>
+          <th>카카오톡 ID</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody id="customerList">
+        <!-- 항목이 여기에 동적으로 들어갑니다 -->
+      </tbody>
+    </table>
+
+    <div id="emptyMessage" class="empty-message" style="display: none;">
+      저장된 고객 정보가 없습니다.
+    </div>
+  </div>
+</body>
+</html>
