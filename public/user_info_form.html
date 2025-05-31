@@ -6,182 +6,132 @@
   <style>
     body {
       font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background-color: #fffaf3;
+      background-color: #fef9f4;
       margin: 0;
-      padding: 40px;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
     .form-container {
-      max-width: 500px;
-      margin: auto;
       background: white;
       border-radius: 16px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
-      padding: 30px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 480px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 30px;
-      color: #444;
+      margin-bottom: 24px;
+      color: #333;
     }
 
     label {
       display: block;
-      margin-top: 15px;
+      margin-top: 18px;
       font-weight: bold;
-      font-size: 14px;
     }
 
     input, select {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       margin-top: 6px;
-      border-radius: 8px;
       border: 1px solid #ccc;
+      border-radius: 8px;
       box-sizing: border-box;
     }
 
-    .save-checkbox {
+    .checkbox-line {
       display: flex;
       justify-content: flex-end;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
-    .save-checkbox input {
-      transform: scale(1.2);
-      margin-left: 8px;
+    .checkbox-line label {
+      margin-left: 6px;
+      font-weight: normal;
     }
 
-    .button-row {
+    .btn-group {
       display: flex;
       justify-content: space-between;
       margin-top: 30px;
     }
 
-    .button-row button {
-      flex: 1;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: bold;
+    .btn-group button {
+      width: 48%;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 15px;
       cursor: pointer;
-      margin: 0 4px;
     }
 
-    .btn-estimate {
-      background-color: #ff944d;
+    .btn-primary {
+      background: linear-gradient(to right, #ff9966, #ff5e62);
       color: white;
     }
 
-    .btn-admin {
-      background-color: #666;
+    .btn-secondary {
+      background: #555;
       color: white;
     }
 
-    .btn-estimate:hover {
-      background-color: #ff7f24;
+    .optional-label {
+      font-weight: normal;
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
     }
 
-    .btn-admin:hover {
-      background-color: #444;
-    }
   </style>
 </head>
 <body>
   <div class="form-container">
-    <h2>📋 사용자 정보 입력</h2>
-    <form id="userForm" action="b2b_country_course_linked.html" method="get">
-      <label for="name">상호명/이름 <span style="color: red;">*</span></label>
-      <input type="text" id="name" name="name" required />
+    <h2>사용자 정보 입력</h2>
 
-      <label for="phone">연락처 <span style="color: red;">*</span></label>
-      <input type="tel" id="phone" name="phone" required />
+    <label for="name">상호명/이름 *</label>
+    <input type="text" id="name" placeholder="상호명 또는 이름 입력">
 
-      <label for="region1">지역 (시/도) <span style="color: red;">*</span></label>
-      <select id="region1" name="region1" required>
-        <option value="">시/도 선택</option>
-        <option value="서울특별시">서울특별시</option>
-        <option value="경기도">경기도</option>
-        <option value="부산광역시">부산광역시</option>
-        <option value="대구광역시">대구광역시</option>
-        <!-- 필요한 지역 추가 -->
-      </select>
+    <label for="phone">연락처 *</label>
+    <input type="tel" id="phone" placeholder="연락처 입력">
 
-      <label for="region2">지역 (시/군/구)</label>
-      <select id="region2" name="region2">
-        <option value="">시/군/구 선택</option>
-      </select>
+    <label for="province">지역 (시/도) *</label>
+    <select id="province">
+      <option value="">시/도 선택</option>
+      <option>서울특별시</option>
+      <option>경기도</option>
+      <option>부산광역시</option>
+      <!-- ... 필요한 시/도 추가 -->
+    </select>
 
-      <label for="kakaoId">카카오톡 ID (선택)</label>
-      <input type="text" id="kakaoId" name="kakaoId" placeholder="예: sytour" />
+    <label for="district">지역 (시/군/구) *</label>
+    <select id="district">
+      <option value="">시/군/구 선택</option>
+      <option>성남시</option>
+      <option>수원시</option>
+      <option>고양시</option>
+      <!-- ... 필요한 시군구 추가 -->
+    </select>
 
-      <div class="save-checkbox">
-        <label for="saveInfo">저장</label>
-        <input type="checkbox" id="saveInfo" />
-      </div>
+    <label for="kakao">카카오톡 ID <span class="optional-label">(선택)</span></label>
+    <input type="text" id="kakao" placeholder="예: sytour">
 
-      <div class="button-row">
-        <button type="submit" class="btn-estimate">견적 요청 세부 내용</button>
-        <button type="button" class="btn-admin" onclick="location.href='admin_login.html'">관리자용</button>
-      </div>
-    </form>
+    <div class="checkbox-line">
+      <input type="checkbox" id="saveInfo">
+      <label for="saveInfo">저장</label>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-primary">견적 요청 세부 내용</button>
+      <button class="btn-secondary">관리자용</button>
+    </div>
   </div>
-
-  <script>
-    // 저장 기능
-    window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("savedUserInfo");
-      if (saved) {
-        const data = JSON.parse(saved);
-        document.getElementById("name").value = data.name;
-        document.getElementById("phone").value = data.phone;
-        document.getElementById("region1").value = data.region1;
-        document.getElementById("region2").innerHTML = `<option>${data.region2}</option>`;
-        document.getElementById("kakaoId").value = data.kakaoId;
-        document.getElementById("saveInfo").checked = true;
-      }
-
-      document.getElementById("userForm").addEventListener("submit", () => {
-        if (document.getElementById("saveInfo").checked) {
-          const saveData = {
-            name: document.getElementById("name").value,
-            phone: document.getElementById("phone").value,
-            region1: document.getElementById("region1").value,
-            region2: document.getElementById("region2").value,
-            kakaoId: document.getElementById("kakaoId").value,
-          };
-          localStorage.setItem("savedUserInfo", JSON.stringify(saveData));
-        } else {
-          localStorage.removeItem("savedUserInfo");
-        }
-      });
-
-      document.getElementById("region1").addEventListener("change", () => {
-        const region1 = document.getElementById("region1").value;
-        const region2 = document.getElementById("region2");
-        region2.innerHTML = '<option value="">시/군/구 선택</option>';
-
-        if (region1 === "서울특별시") {
-          ["강남구", "서초구", "중구", "종로구"].forEach(area => {
-            const opt = document.createElement("option");
-            opt.value = area;
-            opt.innerText = area;
-            region2.appendChild(opt);
-          });
-        } else if (region1 === "경기도") {
-          ["수원시", "성남시", "고양시", "용인시"].forEach(area => {
-            const opt = document.createElement("option");
-            opt.value = area;
-            opt.innerText = area;
-            region2.appendChild(opt);
-          });
-        }
-        // 필요한 지역 추가 가능
-      });
-    });
-  </script>
 </body>
 </html>
