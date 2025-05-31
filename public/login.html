@@ -6,7 +6,11 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
+      background-image: url('/resort_background_clean.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
       margin: 0;
       min-height: 100vh;
       display: flex;
@@ -15,10 +19,10 @@
     }
 
     .login-container {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.88);
       padding: 40px;
       border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.15);
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
       max-width: 400px;
       width: 90%;
     }
@@ -33,9 +37,7 @@
       line-height: 1.6;
     }
 
-    .contact-box div {
-      margin-bottom: 6px;
-    }
+    .contact-box div { margin-bottom: 6px; }
 
     h2 {
       text-align: center;
@@ -76,31 +78,11 @@
       <div><strong>📞 한국 담당자:</strong> +82 10-4009-1397, <strong>카톡 ID:</strong> sytour</div>
     </div>
     <h2>SMART YOUNG TOUR</h2>
-    <form onsubmit="return login()">
-      <input type="text" id="id" placeholder="ID" required />
-      <input type="password" id="pw" placeholder="PW" required />
+    <form action="b2b_country_course_linked.html" method="get">
+      <input type="text" name="id" placeholder="ID" required />
+      <input type="password" name="pw" placeholder="PW" required />
       <button type="submit">로그인</button>
     </form>
   </div>
-
-  <script>
-    function login() {
-      const id = document.getElementById("id").value.trim();
-      const pw = document.getElementById("pw").value.trim();
-
-      // ✅ 테스트용 계정
-      const validId = "agent";
-      const validPw = "1234";
-
-      if (id === validId && pw === validPw) {
-        // 로그인 성공 → 다음 페이지로 이동
-        window.location.href = "admin_main.html";
-      } else {
-        alert("아이디 또는 비밀번호가 틀렸습니다.");
-      }
-
-      return false; // form 기본 제출 막기
-    }
-  </script>
 </body>
 </html>
