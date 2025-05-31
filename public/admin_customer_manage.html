@@ -25,10 +25,22 @@
       margin-bottom: 30px;
     }
 
+    .filters {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .filters input, .filters select {
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
     }
 
     th, td {
@@ -54,10 +66,11 @@
 
     button {
       padding: 6px 12px;
-      margin: 0 3px;
+      margin: 0 2px;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 13px;
     }
 
     .edit-btn {
@@ -80,6 +93,20 @@
 <body>
   <div class="container">
     <h2>📋 고객 관리 시스템</h2>
+
+    <div class="filters">
+      <select id="filterRegion">
+        <option value="">전체 지역</option>
+        <option value="서울특별시">서울특별시</option>
+        <option value="경기도">경기도</option>
+        <option value="부산광역시">부산광역시</option>
+        <option value="대구광역시">대구광역시</option>
+      </select>
+      <input type="text" id="searchName" placeholder="상호명/이름 검색" />
+      <input type="text" id="searchPhone" placeholder="연락처 검색" />
+      <button onclick="filterData()">🔍 검색</button>
+      <button onclick="loadCustomers()">🔄 초기화</button>
+    </div>
 
     <table>
       <thead>
