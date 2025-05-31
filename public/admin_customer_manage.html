@@ -27,15 +27,44 @@
 
     .filters {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
+      align-items: center;
     }
 
-    .filters input, .filters select {
-      padding: 8px;
+    .filters select,
+    .filters input {
+      padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid #ccc;
       font-size: 14px;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    .icon-btn {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      background-color: #ff944d;
+      color: white;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background-color: #ff7e33;
+    }
+
+    .icon-btn.reset {
+      background-color: #bbb;
+    }
+
+    .icon-btn.reset:hover {
+      background-color: #999;
     }
 
     table {
@@ -95,17 +124,23 @@
     <h2>📋 고객 관리 시스템</h2>
 
     <div class="filters">
-      <select id="filterRegion">
-        <option value="">전체 지역</option>
-        <option value="서울특별시">서울특별시</option>
-        <option value="경기도">경기도</option>
-        <option value="부산광역시">부산광역시</option>
-        <option value="대구광역시">대구광역시</option>
+      <select id="filterRegion1">
+        <option value="">전체 시/도</option>
+        <option>서울특별시</option>
+        <option>경기도</option>
+        <option>부산광역시</option>
+        <option>대구광역시</option>
       </select>
+
+      <select id="filterRegion2">
+        <option value="">전체 시/군/구</option>
+      </select>
+
       <input type="text" id="searchName" placeholder="상호명/이름 검색" />
       <input type="text" id="searchPhone" placeholder="연락처 검색" />
-      <button onclick="filterData()">🔍 검색</button>
-      <button onclick="loadCustomers()">🔄 초기화</button>
+
+      <button class="icon-btn" onclick="filterData()">🔍 검색</button>
+      <button class="icon-btn reset" onclick="loadCustomers()">🔄 초기화</button>
     </div>
 
     <table>
