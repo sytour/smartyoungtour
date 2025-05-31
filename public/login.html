@@ -1,99 +1,251 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>SMART YOUNG TOUR 로그인</title>
+  <title>사용자 정보 입력</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-image: url('/807413fa-6cac-4168-8318-30de8095a12b.png');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      margin: 0;
-      min-height: 100vh;
+      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background: linear-gradient(to bottom right, #fff9f4, #fdf6ec);
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
 
-    .login-container {
-      background: rgba(255, 255, 255, 0.88);
+    .form-container {
+      background: white;
       padding: 40px;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.2);
-      max-width: 400px;
-      width: 90%;
-    }
-
-    .contact-box {
-      background-color: #fafafa;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 20px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    .contact-box div {
-      margin-bottom: 4px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 520px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 20px;
-      font-size: 22px;
       color: #333;
+      margin-bottom: 32px;
+      font-size: 24px;
     }
 
-    input {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+    label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+      color: #444;
     }
 
-    button {
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .label-with-checkbox {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    input, select {
       width: 100%;
       padding: 12px;
-      background-color: orange;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      transition: border 0.3s ease;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    input:focus, select:focus {
+      border-color: #ff944d;
+      outline: none;
+    }
+
+    .main-buttons {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 30px;
+    }
+
+    .next-btn {
+      width: 70%;
+      background: linear-gradient(135deg, #ffa94d, #ff7e5f);
       color: white;
-      border: none;
-      border-radius: 6px;
       font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
       font-size: 16px;
       cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .next-btn:hover {
+      background: linear-gradient(135deg, #ff8533, #ff6b4d);
+    }
+
+    .admin-btn {
+      width: 25%;
+      background-color: #666;
+      color: white;
+      font-size: 14px;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .admin-btn:hover {
+      background-color: #444;
+    }
+
+    ::placeholder {
+      color: #bbb;
+    }
+
+    select:invalid {
+      color: #aaa;
     }
   </style>
-  <script>
-    function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      if (username === "agent" && password === "1234") {
-        window.location.href = "user_info_form.html";
-      } else {
-        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import {
+      getFirestore, collection, getDocs, setDoc, doc, query, where
+    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDEoEvrhTfLqagtRiBva_pTbswkl5WhACE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.appspot.com",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05effa56e81c43595b",
+      measurementId: "G-KN3EQN2WLN"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.validateAndProceed = async function () {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const region1 = document.getElementById("region1").value;
+      const region2 = document.getElementById("region2").value;
+      const kakao = document.getElementById("kakao").value.trim();
+
+      if (!name || !phone || !region1 || !region2) {
+        alert("필수 항목을 모두 입력해주세요.");
+        return;
       }
+
+      const userData = { name, phone, region1, region2, kakao };
+
+      // 중복 체크 후 저장
+      await saveUserDataIfNotDuplicate(userData);
+
+      // 저장 여부와 관계없이 다음 페이지 이동
+      window.location.href = "b2b_country_course_linked.html";
+    };
+
+    async function saveUserDataIfNotDuplicate(userData) {
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("phone", "==", userData.phone));
+      const snapshot = await getDocs(q);
+
+      if (!snapshot.empty) return;
+
+      const newDocRef = doc(usersRef);
+      await setDoc(newDocRef, userData);
     }
+
+    window.updateSubRegion = function () {
+      const region1 = document.getElementById("region1").value;
+      const region2 = document.getElementById("region2");
+      region2.innerHTML = '<option value="">-- 시/군/구 선택 --</option>';
+
+      const regionData = {
+        "서울특별시": ["강남구", "종로구", "마포구", "송파구"],
+        "경기도": ["성남시", "용인시", "수원시", "고양시", "광주시"],
+        "부산광역시": ["해운대구", "부산진구", "동래구"],
+        "대구광역시": ["수성구", "중구", "달서구"]
+      };
+
+      if (regionData[region1]) {
+        regionData[region1].forEach(sub => {
+          const option = document.createElement("option");
+          option.value = sub;
+          option.textContent = sub;
+          region2.appendChild(option);
+        });
+      }
+    };
+
+    window.onload = () => {
+      const saved = localStorage.getItem("userInfo");
+      if (saved) {
+        const data = JSON.parse(saved);
+        document.getElementById("name").value = data.name;
+        document.getElementById("phone").value = data.phone;
+        document.getElementById("region1").value = data.region1;
+        updateSubRegion();
+        setTimeout(() => {
+          document.getElementById("region2").value = data.region2;
+        }, 100);
+        document.getElementById("kakao").value = data.kakao || "";
+        document.getElementById("saveInfo").checked = true;
+      }
+    };
   </script>
 </head>
 <body>
-  <div class="login-container">
-    <div class="contact-box">
-      <div><strong>현지 담당자:</strong> 070-7799-4009</div>
-      <div><strong>현지 담당자(라오스):</strong> +856 20-9918-8669, 카톡ID:mkmk9111</div>
-      <div><strong>한국 담당자:</strong> +82 10-4009-1397, 카톡ID:sytour</div>
+  <div class="form-container">
+    <h2>사용자 정보 입력</h2>
+
+    <div class="input-group">
+      <div class="label-with-checkbox">
+        <label for="name">상호명/이름 <span style="color: red;">*</span></label>
+        <label><input type="checkbox" id="saveInfo" /> 저장</label>
+      </div>
+      <input type="text" id="name" placeholder="예: 홍길동 or 스마트영투어" required>
     </div>
 
-    <h2>SMART YOUNG TOUR</h2>
-    <input type="text" id="username" placeholder="ID" />
-    <input type="password" id="password" placeholder="PW" />
-    <button onclick="login()">로그인</button>
+    <div class="input-group">
+      <label for="phone">연락처 <span style="color: red;">*</span></label>
+      <input type="text" id="phone" placeholder="예: 010-0000-0000" required>
+    </div>
+
+    <div class="input-group">
+      <label for="region1">지역 (시/도) <span style="color: red;">*</span></label>
+      <select id="region1" onchange="updateSubRegion()" required>
+        <option value="">-- 시/도 선택 --</option>
+        <option value="서울특별시">서울특별시</option>
+        <option value="경기도">경기도</option>
+        <option value="부산광역시">부산광역시</option>
+        <option value="대구광역시">대구광역시</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="region2">지역 (시/군/구) <span style="color: red;">*</span></label>
+      <select id="region2" required>
+        <option value="">-- 시/군/구 선택 --</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <label for="kakao">카카오톡 ID (선택)</label>
+      <input type="text" id="kakao" placeholder="예: sytour">
+    </div>
+
+    <div class="main-buttons">
+      <button class="next-btn" onclick="validateAndProceed()">견적 요청 세부 내용</button>
+      <button class="admin-btn" onclick="location.href='admin_login.html'">관리자용</button>
+    </div>
   </div>
 </body>
 </html>
