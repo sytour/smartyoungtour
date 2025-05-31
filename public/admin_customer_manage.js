@@ -3,7 +3,7 @@ import {
   getFirestore, collection, getDocs, updateDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// 🔧 본인의 Firebase 설정으로 교체해야 함
+// 🔧 본인의 Firebase 설정값으로 교체해야 함
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_AUTH_DOMAIN",
@@ -19,8 +19,31 @@ const db = getFirestore(app);
 const customerList = document.getElementById("customerList");
 const emptyMessage = document.getElementById("emptyMessage");
 
-let allCustomers = []; // 전체 불러온 데이터를 저장해두고 필터에 사용
+let allCustomers = []; // 전체 데이터 보관용
 
+// 시/도 → 시/군/구 자동 연동용
+const regionData = {
+  "서울특별시": ["강남구", "종로구", "마포구", "송파구"],
+  "경기도": ["성남시", "용인시", "수원시", "고양시"],
+  "부산광역시": ["해운대구", "동래구", "부산진구"],
+  "대구광역시": ["수성구", "달서구", "중구"]
+};
+
+document.getElementById("filterRegion1").addEventListener("change", () => {
+  const region1 = document.getElementById("filterRegion1").value;
+  const region2 = document.getElementById("filterRegion2");
+  region2.innerHTML = '<option value="">전체 시/군/구</option>';
+  if (regionData[region1]) {
+    regionData[region1].forEach(sub => {
+      const opt = document.createElement("option");
+      opt.value = sub;
+      opt.textContent = sub;
+      region2.appendChild(opt);
+    });
+  }
+});
+
+// 고객 목록 불러오기
 export async function loadCustomers() {
   customerList.innerHTML = "";
   const querySnapshot = await getDocs(collection(db, "customers"));
@@ -33,6 +56,7 @@ export async function loadCustomers() {
   renderCustomers(allCustomers);
 }
 
+// 고객 테이블 렌더링
 function renderCustomers(data) {
   customerList.innerHTML = "";
 
@@ -92,15 +116,16 @@ function renderCustomers(data) {
   });
 }
 
-window.loadCustomers = loadCustomers;
-
+// 검색 필터 동작
 window.filterData = () => {
-  const region = document.getElementById("filterRegion").value;
+  const region1 = document.getElementById("filterRegion1").value;
+  const region2 = document.getElementById("filterRegion2").value;
   const name = document.getElementById("searchName").value.trim().toLowerCase();
   const phone = document.getElementById("searchPhone").value.trim();
 
   const filtered = allCustomers.filter(cust =>
-    (!region || cust.region1 === region) &&
+    (!region1 || cust.region1 === region1) &&
+    (!region2 || cust.region2 === region2) &&
     (!name || (cust.name && cust.name.toLowerCase().includes(name))) &&
     (!phone || (cust.phone && cust.phone.includes(phone)))
   );
@@ -108,4 +133,5 @@ window.filterData = () => {
   renderCustomers(filtered);
 };
 
+// 초기 진입 시 자동 로딩
 window.onload = loadCustomers;
