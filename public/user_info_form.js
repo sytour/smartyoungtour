@@ -3,6 +3,7 @@ import {
   getFirestore, collection, getDocs, setDoc, doc, query, where
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+// ✅ Firebase 설정
 const firebaseConfig = {
   apiKey: "AIzaSyDEoEvrhTfLqagtRiBva_pTbswkl5WhACE",
   authDomain: "smartyoungtour.firebaseapp.com",
@@ -16,6 +17,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ✅ 버튼 클릭 → 저장 + 이동
 window.validateAndProceed = async function () {
   const name = document.getElementById("name").value.trim();
   const phone = document.getElementById("phone").value.trim();
@@ -28,35 +30,31 @@ window.validateAndProceed = async function () {
     return;
   }
 
-  const userData = {
-    name,
-    phone,
-    region1,
-    region2,
-    kakao
-  };
+  const userData = { name, phone, region1, region2, kakao };
 
-  // ❗ 중복이면 저장하지 않고 조용히 다음 페이지 이동
+  if (document.getElementById("saveInfo").checked) {
+    localStorage.setItem("userInfo", JSON.stringify(userData));
+  }
+
   await saveUserDataIfNotDuplicate(userData);
-
-  // 저장 여부와 무관하게 다음 화면 이동
   window.location.href = "b2b_country_course_linked.html";
 };
 
+// ✅ 중복 전화번호 저장 방지
 async function saveUserDataIfNotDuplicate(userData) {
   const usersRef = collection(db, "users");
   const q = query(usersRef, where("phone", "==", userData.phone));
   const querySnapshot = await getDocs(q);
 
   if (!querySnapshot.empty) {
-    // 동일한 전화번호 존재 → 저장하지 않고 조용히 종료
-    return;
+    return; // 동일한 전화번호 존재 → 저장 안 함
   }
 
   const newDocRef = doc(usersRef);
   await setDoc(newDocRef, userData);
 }
 
+// ✅ 지역 선택시 시/군/구 옵션 동기화
 window.updateSubRegion = function () {
   const region1 = document.getElementById("region1").value;
   const region2 = document.getElementById("region2");
@@ -79,6 +77,7 @@ window.updateSubRegion = function () {
   }
 };
 
+// ✅ 저장된 localStorage 불러오기
 window.onload = function () {
   const saved = localStorage.getItem("userInfo");
   if (saved) {
