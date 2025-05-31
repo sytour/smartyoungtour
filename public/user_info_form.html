@@ -6,158 +6,131 @@
   <style>
     body {
       font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: linear-gradient(to bottom right, #fff9f4, #fdf6ec);
+      background-color: #fef9f4;
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
+      height: 100vh;
     }
 
     .form-container {
       background: white;
-      padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      padding: 40px;
       width: 100%;
-      max-width: 520px;
+      max-width: 480px;
     }
 
     h2 {
       text-align: center;
+      margin-bottom: 24px;
       color: #333;
-      margin-bottom: 32px;
-      font-size: 24px;
     }
 
     label {
-      font-weight: 600;
-      margin-bottom: 4px;
       display: block;
-      color: #444;
-    }
-
-    .input-group {
-      margin-bottom: 20px;
-    }
-
-    .label-with-checkbox {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
+      margin-top: 18px;
+      font-weight: bold;
     }
 
     input, select {
       width: 100%;
       padding: 12px;
-      border: 1px solid #ddd;
+      margin-top: 6px;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 15px;
-      transition: border 0.3s ease;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+      box-sizing: border-box;
     }
 
-    input:focus, select:focus {
-      border-color: #ff944d;
-      outline: none;
+    .checkbox-line {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 12px;
     }
 
-    .main-buttons {
+    .checkbox-line label {
+      margin-left: 6px;
+      font-weight: normal;
+    }
+
+    .btn-group {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       margin-top: 30px;
     }
 
-    .next-btn {
-      width: 70%;
-      background: linear-gradient(135deg, #ffa94d, #ff7e5f);
-      color: white;
+    .btn-group button {
+      width: 48%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
       font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
 
-    .next-btn:hover {
-      background: linear-gradient(135deg, #ff8533, #ff6b4d);
-    }
-
-    .admin-btn {
-      width: 25%;
-      background-color: #666;
+    .btn-primary {
+      background: linear-gradient(to right, #ff9966, #ff5e62);
       color: white;
+    }
+
+    .btn-secondary {
+      background: #555;
+      color: white;
+    }
+
+    .optional-label {
+      font-weight: normal;
       font-size: 14px;
-      border: none;
-      border-radius: 8px;
-      padding: 14px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      color: #666;
+      margin-top: 4px;
     }
 
-    .admin-btn:hover {
-      background-color: #444;
-    }
-
-    ::placeholder {
-      color: #bbb;
-    }
-
-    select:invalid {
-      color: #aaa;
-    }
   </style>
-
-  <!-- ✅ Firestore 저장 기능이 들어 있는 외부 JS 연결 -->
-  <script type="module" src="user_info_form.js"></script>
 </head>
 <body>
   <div class="form-container">
     <h2>사용자 정보 입력</h2>
 
-    <div class="input-group">
-      <div class="label-with-checkbox">
-        <label for="name">상호명/이름 <span style="color: red;">*</span></label>
-        <label><input type="checkbox" id="saveInfo" /> 저장</label>
-      </div>
-      <input type="text" id="name" placeholder="예: 홍길동 or 스마트영투어" required>
+    <label for="name">상호명/이름 *</label>
+    <input type="text" id="name" placeholder="상호명 또는 이름 입력">
+
+    <label for="phone">연락처 *</label>
+    <input type="tel" id="phone" placeholder="연락처 입력">
+
+    <label for="province">지역 (시/도) *</label>
+    <select id="province">
+      <option value="">시/도 선택</option>
+      <option>서울특별시</option>
+      <option>경기도</option>
+      <option>부산광역시</option>
+      <!-- ... 필요한 시/도 추가 -->
+    </select>
+
+    <label for="district">지역 (시/군/구) *</label>
+    <select id="district">
+      <option value="">시/군/구 선택</option>
+      <option>성남시</option>
+      <option>수원시</option>
+      <option>고양시</option>
+      <!-- ... 필요한 시군구 추가 -->
+    </select>
+
+    <label for="kakao">카카오톡 ID <span class="optional-label">(선택)</span></label>
+    <input type="text" id="kakao" placeholder="예: sytour">
+
+    <div class="checkbox-line">
+      <input type="checkbox" id="saveInfo">
+      <label for="saveInfo">저장</label>
     </div>
 
-    <div class="input-group">
-      <label for="phone">연락처 <span style="color: red;">*</span></label>
-      <input type="text" id="phone" placeholder="예: 010-0000-0000" required>
-    </div>
-
-    <div class="input-group">
-      <label for="region1">지역 (시/도) <span style="color: red;">*</span></label>
-      <select id="region1" onchange="updateSubRegion()" required>
-        <option value="">-- 시/도 선택 --</option>
-        <option value="서울특별시">서울특별시</option>
-        <option value="경기도">경기도</option>
-        <option value="부산광역시">부산광역시</option>
-        <option value="대구광역시">대구광역시</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label for="region2">지역 (시/군/구) <span style="color: red;">*</span></label>
-      <select id="region2" required>
-        <option value="">-- 시/군/구 선택 --</option>
-      </select>
-    </div>
-
-    <div class="input-group">
-      <label for="kakao">카카오톡 ID (선택)</label>
-      <input type="text" id="kakao" placeholder="예: sytour">
-    </div>
-
-    <div class="main-buttons">
-      <button class="next-btn" onclick="validateAndProceed()">견적 요청 세부 내용</button>
-      <button class="admin-btn" onclick="location.href='admin_login.html'">관리자용</button>
+    <div class="btn-group">
+      <button class="btn-primary">견적 요청 세부 내용</button>
+      <button class="btn-secondary">관리자용</button>
     </div>
   </div>
 </body>
