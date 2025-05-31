@@ -30,22 +30,25 @@
       display: flex;
       gap: 10px;
       margin-bottom: 20px;
+      align-items: center;
     }
 
     .filters select,
     .filters input {
-      padding: 10px;
+      padding: 6px 10px;
       border: 1px solid #ccc;
-      border-radius: 8px;
+      border-radius: 6px;
       font-size: 14px;
+      height: 36px;
     }
 
     .filters button {
-      padding: 10px 16px;
+      padding: 6px 12px;
       font-size: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
+      height: 36px;
     }
 
     .filters .search-btn {
@@ -148,7 +151,7 @@
     <div id="emptyMessage" style="display:none;">저장된 고객 정보가 없습니다.</div>
   </div>
 
-  <!-- 🔗 연동된 JS -->
+  <!-- 🔗 Firestore 연동 JS -->
   <script type="module" src="admin_customer_manage.js"></script>
 </body>
 </html>
