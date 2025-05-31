@@ -85,19 +85,21 @@
 
   <script>
     function login() {
-      const id = document.getElementById("id").value;
-      const pw = document.getElementById("pw").value;
+      const id = document.getElementById("id").value.trim();
+      const pw = document.getElementById("pw").value.trim();
 
-      // ✅ 임시 로그인 ID/PW (테스트용)
+      // ✅ 테스트용 계정
       const validId = "agent";
       const validPw = "1234";
 
       if (id === validId && pw === validPw) {
-        alert("로그인 성공!");  // 또는 window.location.href = '/admin_main.html';
+        // 로그인 성공 → 다음 페이지로 이동
+        window.location.href = "admin_main.html";
       } else {
         alert("아이디 또는 비밀번호가 틀렸습니다.");
       }
-      return false; // 페이지 이동 막기
+
+      return false; // form 기본 제출 막기
     }
   </script>
 </body>
