@@ -3,14 +3,15 @@ import {
   getFirestore, collection, getDocs, updateDoc, deleteDoc, doc
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-// 🔧 본인의 Firebase 설정값으로 교체해야 함
+// ✅ 스마트영투어 프로젝트에 맞는 Firebase 설정값
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyDYEovrThfL1qqtR1Bva_pJbswk1l5AhCE",
+  authDomain: "smartyoungtour.firebaseapp.com",
+  projectId: "smartyoungtour",
+  storageBucket: "smartyoungtour.appspot.com",
+  messagingSenderId: "615207664322",
+  appId: "1:615207664322:web:ea20d5effa56e01c43595b",
+  measurementId: "G-KNSJQNW2WLN"
 };
 
 const app = initializeApp(firebaseConfig);
