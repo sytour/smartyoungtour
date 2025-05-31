@@ -2,94 +2,89 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>SMART YOUNG TOUR 로그인</title>
+  <title>SMART YOUNG TOUR</title>
   <style>
     body {
-      margin: 0;
-      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
       background-image: url('public/807413fa-6cac-4168-8318-30de8095a12b.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       background-attachment: fixed;
+
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .login-container {
-      background: rgba(255, 255, 255, 0.9);
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.12);
-      width: 100%;
-      max-width: 420px;
-      box-sizing: border-box;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #222;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    input[type="text"],
-    input[type="password"] {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      box-sizing: border-box;
-      font-size: 15px;
-    }
-
-    .btn-login {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(to right, #ff9166, #ff7a5a);
-      color: white;
-      border: none;
+      background: rgba(255, 255, 255, 0.88);
+      padding: 40px;
       border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
+      box-shadow: 0 0 12px rgba(0,0,0,0.2);
+      max-width: 400px;
+      width: 90%;
     }
 
     .contact-box {
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 12px;
       margin-bottom: 20px;
       font-size: 14px;
-      color: #444;
       line-height: 1.6;
-      background: #f7f7f7;
-      padding: 12px;
-      border-radius: 10px;
     }
 
-    .contact-box b {
-      display: inline-block;
-      width: 140px;
+    .contact-box div { margin-bottom: 6px; }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+      color: #333;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      background-color: #f1f5ff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: orange;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <div class="login-container">
     <div class="contact-box">
-      <div><b>현지 연락처:</b> 070-0000-0000</div>
-      <div><b>현지 연락처 (라오스):</b> +856 20-0000-0000</div>
-      <div><b>카카오톡 ID:</b> sytour</div>
-      <div><b>한국 연락처:</b> +82 10-4009-1397</div>
+      <div><strong>📞 현지 담당자:</strong> 070-7799-4009</div>
+      <div><strong>📞 현지 담당자(라오스):</strong> +856 20-9918-8669</div>
+      <div><strong>💬 카톡 ID:</strong> mkmk9111</div>
+      <div><strong>📞 한국 담당자:</strong> +82 10-4009-1397</div>
+      <div><strong>💬 카톡 ID:</strong> sytour</div>
     </div>
-
     <h2>SMART YOUNG TOUR</h2>
-
-    <form action="/login_check" method="POST">
+    <form action="user_info_form.html" method="get">
       <input type="text" name="id" placeholder="ID" required />
       <input type="password" name="pw" placeholder="PW" required />
-      <button type="submit" class="btn-login">로그인</button>
+      <button type="submit">로그인</button>
     </form>
   </div>
 </body>
