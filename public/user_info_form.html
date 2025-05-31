@@ -2,163 +2,164 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>사용자 정보 입력</title>
+  <title>고객 관리 시스템</title>
   <style>
     body {
       font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
-      background: linear-gradient(to bottom right, #fff9f4, #fdf6ec);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      background-color: #fffaf3;
       margin: 0;
+      padding: 40px;
     }
 
-    .form-container {
+    .container {
+      max-width: 1000px;
+      margin: auto;
       background: white;
-      padding: 40px;
       border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-      width: 100%;
-      max-width: 520px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+      padding: 30px;
     }
 
     h2 {
       text-align: center;
       color: #333;
-      margin-bottom: 32px;
-      font-size: 24px;
+      margin-bottom: 30px;
     }
 
-    label {
-      font-weight: 600;
-      margin-bottom: 4px;
-      display: block;
-      color: #444;
-    }
-
-    .input-group {
+    .filters {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
-    }
-
-    .label-with-checkbox {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
     }
 
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 15px;
-      transition: border 0.3s ease;
-      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
-    }
-
-    input:focus, select:focus {
-      border-color: #ff944d;
-      outline: none;
-    }
-
-    .main-buttons {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 30px;
-    }
-
-    .next-btn {
-      width: 70%;
-      background: linear-gradient(135deg, #ffa94d, #ff7e5f);
-      color: white;
-      font-weight: bold;
-      border: none;
-      border-radius: 8px;
-      padding: 14px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .next-btn:hover {
-      background: linear-gradient(135deg, #ff8533, #ff6b4d);
-    }
-
-    .admin-btn {
-      width: 25%;
-      background-color: #666;
-      color: white;
+    .filters select,
+    .filters input {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
       font-size: 14px;
+      height: 36px;
+    }
+
+    .filters button {
+      display: inline-block;
+      padding: 0 16px;
+      font-size: 14px;
+      height: 36px;
+      line-height: 36px;
       border: none;
-      border-radius: 8px;
-      padding: 14px;
+      border-radius: 6px;
+      white-space: nowrap;
+      vertical-align: middle;
+    }
+
+    .search-btn {
+      background-color: #ff944d;
+      color: white;
+    }
+
+    .reset-btn {
+      background-color: #bbb;
+      color: white;
+      margin-left: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 6px 10px;
+      border: 1px solid #eee;
+      text-align: center;
+    }
+
+    th {
+      background-color: #fdf2e9;
+    }
+
+    #emptyMessage {
+      text-align: center;
+      color: #999;
+      padding: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 6px;
+      box-sizing: border-box;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .btn-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    button.edit-btn,
+    button.delete-btn {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.3s ease;
     }
 
-    .admin-btn:hover {
-      background-color: #444;
+    .edit-btn {
+      background-color: #4CAF50;
+      color: white;
     }
 
-    ::placeholder {
-      color: #bbb;
-    }
-
-    select:invalid {
-      color: #aaa;
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
     }
   </style>
-
-  <!-- ✅ Firestore 저장 기능이 들어 있는 외부 JS 연결 -->
-  <script type="module" src="user_info_form.js"></script>
 </head>
 <body>
-  <div class="form-container">
-    <h2>사용자 정보 입력</h2>
+  <div class="container">
+    <h2>📋 고객 관리 시스템</h2>
 
-    <div class="input-group">
-      <div class="label-with-checkbox">
-        <label for="name">상호명/이름 <span style="color: red;">*</span></label>
-        <label><input type="checkbox" id="saveInfo" /> 저장</label>
-      </div>
-      <input type="text" id="name" placeholder="예: 홍길동 or 스마트영투어" required>
-    </div>
-
-    <div class="input-group">
-      <label for="phone">연락처 <span style="color: red;">*</span></label>
-      <input type="text" id="phone" placeholder="예: 010-0000-0000" required>
-    </div>
-
-    <div class="input-group">
-      <label for="region1">지역 (시/도) <span style="color: red;">*</span></label>
-      <select id="region1" onchange="updateSubRegion()" required>
-        <option value="">-- 시/도 선택 --</option>
+    <div class="filters">
+      <select id="filterRegion1" onchange="updateSubRegion()">
+        <option value="">전체 시/도</option>
         <option value="서울특별시">서울특별시</option>
         <option value="경기도">경기도</option>
         <option value="부산광역시">부산광역시</option>
         <option value="대구광역시">대구광역시</option>
       </select>
-    </div>
 
-    <div class="input-group">
-      <label for="region2">지역 (시/군/구) <span style="color: red;">*</span></label>
-      <select id="region2" required>
-        <option value="">-- 시/군/구 선택 --</option>
+      <select id="filterRegion2">
+        <option value="">전체 시/군/구</option>
       </select>
+
+      <input type="text" id="searchName" placeholder="상호명/이름 검색" />
+      <input type="text" id="searchPhone" placeholder="연락처 검색" />
+      <button class="search-btn" onclick="filterData()">🔍 검색</button>
+      <button class="reset-btn" onclick="location.reload()">초기화</button>
     </div>
 
-    <div class="input-group">
-      <label for="kakao">카카오톡 ID (선택)</label>
-      <input type="text" id="kakao" placeholder="예: sytour">
-    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>상호명/이름</th>
+          <th>연락처</th>
+          <th>지역(시/도)</th>
+          <th>지역(시/군/구)</th>
+          <th>카카오톡 ID</th>
+          <th>관리</th>
+        </tr>
+      </thead>
+      <tbody id="customerList"></tbody>
+    </table>
 
-    <div class="main-buttons">
-      <button class="next-btn" onclick="validateAndProceed()">견적 요청 세부 내용</button>
-      <button class="admin-btn" onclick="location.href='admin_login.html'">관리자용</button>
-    </div>
+    <div id="emptyMessage" style="display:none;">저장된 고객 정보가 없습니다.</div>
   </div>
+
+  <script type="module" src="admin_customer_manage.js"></script>
 </body>
 </html>
