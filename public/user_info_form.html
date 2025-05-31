@@ -90,6 +90,7 @@
       margin-top: 4px;
     }
   </style>
+  <script type="module" src="user_info_form.js"></script>
 </head>
 <body>
   <div class="form-container">
@@ -104,15 +105,15 @@
     <label for="region1">지역 (시/도) *</label>
     <select id="region1" onchange="updateSubRegion()">
       <option value="">시/도 선택</option>
-      <option>서울특별시</option>
-      <option>경기도</option>
-      <option>부산광역시</option>
-      <option>대구광역시</option>
+      <option value="서울특별시">서울특별시</option>
+      <option value="경기도">경기도</option>
+      <option value="부산광역시">부산광역시</option>
+      <option value="대구광역시">대구광역시</option>
     </select>
 
     <label for="region2">지역 (시/군/구) *</label>
     <select id="region2">
-      <option value="">-- 시/군/구 선택 --</option>
+      <option value="">시/군/구 선택</option>
     </select>
 
     <label for="kakao">카카오톡 ID <span class="optional-label">(선택)</span></label>
@@ -128,8 +129,5 @@
       <button class="btn-secondary" onclick="window.location.href='admin_login.html'">관리자용</button>
     </div>
   </div>
-
-  <!-- JS 연동 -->
-  <script type="module" src="user_info_form.js"></script>
 </body>
 </html>
