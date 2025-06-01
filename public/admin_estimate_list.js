@@ -89,22 +89,23 @@ window.showDetail = async function(index) {
   }
 
   // 🍽️ 식사 요금 계산
-  let mealTotal = 0;
-  try {
-    const snap = await getDocs(collection(db, "meal_prices"));
-    snap.forEach(doc => {
-      const data = doc.data();
-      console.log("🍽️ 식사코스:", data.course);
-      if (data.course === courseOnly) {
-        const base = (data.totalLunch || 0) + (data.totalDinner || 0);
-        const addDinner = d.includeDinner ? (data.firstDinnerValue || 0) : 0;
-        mealTotal = (base + addDinner) * people;
-        console.log("✅ 식사 요금 계산 완료:", mealTotal);
-      }
-    });
-  } catch (e) {
-    console.error("❌ 식사 요금 계산 실패", e);
-  }
+let mealTotal = 0;
+try {
+  const snap = await getDocs(collection(db, "meal_prices"));
+  snap.forEach(doc => {
+    const data = doc.data();
+    if (data.course === courseOnly) {
+      const lunch = data.totalLunch || 0;
+      const dinner = data.totalDinner || 0;
+      const firstDinner = (d.includeDinner || d.includeFirstDinner) ? (data.firstDinnerValue || 0) : 0;
+      const perPerson = lunch + dinner + firstDinner;
+      mealTotal = perPerson * people;
+      console.log("✅ 식사 요금 계산 완료:", mealTotal);
+    }
+  });
+} catch (e) {
+  console.error("❌ 식사 요금 계산 실패", e);
+}
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
