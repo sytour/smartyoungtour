@@ -59,11 +59,12 @@ window.showDetail = async function(index) {
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
+  const includeFirstDinner = String(d.includeFirstDinner || "false"); // ✅ 방어 처리
 
   console.log("🎯 견적 courseName:", d.courseName);
   console.log("🎯 비교용 courseOnly:", courseOnly);
   console.log("🎯 인원 수:", totalPeople);
-  console.log("🎯 1일차 석식 포함 여부:", d.includeFirstDinner);
+  console.log("🎯 1일차 석식 포함 여부:", includeFirstDinner);
 
   let hotelTotal = 0;
   try {
@@ -94,7 +95,7 @@ window.showDetail = async function(index) {
       const matchedCourse = (data.course || "").trim() === courseOnly;
       if (matchedCourse) {
         let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-        if (String(d.includeFirstDinner) === "true") {
+        if (includeFirstDinner === "true") {
           total += (data.firstDinnerValue || 0);
         }
         mealTotal = total * totalPeople;
