@@ -55,14 +55,16 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  const courseOnly = (d.courseName || '').trim();
-  const nightsMatch = courseOnly.match(/(\d)박/);
+  // ✅ 정제된 courseName 만들기 (앞에 # 이 있으면 제거)
+  const rawCourse = d.courseName || '';
+  const cleanCourseName = rawCourse.replace(/^#\s*/, '').trim();  // '# ' 제거 + trim
+  const nightsMatch = cleanCourseName.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
-  const includeFirstDinner = String(d.includeFirstDinner || "false"); // ✅ 방어 처리
+  const includeFirstDinner = String(d.includeFirstDinner || "false");
 
-  console.log("🎯 견적 courseName:", d.courseName);
-  console.log("🎯 비교용 courseOnly:", courseOnly);
+  console.log("🎯 견적 courseName:", rawCourse);
+  console.log("🎯 정제된 courseOnly:", cleanCourseName);
   console.log("🎯 인원 수:", totalPeople);
   console.log("🎯 1일차 석식 포함 여부:", includeFirstDinner);
 
@@ -71,7 +73,7 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "hotel_prices"));
     snap.forEach(doc => {
       const data = doc.data();
-      if ((data.course || '').trim() === courseOnly && data.grade === d.hotelGrade) {
+      if ((data.course || '').trim() === cleanCourseName && data.grade === d.hotelGrade) {
         const single = data.single || 0;
         const twin = data.twin_double || 0;
         const triple = data.triple || 0;
@@ -87,27 +89,27 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
- let mealTotal = 0;
-try {
-  const snap = await getDocs(collection(db, "meal_prices"));
-  for (const docSnap of snap.docs) {
-    const data = docSnap.data();
-    const matchedCourse = (data.course || "").trim() === courseOnly;
-    const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
+  let mealTotal = 0;
+  try {
+    const snap = await getDocs(collection(db, "meal_prices"));
+    for (const docSnap of snap.docs) {
+      const data = docSnap.data();
+      const matchedCourse = (data.course || "").trim() === cleanCourseName;
+      const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
 
-    if (matchedCourse && matchedOption) {
-      let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-      if (includeFirstDinner === "true") {
-        total += (data.firstDinnerValue || 0);
+      if (matchedCourse && matchedOption) {
+        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
+        if (includeFirstDinner === "true") {
+          total += (data.firstDinnerValue || 0);
+        }
+        mealTotal = total * totalPeople;
+        console.log("✅ 식사 요금 계산 완료:", mealTotal);
+        break;
       }
-      mealTotal = total * totalPeople;
-      console.log("✅ 식사 요금 계산 완료:", mealTotal);
-      break;
     }
+  } catch (e) {
+    console.error("❌ 식사 요금 계산 실패", e);
   }
-} catch (e) {
-  console.error("❌ 식사 요금 계산 실패", e);
-}
 
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
