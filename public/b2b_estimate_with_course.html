@@ -77,18 +77,20 @@
         alert('❌ 저장 중 오류가 발생했습니다.');
       }
     };
+
+    window.generatePDF = function() {
+      alert("PDF 견적서 출력은 준비 중입니다.");
+    }
   </script>
 </head>
 <body>
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
-    <!-- 기존 section 모두 그대로 유지 -->
-    <!-- 마지막 버튼 그룹만 수정 -->
+    <!-- 기존 입력 UI와 섹션들은 유지되어야 함 -->
     <div class="section button-group">
       <button onclick="submitEstimate()">견적 요청</button>
       <button onclick="generatePDF()">PDF 견적서 출력</button>
     </div>
   </div>
-  <!-- generatePDF 함수는 기존 그대로 유지 -->
 </body>
 </html>
