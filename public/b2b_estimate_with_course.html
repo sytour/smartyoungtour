@@ -21,22 +21,164 @@
     .room-table input { width: 100%; box-sizing: border-box; }
     .button-group { display: flex; justify-content: space-between; margin-top: 20px; }
   </style>
+</head>
+<body>
+  <div class="container">
+    <h2>B2B 견적 요청 입력</h2>
+
+    <div class="section">
+      <div class="row-group">
+        <div style="flex: 1; min-width: 200px;">
+          <label>코스명</label>
+          <input type="text" id="courseName" readonly>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <label>총 인원 수</label>
+          <input type="number" id="totalPeople" value="0">
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <label>출발일</label>
+          <input type="date" id="departureDate">
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <label>호텔 등급 (4성급 / 5성급)</label>
+      <select id="hotelGrade">
+        <option value="4성급">4성급</option>
+        <option value="5성급">5성급</option>
+      </select>
+      <table class="room-table">
+        <thead>
+          <tr>
+            <th>싱글</th>
+            <th>트윈/더블</th>
+            <th>트리플</th>
+            <th>총 룸 수</th>
+            <th>총 인원 수</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="number" id="roomSingle" value="0"></td>
+            <td><input type="number" id="roomTwinDouble" value="0"></td>
+            <td><input type="number" id="roomTriple" value="0"></td>
+            <td><input type="text" id="calculatedRoomTotal" readonly></td>
+            <td><input type="text" id="calculatedPersonTotal" readonly></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <label>차량 종류</label>
+      <div id="vehicleResult">자동 선택됨</div>
+    </div>
+
+    <div class="section" id="mealSection">
+      <label id="mealLabel">식사 구성</label>
+      <div id="mealInfo"></div>
+    </div>
+
+    <div class="section">
+      <label>선택관광 포함 여부</label>
+      <div class="radio-group">
+        <label><input type="radio" name="optionalTour" value="Y" checked> 옵션 유</label>
+        <label><input type="radio" name="optionalTour" value="N"> 옵션 무</label>
+      </div>
+      <label style="margin-top: 20px;">쇼핑 횟수</label>
+      <select id="shoppingCount">
+        <option value="0">노쇼핑</option>
+        <option value="1">쇼핑 1회</option>
+        <option value="2">쇼핑 2회</option>
+        <option value="3">쇼핑 3회</option>
+      </select>
+    </div>
+
+    <div class="section">
+      <label>일정</label>
+      <div id="itinerary">자동 일정 표시</div>
+    </div>
+
+    <div class="section">
+      <label>총 지상비 (전체)</label>
+      <input type="text" id="totalGroundCost" readonly>
+      <label>성인 1인 지상비 (p/p)</label>
+      <input type="text" id="perPersonCost" readonly>
+    </div>
+
+    <div class="section button-group">
+      <button onclick="submitEstimate()">견적 요청</button>
+      <button onclick="generatePDF()">PDF 견적서 출력</button>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDEoEvhrfLtaq1R8lPva_lbsbW1sAH0CE",
-      authDomain: "smartyoungtour.firebaseapp.com",
-      projectId: "smartyoungtour",
-      storageBucket: "smartyoungtour.appspot.com",
-      messagingSenderId: "615207664322",
-      appId: "1:615207664322:web:ea2d05effa56e81c43595b",
-      measurementId: "G-KN3EQN2WLN"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_AUTH_DOMAIN",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_STORAGE_BUCKET",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const course = decodeURIComponent(params.get('course') || '');
+    const itinerary = decodeURIComponent(params.get('itinerary') || '자동 일정 표시');
+    document.getElementById('courseName').value = course;
+    document.getElementById('itinerary').innerText = itinerary;
+
+    const updateRoomSummary = () => {
+      const s = parseInt(document.getElementById('roomSingle').value) || 0;
+      const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
+      const tr = parseInt(document.getElementById('roomTriple').value) || 0;
+      const totalRooms = s + td + tr;
+      const totalPeople = s + (td * 2) + (tr * 3);
+      document.getElementById('calculatedRoomTotal').value = totalRooms;
+      document.getElementById('calculatedPersonTotal').value = totalPeople;
+
+      const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
+      let vehicle = '벤';
+      if (inputTotal > 6 && inputTotal <= 11) vehicle = '미니버스';
+      else if (inputTotal >= 12) vehicle = '버스';
+      document.getElementById('vehicleResult').innerText = vehicle;
+    };
+
+    ['roomSingle', 'roomTwinDouble', 'roomTriple', 'totalPeople'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updateRoomSummary);
+    });
+
+    const mealLabel = document.getElementById('mealLabel');
+    const mealInfo = document.getElementById('mealInfo');
+    if (course.includes("골프")) {
+      mealLabel.innerText = "골프 투어 식사 설정";
+      mealInfo.innerHTML = `
+        <div class="inline-group">
+          <input type="checkbox" id="golfLunch">
+          <label for="golfLunch">중식 포함</label>
+          <input type="checkbox" id="golfDinner" style="margin-left: 20px;">
+          <label for="golfDinner">석식 포함</label>
+        </div>
+        <div class="inline-group" style="margin-top: 10px;">
+          <input type="checkbox" id="lateArrivalDinnerGolf">
+          <label for="lateArrivalDinnerGolf">낮 비행기 도착 시 석식 포함</label>
+        </div>`;
+    } else {
+      mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
+      mealInfo.innerHTML = `
+        <div class="inline-group">
+          <input type="checkbox" id="lateArrivalDinner">
+          <label for="lateArrivalDinner">낮 비행기 도착 시 석식 포함</label>
+        </div>`;
+    }
 
     window.submitEstimate = async () => {
       const courseName = document.getElementById('courseName').value;
@@ -79,8 +221,9 @@
       }
     };
 
-    window.generatePDF = function() {
+    window.generatePDF = () => {
       alert("PDF 견적서 출력은 준비 중입니다.");
-    }
+    };
   </script>
-</head>
+</body>
+</html>
