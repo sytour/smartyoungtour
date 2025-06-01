@@ -57,6 +57,8 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
+  const courseOnly = d.courseName.split(' ').slice(1).join(' '); // "루앙프라방 일반 3박" 등
+
   // 호텔 요금 계산
   let hotelTotal = 0;
   try {
@@ -64,7 +66,7 @@ window.showDetail = async function(index) {
     snap.forEach(doc => {
       const data = doc.data();
       if (
-        data.course === d.courseName &&
+        data.course === courseOnly &&
         data.grade === d.hotelGrade
       ) {
         const singlePrice = data.single || 0;
@@ -87,7 +89,7 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "meal_prices"));
     snap.forEach(doc => {
       const data = doc.data();
-      if (data.course === d.courseName) {
+      if (data.course === courseOnly) {
         const base = (data.totalLunch || 0) + (data.totalDinner || 0);
         const addDinner = d.includeDinner ? (data.firstDinnerValue || 0) : 0;
         const perPersonMeal = base + addDinner;
@@ -111,7 +113,6 @@ window.showDetail = async function(index) {
   `;
   detailBox.scrollIntoView({ behavior: 'smooth' });
 };
-
 
 window.togglePaid = async function(id, index) {
   const isPaid = !allData[index].isPaid;
