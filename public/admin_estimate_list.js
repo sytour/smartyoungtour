@@ -87,7 +87,7 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
- // 🍽️ 식사 요금 계산
+// 🍽️ 식사 요금 계산
 let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
