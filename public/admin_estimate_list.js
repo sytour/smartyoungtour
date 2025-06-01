@@ -63,6 +63,7 @@ window.showDetail = async function(index) {
   console.log("🎯 견적 courseName:", d.courseName);
   console.log("🎯 비교용 courseOnly:", courseOnly);
   console.log("🎯 인원 수:", totalPeople);
+  console.log("🎯 1일차 석식 포함 여부:", d.includeFirstDinner);
 
   let hotelTotal = 0;
   try {
@@ -91,9 +92,11 @@ window.showDetail = async function(index) {
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
       const matchedCourse = (data.course || "").trim() === courseOnly;
-      const matchedOption = String(data.includeFirstDinner) === String(d.includeFirstDinner);
-      if (matchedCourse && matchedOption) {
-        const total = (data.totalLunch || 0) + (data.totalDinner || 0);
+      if (matchedCourse) {
+        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
+        if (String(d.includeFirstDinner) === "true") {
+          total += (data.firstDinnerValue || 0);
+        }
         mealTotal = total * totalPeople;
         console.log("✅ 식사 요금 계산 완료:", mealTotal);
         break;
