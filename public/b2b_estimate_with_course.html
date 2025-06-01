@@ -163,15 +163,15 @@
       mealLabel.innerText = "골프 투어 식사 설정";
       mealInfo.innerHTML = `
         <div style="display: flex; gap: 30px; align-items: center; flex-wrap: wrap;">
-          <label style="white-space: nowrap;"><input type="checkbox" id="golfLunch" style="margin-right: 6px;">중식 포함</label>
-          <label style="white-space: nowrap;"><input type="checkbox" id="golfDinner" style="margin-right: 6px;">석식 포함</label>
-          <label style="white-space: nowrap;"><input type="checkbox" id="lateArrivalDinnerGolf" style="margin-right: 6px;">낮 도착 시 석식 포함</label>
+          <label style="white-space: nowrap; font-weight: normal;"><input type="checkbox" id="golfLunch" style="margin-right: 4px;">중식 포함</label>
+          <label style="white-space: nowrap; font-weight: normal;"><input type="checkbox" id="golfDinner" style="margin-right: 4px;">석식 포함</label>
+          <label style="white-space: nowrap; font-weight: normal;"><input type="checkbox" id="lateArrivalDinnerGolf" style="margin-right: 4px;">낮 도착 시 석식 포함</label>
         </div>`;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
         <div style="display: flex; gap: 30px; align-items: center;">
-          <label style="white-space: nowrap;"><input type="checkbox" id="lateArrivalDinner" style="margin-right: 6px;">낮 도착 시 석식 포함</label>
+          <label style="white-space: nowrap; font-weight: normal;"><input type="checkbox" id="lateArrivalDinner" style="margin-right: 4px;">낮 도착 시 석식 포함</label>
         </div>`;
     }
 
