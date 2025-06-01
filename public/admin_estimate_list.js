@@ -91,9 +91,11 @@ window.showDetail = async function(index) {
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
       const matchedCourse = (data.course || "").trim() === courseOnly;
-      const matchedOption = String(data.includeFirstDinner) === String(d.includeFirstDinner);
-      if (matchedCourse && matchedOption) {
-        const total = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
+      if (matchedCourse) {
+        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
+        if (String(d.includeFirstDinner) === "true") {
+          total += (data.firstDinnerValue || 0);
+        }
         mealTotal = total * totalPeople;
         console.log("✅ 식사 요금 계산 완료:", mealTotal);
         break;
