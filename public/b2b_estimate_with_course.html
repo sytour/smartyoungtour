@@ -25,11 +25,21 @@
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
 
+    <!-- ✅ 고객 정보 입력 (한 줄 배치 + 저장) -->
     <div class="section">
-      <label>상호/이름</label>
-      <input type="text" id="clientName" placeholder="예: 홍길동투어">
-      <label>연락처</label>
-      <input type="text" id="clientPhone" placeholder="예: 010-1234-5678">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="flex: 1;">
+          <label>상호/이름</label>
+          <input type="text" id="clientName" placeholder="예: 홍길동투어">
+        </div>
+        <div style="flex: 1;">
+          <label>연락처</label>
+          <input type="text" id="clientPhone" placeholder="예: 010-1234-5678">
+        </div>
+        <div style="margin-top: 24px;">
+          <label><input type="checkbox" id="saveInfo"> 저장</label>
+        </div>
+      </div>
     </div>
 
     <div class="section">
@@ -186,6 +196,13 @@
         </div>`;
     }
 
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedName = localStorage.getItem("clientName");
+      const savedPhone = localStorage.getItem("clientPhone");
+      if (savedName) document.getElementById('clientName').value = savedName;
+      if (savedPhone) document.getElementById('clientPhone').value = savedPhone;
+    });
+
     window.submitEstimate = async () => {
       const name = document.getElementById('clientName').value.trim();
       const phone = document.getElementById('clientPhone').value.trim();
@@ -239,6 +256,10 @@
       try {
         await addDoc(collection(db, "estimates_admin"), data);
         await addDoc(collection(db, "estimates_client"), data);
+        if (document.getElementById('saveInfo').checked) {
+          localStorage.setItem("clientName", name);
+          localStorage.setItem("clientPhone", phone);
+        }
         alert('✅ 견적 요청이 성공적으로 저장되었습니다.');
       } catch (e) {
         console.error("저장 실패:", e);
