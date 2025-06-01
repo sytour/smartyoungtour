@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   addBtn.addEventListener("click", async () => {
     const country = countrySelect.value;
     const days = parseInt(daysSelect.value);
-    const course = `${courseSelect.value} ${days}박`; // ✅ 박 포함 코스명
+    const course = `${courseSelect.value} ${days}박`;
     const includeFirstDinner = firstDinner.checked;
 
     if (!country || !course) {
@@ -100,12 +100,19 @@ window.addEventListener("DOMContentLoaded", async () => {
     for (let i = 1; i <= 6; i++) {
       const lunchVal = parseFloat(document.getElementById(`lunch${i}`).value) || 0;
       const dinnerVal = parseFloat(document.getElementById(`dinner${i}`).value) || 0;
+
       if (i === 1) {
         firstDinnerValue = dinnerVal;
-      } else {
-        totalLunch += lunchVal;
-        totalDinner += dinnerVal;
       }
+
+      totalLunch += lunchVal;
+      totalDinner += dinnerVal;
+    }
+
+    // 만약 1일차 석식이 불포함이라면 dinnerTotal에서 제외
+    if (!includeFirstDinner) {
+      totalDinner -= firstDinnerValue;
+      firstDinnerValue = 0;
     }
 
     try {
@@ -134,7 +141,6 @@ window.addEventListener("DOMContentLoaded", async () => {
     const selectedCountry = countryFilter.value;
     const snapshot = await getDocs(collection(db, "meal_prices"));
 
-    // ✅ 정렬 추가: 국가 > 코스 순으로 가나다 정렬
     const sortedDocs = snapshot.docs.sort((a, b) => {
       const aData = a.data();
       const bData = b.data();
@@ -147,7 +153,10 @@ window.addEventListener("DOMContentLoaded", async () => {
     sortedDocs.forEach(docSnap => {
       const data = docSnap.data();
       if (!selectedCountry || data.country === selectedCountry) {
-        const totalAll = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
+        const totalAll =
+          (data.totalLunch || 0) +
+          (data.totalDinner || 0) +
+          (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.country}</td>
@@ -170,5 +179,5 @@ window.addEventListener("DOMContentLoaded", async () => {
       alert("삭제 완료");
       renderTable();
     }
-  }
+  };
 });
