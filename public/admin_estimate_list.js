@@ -1,3 +1,4 @@
+// ✅ 전체 수정된 admin_estimate_list.js (mealTotal 계산만 정확히 수정)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -29,7 +30,6 @@ function renderTable(data) {
   data.forEach((item, idx) => {
     const row = document.createElement('tr');
     const paidLabel = item.isPaid ? "✅" : "❌";
-
     row.innerHTML = `
       <td>${item.name || ''}</td>
       <td>${item.phone || ''}</td>
@@ -64,14 +64,12 @@ window.showDetail = async function(index) {
   console.log("🎯 견적 courseName:", d.courseName);
   console.log("🎯 비교용 courseOnly:", courseOnly);
 
-  // 🏨 호텔 요금 계산
   let hotelTotal = 0;
   try {
     const snap = await getDocs(collection(db, "hotel_prices"));
     snap.forEach(doc => {
       const data = doc.data();
-      const courseTrimmed = (data.course || '').trim();
-      if (courseTrimmed === courseOnly && data.grade === d.hotelGrade) {
+      if ((data.course || '').trim() === courseOnly && data.grade === d.hotelGrade) {
         const single = data.single || 0;
         const twin = data.twin_double || 0;
         const triple = data.triple || 0;
@@ -87,41 +85,23 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
- // 🍽️ 식사 요금 계산
-let mealTotal = 0;
-try {
-  const snap = await getDocs(collection(db, "meal_prices"));
-
-  for (const docSnap of snap.docs) {
-    const data = docSnap.data();
-
-    const courseMatch = (data.course || "").trim() === courseOnly;
-    const daysMatch = parseInt(data.days) === nights;
-
-    const estimateDinner = String(d.includeDinner || d.includeFirstDinner || "").toLowerCase() === "true";
-    const dbDinner = Boolean(data.includeFirstDinner) === true;
-
-    const dinnerIncludedMatch = estimateDinner === dbDinner;
-
-    if (courseMatch && daysMatch && dinnerIncludedMatch) {
-      const lunch = data.totalLunch || 0;
-      const dinner = data.totalDinner || 0;
-
-      // ✅ 여기: firstDinnerValue가 없으면 dinner 평균값으로 추정
-      const firstDinner = dbDinner
-        ? (typeof data.firstDinnerValue === 'number'
-            ? data.firstDinnerValue
-            : Math.round(dinner / (nights - 1))) // fallback 계산
-        : 0;
-
-      mealTotal = (lunch + dinner + firstDinner) * people;
-      console.log("✅ 식사 요금 계산 완료:", mealTotal);
-      break;
+  let mealTotal = 0;
+  try {
+    const snap = await getDocs(collection(db, "meal_prices"));
+    for (const docSnap of snap.docs) {
+      const data = docSnap.data();
+      const matchedCourse = (data.course || "").trim() === courseOnly;
+      const matchedOption = String(data.includeFirstDinner) === String(d.includeFirstDinner);
+      if (matchedCourse && matchedOption) {
+        const total = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
+        mealTotal = total * people;
+        console.log("✅ 식사 요금 계산 완료:", mealTotal);
+        break;
+      }
     }
+  } catch (e) {
+    console.error("❌ 식사 요금 계산 실패", e);
   }
-} catch (e) {
-  console.error("❌ 식사 요금 계산 실패", e);
-}
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
