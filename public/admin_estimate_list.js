@@ -91,17 +91,15 @@ window.showDetail = async function(index) {
 let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
-  const firstDinnerIncluded = !!d.includeDinner || !!d.includeFirstDinner;
-
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
-    const courseMatch = (data.course || '').trim() === courseOnly;
-    const dinnerFlagMatch = !!data.includeFirstDinner === firstDinnerIncluded;
+    const courseMatched = data.course?.trim() === courseOnly;
+    const dinnerMatched = data.includeFirstDinner === (d.includeDinner || d.includeFirstDinner);
 
-    if (courseMatch && dinnerFlagMatch) {
+    if (courseMatched && dinnerMatched) {
       const lunch = data.totalLunch || 0;
       const dinner = data.totalDinner || 0;
-      const firstDinner = firstDinnerIncluded ? (data.firstDinnerValue || 0) : 0;
+      const firstDinner = data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
       const perPerson = lunch + dinner + firstDinner;
       mealTotal = perPerson * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
