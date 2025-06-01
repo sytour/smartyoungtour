@@ -85,23 +85,15 @@ window.showDetail = async function(index) {
   let mealTotal = 0;
   try {
     const snap = await getDocs(collection(db, "meal_prices"));
-    let perPersonMeal = 0;
     snap.forEach(doc => {
       const data = doc.data();
       if (data.course === d.courseName) {
-        const day = parseInt(data.day);
-        const type = data.type;
-        const price = parseFloat(data.price || 0);
-        const includeDinner = d.includeDinner || false;
-
-        // 조건: 낮 도착 석식 포함 체크 여부
-        if (day === 1 && type === "석식" && !includeDinner) {
-          return;
-        }
-        perPersonMeal += price;
+        const base = (data.totalLunch || 0) + (data.totalDinner || 0);
+        const addDinner = d.includeDinner ? (data.firstDinnerValue || 0) : 0;
+        const perPersonMeal = base + addDinner;
+        mealTotal = perPersonMeal * parseInt(d.peopleCount || 0);
       }
     });
-    mealTotal = perPersonMeal * parseInt(d.peopleCount || 0);
   } catch (e) {
     console.error("식사 요금 계산 실패", e);
   }
@@ -119,6 +111,7 @@ window.showDetail = async function(index) {
   `;
   detailBox.scrollIntoView({ behavior: 'smooth' });
 };
+
 
 window.togglePaid = async function(id, index) {
   const isPaid = !allData[index].isPaid;
