@@ -87,25 +87,27 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-  let mealTotal = 0;
-  try {
-    const snap = await getDocs(collection(db, "meal_prices"));
-    for (const docSnap of snap.docs) {
-      const data = docSnap.data();
-      const matchedCourse = (data.course || "").trim() === courseOnly;
-      if (matchedCourse) {
-        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-        if (includeFirstDinner === "true") {
-          total += (data.firstDinnerValue || 0);
-        }
-        mealTotal = total * totalPeople;
-        console.log("✅ 식사 요금 계산 완료:", mealTotal);
-        break;
+ let mealTotal = 0;
+try {
+  const snap = await getDocs(collection(db, "meal_prices"));
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data();
+    const matchedCourse = (data.course || "").trim() === courseOnly;
+    const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
+
+    if (matchedCourse && matchedOption) {
+      let total = (data.totalLunch || 0) + (data.totalDinner || 0);
+      if (includeFirstDinner === "true") {
+        total += (data.firstDinnerValue || 0);
       }
+      mealTotal = total * totalPeople;
+      console.log("✅ 식사 요금 계산 완료:", mealTotal);
+      break;
     }
-  } catch (e) {
-    console.error("❌ 식사 요금 계산 실패", e);
   }
+} catch (e) {
+  console.error("❌ 식사 요금 계산 실패", e);
+}
 
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
