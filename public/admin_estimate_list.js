@@ -97,7 +97,11 @@ try {
     if (data.course === courseOnly) {
       const lunch = Number(data.totalLunch || 0);
       const dinner = Number(data.totalDinner || 0);
-      const firstDinner = (d.includeDinner === true || d.includeFirstDinner === true) ? Number(data.firstDinnerValue || 0) : 0;
+
+      // 강제 boolean 변환
+      const toBool = v => v === true || v === "true";
+      const firstDinner = (toBool(d.includeDinner) || toBool(d.includeFirstDinner)) ? Number(data.firstDinnerValue || 0) : 0;
+
       const perPerson = lunch + dinner + firstDinner;
       mealTotal = perPerson * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
