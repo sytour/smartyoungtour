@@ -10,7 +10,7 @@
     h2 { text-align: center; margin-bottom: 30px; }
     .section { background: #fff; padding: 20px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 10px; }
     label { display: block; margin-top: 12px; font-weight: bold; }
-    input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; }
+    input, select { padding: 10px; border: 1px solid #ccc; border-radius: 6px; width: 100%; box-sizing: border-box; }
     .inline-group { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
     .row-group { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
     .room-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -24,6 +24,13 @@
 <body>
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
+
+    <div class="section">
+      <label>상호/이름</label>
+      <input type="text" id="clientName" placeholder="예: 홍길동투어">
+      <label>연락처</label>
+      <input type="text" id="clientPhone" placeholder="예: 010-1234-5678">
+    </div>
 
     <div class="section">
       <div class="row-group">
@@ -117,7 +124,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
-    // ✅ 실제 Firebase 설정값 반영
     const firebaseConfig = {
       apiKey: "AIzaSyDEoEvrhfTLtaqqtR1Bva_IPbKsW15AhcE",
       authDomain: "smartyoungtour.firebaseapp.com",
@@ -181,6 +187,13 @@
     }
 
     window.submitEstimate = async () => {
+      const name = document.getElementById('clientName').value.trim();
+      const phone = document.getElementById('clientPhone').value.trim();
+      if (!name || !phone) {
+        alert("상호/이름과 연락처를 입력해주세요.");
+        return;
+      }
+
       const courseName = document.getElementById('courseName').value;
       const totalPeople = parseInt(document.getElementById('totalPeople').value) || 0;
       const departureDate = document.getElementById('departureDate').value;
@@ -203,11 +216,23 @@
       }
 
       const data = {
-        courseName, totalPeople, departureDate, hotelGrade,
-        roomSingle, roomTwinDouble, roomTriple,
-        totalRoom, totalPersonCalculated,
-        vehicle, itinerary, optionalTour, shoppingCount,
-        totalGroundCost, perPersonCost,
+        name,
+        phone,
+        courseName,
+        totalPeople,
+        departureDate,
+        hotelGrade,
+        roomSingle,
+        roomTwinDouble,
+        roomTriple,
+        totalRoom,
+        totalPersonCalculated,
+        vehicle,
+        itinerary,
+        optionalTour,
+        shoppingCount,
+        totalGroundCost,
+        perPersonCost,
         timestamp: serverTimestamp()
       };
 
