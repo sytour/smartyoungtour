@@ -39,7 +39,7 @@
       </div>
     </div>
 
-    <!-- 조합정보 -->
+    <!-- 코스 및 인원 정보 -->
     <div class="section">
       <div class="row-group">
         <div style="flex: 1; min-width: 200px;">
@@ -57,7 +57,7 @@
       </div>
     </div>
 
-    <!-- 호텔 -->
+    <!-- 호텔 정보 -->
     <div class="section">
       <label>호텔 등급 (4성급 / 5성급)</label>
       <select id="hotelGrade">
@@ -86,19 +86,19 @@
       </table>
     </div>
 
-    <!-- 차량 -->
+    <!-- 차량 종류 -->
     <div class="section">
       <label>차량 종류</label>
       <div id="vehicleResult">자동 선택됨</div>
     </div>
 
-    <!-- 식사 -->
+    <!-- 식사 구성 -->
     <div class="section" id="mealSection">
       <label id="mealLabel">식사 구성</label>
       <div id="mealInfo"></div>
     </div>
 
-    <!-- 선택관광 -->
+    <!-- 선택 관광 및 쇼핑 -->
     <div class="section">
       <label>선택관광 포함 여부</label>
       <div class="radio-group">
@@ -120,7 +120,7 @@
       <div id="itinerary">자동 일정 표시</div>
     </div>
 
-    <!-- 경제 -->
+    <!-- 지상비 -->
     <div class="section">
       <label>총 지상비 (전체)</label>
       <input type="text" id="totalGroundCost" readonly>
@@ -128,6 +128,7 @@
       <input type="text" id="perPersonCost" readonly>
     </div>
 
+    <!-- 버튼 -->
     <div class="section button-group">
       <button onclick="submitEstimate()">견적 요청</button>
       <button onclick="generatePDF()">PDF 견적서 출력</button>
@@ -194,10 +195,10 @@
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
           <input type="checkbox" id="lateArrivalDinner">
-          <label for="lateArrivalDinner" style="margin: 0;">낮 비행기 도착 시 석식 포함</label>
-        </div>`;
+          낮 비행기 도착 시 석식 포함
+        </label>`;
     }
 
     window.submitEstimate = async () => {
