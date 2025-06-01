@@ -29,18 +29,32 @@ function renderTable(data) {
   data.forEach((item, idx) => {
     const row = document.createElement('tr');
     const paidLabel = item.isPaid ? "✅" : "❌";
-    row.innerHTML = `
-      <td>${item.name || ''}</td>
-      <td>${item.phone || ''}</td>
-      <td>${item.courseName || ''}</td>
-      <td>${item.departureDate || ''}</td>
-      <td>${paidLabel}</td>
-      <td>
-        <button onclick="showDetail(${idx})">보기</button>
-        <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
-        <button onclick="deleteEstimate('${item.id}')">삭제</button>
-      </td>
-    `;
+
+    // 첫 번째 줄은 버튼 없음
+    if (idx === 0) {
+      row.innerHTML = `
+        <td>${item.name || ''}</td>
+        <td>${item.phone || ''}</td>
+        <td>${item.courseName || ''}</td>
+        <td>${item.departureDate || ''}</td>
+        <td>${paidLabel}</td>
+        <td></td>
+      `;
+    } else {
+      row.innerHTML = `
+        <td>${item.name || ''}</td>
+        <td>${item.phone || ''}</td>
+        <td>${item.courseName || ''}</td>
+        <td>${item.departureDate || ''}</td>
+        <td>${paidLabel}</td>
+        <td>
+          <button onclick="showDetail(${idx})">상세보기</button>
+          <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
+          <button onclick="deleteEstimate('${item.id}')">삭제</button>
+        </td>
+      `;
+    }
+
     tableBody.appendChild(row);
   });
 }
