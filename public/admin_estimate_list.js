@@ -95,15 +95,19 @@ try {
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
 
-    // course명과 숙박일 수, 1일차 석식 포함 여부가 모두 일치하는 항목 찾기
     const courseMatch = (data.course || "").trim() === courseOnly;
     const daysMatch = parseInt(data.days) === nights;
-    const dinnerIncludedMatch = !!data.includeFirstDinner === !!d.includeFirstDinner;
+
+    // ✔ boolean 비교를 위해 명확하게 변환
+    const estimateDinner = String(d.includeDinner || d.includeFirstDinner || "").toLowerCase() === "true";
+    const dbDinner = Boolean(data.includeFirstDinner) === true;
+
+    const dinnerIncludedMatch = estimateDinner === dbDinner;
 
     if (courseMatch && daysMatch && dinnerIncludedMatch) {
       const lunch = data.totalLunch || 0;
       const dinner = data.totalDinner || 0;
-      const firstDinner = data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
+      const firstDinner = dbDinner ? (data.firstDinnerValue || 0) : 0;
       const perPerson = lunch + dinner + firstDinner;
 
       mealTotal = perPerson * people;
