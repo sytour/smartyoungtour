@@ -57,7 +57,12 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  const courseOnly = d.courseName.split(' ').slice(1).join(' ').trim(); // "루앙프라방 일반 3박" 등
+  const courseOnly = d.courseName.split(' ').slice(1).join(' ').trim(); // "루앙프라방 일반 3박"
+  const country = d.courseName.split(' ')[0];
+
+  // 박 수 추출 (예: "3박")
+  const match = d.courseName.match(/(\d)박/);
+  const nights = match ? parseInt(match[1]) : 1;
 
   // 호텔 요금 계산
   let hotelTotal = 0;
@@ -67,6 +72,7 @@ window.showDetail = async function(index) {
       const data = doc.data();
       if (
         data.course === courseOnly &&
+        data.country === country &&
         data.grade === d.hotelGrade
       ) {
         const singlePrice = data.single || 0;
@@ -74,9 +80,9 @@ window.showDetail = async function(index) {
         const triplePrice = data.triple || 0;
 
         hotelTotal =
-          (parseInt(d.roomSingle || 0) * singlePrice) +
+          ((parseInt(d.roomSingle || 0) * singlePrice) +
           (parseInt(d.roomTwinDouble || 0) * twinPrice) +
-          (parseInt(d.roomTriple || 0) * triplePrice);
+          (parseInt(d.roomTriple || 0) * triplePrice)) * nights;
       }
     });
   } catch (e) {
@@ -89,7 +95,10 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "meal_prices"));
     snap.forEach(doc => {
       const data = doc.data();
-      if (data.course === courseOnly) {
+      if (
+        data.course === courseOnly &&
+        data.country === country
+      ) {
         const base = (data.totalLunch || 0) + (data.totalDinner || 0);
         const addDinner = d.includeDinner ? (data.firstDinnerValue || 0) : 0;
         const perPersonMeal = base + addDinner;
