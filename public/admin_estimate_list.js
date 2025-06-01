@@ -24,39 +24,12 @@ async function loadEstimates() {
   renderTable(allData);
 }
 
-async function renderTable(data) {
+function renderTable(data) {
   tableBody.innerHTML = '';
-  for (let idx = 0; idx < data.length; idx++) {
-    const item = data[idx];
+  data.forEach((item, idx) => {
+    const row = document.createElement('tr');
     const paidLabel = item.isPaid ? "✅" : "❌";
 
-    // ✅ 식사 총액 계산
-    let mealTotal = 0;
-    try {
-      const courseOnly = (item.courseName || "").trim();
-      const nights = parseInt(courseOnly.match(/(\d)박/)?.[1] || "1");
-      const people = parseInt(item.peopleCount || 0);
-      const snap = await getDocs(collection(db, "meal_prices"));
-
-      for (const docSnap of snap.docs) {
-        const data = docSnap.data();
-        const matchCourse = (data.course || "").trim() === courseOnly;
-        const matchDays = parseInt(data.days) === nights;
-        const matchDinner = String(data.includeFirstDinner) === String(item.includeDinner || item.includeFirstDinner);
-
-        if (matchCourse && matchDays && matchDinner) {
-          const lunch = data.totalLunch || 0;
-          const dinner = data.totalDinner || 0;
-          const first = data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
-          mealTotal = (lunch + dinner) * people + first * people;
-          break;
-        }
-      }
-    } catch (e) {
-      console.error("❌ 리스트용 식사요금 계산 실패", e);
-    }
-
-    const row = document.createElement('tr');
     row.innerHTML = `
       <td>${item.name || ''}</td>
       <td>${item.phone || ''}</td>
@@ -76,7 +49,7 @@ async function renderTable(data) {
       </td>
     `;
     tableBody.appendChild(row);
-  }
+  });
 }
 
 window.showDetail = async function(index) {
@@ -124,16 +97,17 @@ window.showDetail = async function(index) {
 
       const courseMatch = (data.course || "").trim() === courseOnly;
       const daysMatch = parseInt(data.days) === nights;
-      const estimateDinner = String(d.includeDinner || d.includeFirstDinner || "").toLowerCase() === "true";
-      const dbDinner = Boolean(data.includeFirstDinner) === true;
+
+      const estimateDinner = d.includeDinner === true || d.includeFirstDinner === true;
+      const dbDinner = data.includeFirstDinner === true;
       const dinnerIncludedMatch = estimateDinner === dbDinner;
 
       if (courseMatch && daysMatch && dinnerIncludedMatch) {
-        const lunch = data.totalLunch || 0;
-        const dinner = data.totalDinner || 0;
-        const firstDinner = dbDinner ? (data.firstDinnerValue || 0) : 0;
+        const lunch = Number(data.totalLunch || 0);
+        const dinner = Number(data.totalDinner || 0);
+        const firstDinner = dbDinner ? Number(data.firstDinnerValue || 0) : 0;
 
-        mealTotal = (lunch + dinner) * people + firstDinner * people;
+        mealTotal = (lunch + dinner + firstDinner) * people;
         console.log("✅ 식사 요금 계산 완료:", mealTotal);
         break;
       }
