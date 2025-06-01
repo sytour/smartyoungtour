@@ -87,34 +87,41 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-  // 🍽️ 식사 요금 계산
-  let mealTotal = 0;
-  try {
-    const snap = await getDocs(collection(db, "meal_prices"));
+ // 🍽️ 식사 요금 계산
+let mealTotal = 0;
+try {
+  const snap = await getDocs(collection(db, "meal_prices"));
 
-    for (const docSnap of snap.docs) {
-      const data = docSnap.data();
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data();
 
-      const courseMatch = (data.course || "").trim() === courseOnly;
-      const daysMatch = parseInt(data.days) === nights;
+    const courseMatch = (data.course || "").trim() === courseOnly;
+    const daysMatch = parseInt(data.days) === nights;
 
-      const estimateDinner = d.includeDinner === true || d.includeFirstDinner === true;
-      const dbDinner = data.includeFirstDinner === true;
-      const dinnerIncludedMatch = estimateDinner === dbDinner;
+    const estimateDinner = String(d.includeDinner || d.includeFirstDinner || "").toLowerCase() === "true";
+    const dbDinner = Boolean(data.includeFirstDinner) === true;
 
-      if (courseMatch && daysMatch && dinnerIncludedMatch) {
-        const lunch = Number(data.totalLunch || 0);
-        const dinner = Number(data.totalDinner || 0);
-        const firstDinner = dbDinner ? Number(data.firstDinnerValue || 0) : 0;
+    const dinnerIncludedMatch = estimateDinner === dbDinner;
 
-        mealTotal = (lunch + dinner + firstDinner) * people;
-        console.log("✅ 식사 요금 계산 완료:", mealTotal);
-        break;
-      }
+    if (courseMatch && daysMatch && dinnerIncludedMatch) {
+      const lunch = data.totalLunch || 0;
+      const dinner = data.totalDinner || 0;
+
+      // ✅ 여기: firstDinnerValue가 없으면 dinner 평균값으로 추정
+      const firstDinner = dbDinner
+        ? (typeof data.firstDinnerValue === 'number'
+            ? data.firstDinnerValue
+            : Math.round(dinner / (nights - 1))) // fallback 계산
+        : 0;
+
+      mealTotal = (lunch + dinner + firstDinner) * people;
+      console.log("✅ 식사 요금 계산 완료:", mealTotal);
+      break;
     }
-  } catch (e) {
-    console.error("❌ 식사 요금 계산 실패", e);
   }
+} catch (e) {
+  console.error("❌ 식사 요금 계산 실패", e);
+}
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
