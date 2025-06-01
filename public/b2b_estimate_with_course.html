@@ -18,25 +18,30 @@
     .summary-right { text-align: right; font-size: 14px; color: #555; margin-top: 10px; }
     .radio-group { display: flex; gap: 20px; margin-top: 8px; }
     .radio-group label { font-weight: normal; }
-  .room-table input { width: 100%; box-sizing: border-box; }
-</style>
+    .room-table input { width: 100%; box-sizing: border-box; }
+    .button-group { display: flex; justify-content: space-between; margin-top: 20px; }
+  </style>
 </head>
 <body>
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
 
     <div class="section">
-  <div class="row-group">
-    <div style="flex: 1; min-width: 200px;">
-      <label>코스명</label>
-      <input type="text" id="courseName" readonly>
+      <div class="row-group">
+        <div style="flex: 1; min-width: 200px;">
+          <label>코스명</label>
+          <input type="text" id="courseName" readonly>
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <label>총 인원 수</label>
+          <input type="number" id="totalPeople" value="0">
+        </div>
+        <div style="flex: 1; min-width: 200px;">
+          <label>출발일</label>
+          <input type="date" id="departureDate">
+        </div>
+      </div>
     </div>
-    <div style="flex: 1; min-width: 200px;">
-      <label>총 인원 수</label>
-      <input type="number" id="totalPeople" value="0">
-    </div>
-  </div>
-</div>
 
     <div class="section">
       <label>호텔 등급 (4성급 / 5성급)</label>
@@ -45,33 +50,32 @@
         <option value="5성급">5성급</option>
       </select>
       <table class="room-table">
-  <colgroup>
-    <col style="width: 18%">
-    <col style="width: 20%">
-    <col style="width: 20%">
-    <col style="width: 20%">
-    <col style="width: 20%">
-  </colgroup>
-  <thead>
-    <tr>
-      <th>싱글</th>
-      <th>트윈/더블</th>
-      <th>트리플</th>
-      <th>총 룸 수</th>
-      <th>총 인원 수</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><input type="number" id="roomSingle" value="0"></td>
-      <td><input type="number" id="roomTwinDouble" value="0"></td>
-      <td><input type="number" id="roomTriple" value="0"></td>
-      <td><input type="text" id="calculatedRoomTotal" readonly></td>
-      <td><input type="text" id="calculatedPersonTotal" readonly></td>
-    </tr>
-  </tbody>
-</table>
-      
+        <colgroup>
+          <col style="width: 18%">
+          <col style="width: 20%">
+          <col style="width: 20%">
+          <col style="width: 20%">
+          <col style="width: 20%">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>싱글</th>
+            <th>트윈/더블</th>
+            <th>트리플</th>
+            <th>총 룸 수</th>
+            <th>총 인원 수</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="number" id="roomSingle" value="0"></td>
+            <td><input type="number" id="roomTwinDouble" value="0"></td>
+            <td><input type="number" id="roomTriple" value="0"></td>
+            <td><input type="text" id="calculatedRoomTotal" readonly></td>
+            <td><input type="text" id="calculatedPersonTotal" readonly></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="section">
@@ -112,7 +116,8 @@
       <input type="text" id="perPersonCost" readonly>
     </div>
 
-    <div class="section">
+    <div class="section button-group">
+      <button onclick="alert('견적 요청 저장 준비 중')">견적 요청</button>
       <button onclick="generatePDF()">PDF 견적서 출력</button>
     </div>
   </div>
@@ -127,22 +132,20 @@
     document.getElementById('itinerary').innerText = itinerary;
 
     function updateRoomSummary() {
-  const s = parseInt(document.getElementById('roomSingle').value) || 0;
-  const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
-  const tr = parseInt(document.getElementById('roomTriple').value) || 0;
-  const totalRooms = s + td + tr;
-  const totalPeople = s + (td * 2) + (tr * 3);
-  document.getElementById('calculatedRoomTotal').value = totalRooms;
-  document.getElementById('calculatedPersonTotal').value = totalPeople;
+      const s = parseInt(document.getElementById('roomSingle').value) || 0;
+      const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
+      const tr = parseInt(document.getElementById('roomTriple').value) || 0;
+      const totalRooms = s + td + tr;
+      const totalPeople = s + (td * 2) + (tr * 3);
+      document.getElementById('calculatedRoomTotal').value = totalRooms;
+      document.getElementById('calculatedPersonTotal').value = totalPeople;
 
-  const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
-  let vehicle = '벤';
-  if (inputTotal > 6 && inputTotal <= 11) vehicle = '미니버스';
-  else if (inputTotal >= 12) vehicle = '버스';
-  document.getElementById('vehicleResult').innerText = vehicle;
-
-  
-}
+      const inputTotal = parseInt(document.getElementById('totalPeople').value) || 0;
+      let vehicle = '벤';
+      if (inputTotal > 6 && inputTotal <= 11) vehicle = '미니버스';
+      else if (inputTotal >= 12) vehicle = '버스';
+      document.getElementById('vehicleResult').innerText = vehicle;
+    }
 
     ['roomSingle', 'roomTwinDouble', 'roomTriple', 'totalPeople'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateRoomSummary);
@@ -167,10 +170,10 @@
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
-  <div class="inline-group">
-    <input type="checkbox" id="lateArrivalDinner">
-    <label for="lateArrivalDinner">낮 비행기 도착 시 석식 포함</label>
-  </div>`;
+        <div class="inline-group">
+          <input type="checkbox" id="lateArrivalDinner">
+          <label for="lateArrivalDinner">낮 비행기 도착 시 석식 포함</label>
+        </div>`;
     }
 
     function generatePDF() {
