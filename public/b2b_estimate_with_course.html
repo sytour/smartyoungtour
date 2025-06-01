@@ -257,13 +257,24 @@
     };
   </script>
 
-  <!-- ✅ 자동입력 코드 추가 -->
+  <!-- ✅ 자동입력 보강 -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('clientName').value = localStorage.getItem('storedClientName') || '';
-      document.getElementById('clientPhone').value = localStorage.getItem('storedClientPhone') || '';
+      let name = localStorage.getItem('storedClientName');
+      let phone = localStorage.getItem('storedClientPhone');
+
+      if (!name || !phone) {
+        const saved = localStorage.getItem('userInfo');
+        if (saved) {
+          const data = JSON.parse(saved);
+          name = data.name || '';
+          phone = data.phone || '';
+        }
+      }
+
+      document.getElementById('clientName').value = name || '';
+      document.getElementById('clientPhone').value = phone || '';
     });
   </script>
-
 </body>
 </html>
