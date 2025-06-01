@@ -73,32 +73,28 @@ async function togglePaid(id) {
 function showDetails(id) {
   const data = allData.find(d => d.id === id);
   if (!data) return;
-  const {
-    course, hotelGrade, rooms, vehicleType,
-    meals, entryFeeTotal, guideFee, optionalFee,
-    miscFee, totalCost, perPersonCost
-  } = data;
 
-  const roomInfo = Object.entries(rooms || {})
-    .map(([type, count]) => `${type}: ${count}개`)
-    .join(", ");
+  const roomInfo = data.rooms
+    ? Object.entries(data.rooms).map(([type, count]) => `${type}: ${count}개`).join(", ")
+    : "";
 
-  const mealInfo = (meals || []).map(m => `${m.day}: ${m.menu}`).join("<br>");
+  const mealInfo = (data.meals || []).map(m => `${m.day}: ${m.menu}`).join("<br>");
 
-  detailBox.innerHTML = `
-    <h3>견적 상세 정보</h3>
-    <p><strong>코스:</strong> ${course}</p>
-    <p><strong>호텔 등급:</strong> ${hotelGrade}성</p>
-    <p><strong>객실:</strong> ${roomInfo}</p>
-    <p><strong>차량:</strong> ${vehicleType}</p>
+  const html = `
+    <h3>견적 상세 보기</h3>
+    <p><strong>코스:</strong> ${data.course || ""}</p>
+    <p><strong>호텔 등급:</strong> ${data.hotelGrade || ""}</p>
+    <p><strong>객실 구성:</strong> ${roomInfo}</p>
+    <p><strong>차량:</strong> ${data.vehicleType || ""}</p>
     <p><strong>식사:</strong><br>${mealInfo}</p>
-    <p><strong>입장료 총합:</strong> $${entryFeeTotal || 0}</p>
-    <p><strong>가이드비:</strong> $${guideFee || 0}</p>
-    <p><strong>선택관광 비용:</strong> $${optionalFee || 0}</p>
-    <p><strong>기타 비용:</strong> $${miscFee || 0}</p>
-    <p><strong>총 지상비:</strong> $${totalCost || 0}</p>
-    <p><strong>1인당 지상비:</strong> $${perPersonCost || 0}</p>
+    <p><strong>입장료:</strong> $${data.entryFeeTotal || 0}</p>
+    <p><strong>가이드비:</strong> $${data.guideFee || 0}</p>
+    <p><strong>선택관광:</strong> $${data.optionalFee || 0}</p>
+    <p><strong>기타 비용:</strong> $${data.miscFee || 0}</p>
+    <p><strong>총 지상비:</strong> $${data.totalCost || 0}</p>
+    <p><strong>1인당 지상비:</strong> $${data.perPersonCost || 0}</p>
   `;
+  detailBox.innerHTML = html;
 }
 
 loadEstimates();
