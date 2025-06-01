@@ -26,7 +26,6 @@
 <body>
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
-
     <!-- 사용자 정보 -->
     <div class="section">
       <div style="display: flex; align-items: flex-end; gap: 12px;">
@@ -221,6 +220,15 @@
         return;
       }
 
+      let includeFirstDinner = "false";
+      if (courseName.includes("골프")) {
+        const chk = document.getElementById('lateArrivalDinnerGolf');
+        if (chk && chk.checked) includeFirstDinner = "true";
+      } else {
+        const chk = document.getElementById('lateArrivalDinner');
+        if (chk && chk.checked) includeFirstDinner = "true";
+      }
+
       const data = {
         name,
         phone,
@@ -239,6 +247,7 @@
         shoppingCount,
         totalGroundCost,
         perPersonCost,
+        includeFirstDinner,
         timestamp: serverTimestamp()
       };
 
@@ -257,12 +266,10 @@
     };
   </script>
 
-  <!-- ✅ 자동입력 보강 -->
   <script>
     window.addEventListener('DOMContentLoaded', () => {
       let name = localStorage.getItem('storedClientName');
       let phone = localStorage.getItem('storedClientPhone');
-
       if (!name || !phone) {
         const saved = localStorage.getItem('userInfo');
         if (saved) {
@@ -271,7 +278,6 @@
           phone = data.phone || '';
         }
       }
-
       document.getElementById('clientName').value = name || '';
       document.getElementById('clientPhone').value = phone || '';
     });
