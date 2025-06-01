@@ -56,16 +56,17 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  const courseOnly = d.courseName.split(' ').slice(1).join(' ').trim(); // "루앙프라방 일반 3박"
+  // ✅ 국가 제거하고 코스명만 남김 (예: "라오스 루앙프라방 일반 3박" → "루앙프라방 일반 3박")
+  const courseOnly = d.courseName.replace(/^[^\s]+\s/, '').trim();
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const people = parseInt(d.peopleCount || 0);
 
-  // 디버깅 로그
+  // 🔍 콘솔 디버깅
   console.log("📌 견적 courseName:", d.courseName);
   console.log("➡️ 비교용 courseOnly:", courseOnly);
 
-  // 호텔 요금 계산
+  // 🏨 호텔 요금 계산
   let hotelTotal = 0;
   try {
     const snap = await getDocs(collection(db, "hotel_prices"));
@@ -88,7 +89,7 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-  // 식사 요금 계산
+  // 🍽️ 식사 요금 계산
   let mealTotal = 0;
   try {
     const snap = await getDocs(collection(db, "meal_prices"));
