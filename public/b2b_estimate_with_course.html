@@ -195,10 +195,12 @@
         </div>`;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
-      mealInfo.innerHTML = `
-        <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-          <input type="checkbox" id="lateArrivalDinner"> 낮 비행기 도착 시 석식 포함
-        </label>`;
+     <div style="display: flex; align-items: center;">
+  <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
+    <input type="checkbox" id="lateArrivalDinner"> 낮 비행기 도착 시 석식 포함
+  </label>
+</div>
+
     }
 
     window.submitEstimate = async () => {
