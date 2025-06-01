@@ -85,7 +85,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   addBtn.addEventListener("click", async () => {
     const country = countrySelect.value;
     const days = parseInt(daysSelect.value);
-    const course = `${courseSelect.value} ${days}박`; // ✅ 수정된 부분
+    const course = `${courseSelect.value} ${days}박`; // ✅ 박 포함 코스명
     const includeFirstDinner = firstDinner.checked;
 
     if (!country || !course) {
@@ -133,7 +133,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     tbody.innerHTML = "";
     const selectedCountry = countryFilter.value;
     const snapshot = await getDocs(collection(db, "meal_prices"));
-    snapshot.forEach(docSnap => {
+
+    // ✅ 정렬 추가: 국가 > 코스 순으로 가나다 정렬
+    const sortedDocs = snapshot.docs.sort((a, b) => {
+      const aData = a.data();
+      const bData = b.data();
+      if (aData.country !== bData.country) {
+        return aData.country.localeCompare(bData.country, 'ko');
+      }
+      return aData.course.localeCompare(bData.course, 'ko');
+    });
+
+    sortedDocs.forEach(docSnap => {
       const data = docSnap.data();
       if (!selectedCountry || data.country === selectedCountry) {
         const totalAll = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
