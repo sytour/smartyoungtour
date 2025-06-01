@@ -1,4 +1,3 @@
-// ✅ 전체 수정된 admin_estimate_list.js (mealTotal 계산만 정확히 수정)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -59,10 +58,11 @@ window.showDetail = async function(index) {
   const courseOnly = (d.courseName || '').trim();
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
-  const people = parseInt(d.peopleCount || 0);
+  const totalPeople = parseInt(d.totalPeople || 0);
 
   console.log("🎯 견적 courseName:", d.courseName);
   console.log("🎯 비교용 courseOnly:", courseOnly);
+  console.log("🎯 인원 수:", totalPeople);
 
   let hotelTotal = 0;
   try {
@@ -94,7 +94,7 @@ window.showDetail = async function(index) {
       const matchedOption = String(data.includeFirstDinner) === String(d.includeFirstDinner);
       if (matchedCourse && matchedOption) {
         const total = (data.totalLunch || 0) + (data.totalDinner || 0) + (data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0);
-        mealTotal = total * people;
+        mealTotal = total * totalPeople;
         console.log("✅ 식사 요금 계산 완료:", mealTotal);
         break;
       }
@@ -102,6 +102,9 @@ window.showDetail = async function(index) {
   } catch (e) {
     console.error("❌ 식사 요금 계산 실패", e);
   }
+
+  const totalGroundCost = hotelTotal + mealTotal;
+  const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
@@ -111,8 +114,8 @@ window.showDetail = async function(index) {
     <p><strong>식사 총 비용:</strong> $${mealTotal}</p>
     <p><strong>차량:</strong> ${d.vehicle}</p>
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
-    <p><strong>총 지상비:</strong> $${d.totalGroundCost}</p>
-    <p><strong>1인 지상비:</strong> $${d.perPersonCost}</p>
+    <p><strong>총 지상비:</strong> $${totalGroundCost}</p>
+    <p><strong>1인 지상비:</strong> $${perPersonCost}</p>
   `;
   detailBox.scrollIntoView({ behavior: 'smooth' });
 };
