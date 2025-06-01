@@ -91,19 +91,24 @@ window.showDetail = async function(index) {
 let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
+
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
-    const courseMatch = (data.course || "").trim() === courseOnly;
-    const includeMatch = !!data.includeFirstDinner === !!d.includeFirstDinner;
 
-    if (courseMatch && includeMatch) {
+    // course명과 숙박일 수, 1일차 석식 포함 여부가 모두 일치하는 항목 찾기
+    const courseMatch = (data.course || "").trim() === courseOnly;
+    const daysMatch = parseInt(data.days) === nights;
+    const dinnerIncludedMatch = !!data.includeFirstDinner === !!d.includeFirstDinner;
+
+    if (courseMatch && daysMatch && dinnerIncludedMatch) {
       const lunch = data.totalLunch || 0;
       const dinner = data.totalDinner || 0;
       const firstDinner = data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
       const perPerson = lunch + dinner + firstDinner;
+
       mealTotal = perPerson * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
-      break; // 정확히 일치하는 항목 1개만 사용
+      break;
     }
   }
 } catch (e) {
