@@ -25,9 +25,9 @@
   <div class="container">
     <h2>B2B 견적 요청 입력</h2>
 
-    <!-- ✅ 고객 정보 입력 (한 줄 배치 + 저장) -->
+    <!-- 사용자 정보 -->
     <div class="section">
-      <div style="display: flex; align-items: center; gap: 12px;">
+      <div style="display: flex; align-items: flex-end; gap: 12px;">
         <div style="flex: 1;">
           <label>상호/이름</label>
           <input type="text" id="clientName" placeholder="예: 홍길동투어">
@@ -36,12 +36,10 @@
           <label>연락처</label>
           <input type="text" id="clientPhone" placeholder="예: 010-1234-5678">
         </div>
-        <div style="margin-top: 24px;">
-          <label><input type="checkbox" id="saveInfo"> 저장</label>
-        </div>
       </div>
     </div>
 
+    <!-- 조합정보 -->
     <div class="section">
       <div class="row-group">
         <div style="flex: 1; min-width: 200px;">
@@ -59,6 +57,7 @@
       </div>
     </div>
 
+    <!-- 호텔 -->
     <div class="section">
       <label>호텔 등급 (4성급 / 5성급)</label>
       <select id="hotelGrade">
@@ -87,16 +86,19 @@
       </table>
     </div>
 
+    <!-- 차량 -->
     <div class="section">
       <label>차량 종류</label>
       <div id="vehicleResult">자동 선택됨</div>
     </div>
 
+    <!-- 식사 -->
     <div class="section" id="mealSection">
       <label id="mealLabel">식사 구성</label>
       <div id="mealInfo"></div>
     </div>
 
+    <!-- 선택관광 -->
     <div class="section">
       <label>선택관광 포함 여부</label>
       <div class="radio-group">
@@ -112,11 +114,13 @@
       </select>
     </div>
 
+    <!-- 일정 -->
     <div class="section">
       <label>일정</label>
       <div id="itinerary">자동 일정 표시</div>
     </div>
 
+    <!-- 경제 -->
     <div class="section">
       <label>총 지상비 (전체)</label>
       <input type="text" id="totalGroundCost" readonly>
@@ -177,31 +181,24 @@
     if (course.includes("골프")) {
       mealLabel.innerText = "골프 투어 식사 설정";
       mealInfo.innerHTML = `
-        <div class="inline-group">
+        <div style="display: flex; align-items: center; gap: 12px;">
           <input type="checkbox" id="golfLunch">
-          <label for="golfLunch">중식 포함</label>
-          <input type="checkbox" id="golfDinner" style="margin-left: 20px;">
-          <label for="golfDinner">석식 포함</label>
+          <label for="golfLunch" style="margin: 0;">중식 포함</label>
+          <input type="checkbox" id="golfDinner">
+          <label for="golfDinner" style="margin: 0;">석식 포함</label>
         </div>
-        <div class="inline-group" style="margin-top: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
           <input type="checkbox" id="lateArrivalDinnerGolf">
-          <label for="lateArrivalDinnerGolf">낮 비행기 도착 시 석식 포함</label>
+          <label for="lateArrivalDinnerGolf" style="margin: 0;">낮 비행기 도착 시 석식 포함</label>
         </div>`;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
-        <div class="inline-group">
+        <div style="display: flex; align-items: center; gap: 8px;">
           <input type="checkbox" id="lateArrivalDinner">
-          <label for="lateArrivalDinner">낮 비행기 도착 시 석식 포함</label>
+          <label for="lateArrivalDinner" style="margin: 0;">낮 비행기 도착 시 석식 포함</label>
         </div>`;
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const savedName = localStorage.getItem("clientName");
-      const savedPhone = localStorage.getItem("clientPhone");
-      if (savedName) document.getElementById('clientName').value = savedName;
-      if (savedPhone) document.getElementById('clientPhone').value = savedPhone;
-    });
 
     window.submitEstimate = async () => {
       const name = document.getElementById('clientName').value.trim();
@@ -221,7 +218,6 @@
       const totalRoom = document.getElementById('calculatedRoomTotal').value;
       const totalPersonCalculated = document.getElementById('calculatedPersonTotal').value;
       const vehicle = document.getElementById('vehicleResult').innerText;
-      const itinerary = document.getElementById('itinerary').innerText;
       const optionalTour = document.querySelector('input[name="optionalTour"]:checked').value;
       const shoppingCount = document.getElementById('shoppingCount').value;
       const totalGroundCost = document.getElementById('totalGroundCost').value;
@@ -256,10 +252,6 @@
       try {
         await addDoc(collection(db, "estimates_admin"), data);
         await addDoc(collection(db, "estimates_client"), data);
-        if (document.getElementById('saveInfo').checked) {
-          localStorage.setItem("clientName", name);
-          localStorage.setItem("clientPhone", phone);
-        }
         alert('✅ 견적 요청이 성공적으로 저장되었습니다.');
       } catch (e) {
         console.error("저장 실패:", e);
