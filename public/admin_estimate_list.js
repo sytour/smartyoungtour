@@ -57,7 +57,7 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  const courseOnly = d.courseName.split(' ').slice(1).join(' '); // "루앙프라방 일반 3박" 등
+  const courseOnly = d.courseName.split(' ').slice(1).join(' ').trim(); // "루앙프라방 일반 3박" 등
 
   // 호텔 요금 계산
   let hotelTotal = 0;
