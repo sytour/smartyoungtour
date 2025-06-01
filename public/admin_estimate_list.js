@@ -53,13 +53,39 @@ function renderTable(data) {
   });
 }
 
-window.showDetail = function(index) {
+window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
+
+  // 🔹 호텔 요금 계산
+  let hotelTotal = 0;
+  try {
+    const snap = await getDocs(collection(db, "hotel_prices"));
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (
+        data.course === d.courseName &&
+        data.grade === d.hotelGrade
+      ) {
+        const singlePrice = data.single || 0;
+        const twinPrice = data.twin_double || 0;
+        const triplePrice = data.triple || 0;
+
+        hotelTotal =
+          (parseInt(d.roomSingle || 0) * singlePrice) +
+          (parseInt(d.roomTwinDouble || 0) * twinPrice) +
+          (parseInt(d.roomTriple || 0) * triplePrice);
+      }
+    });
+  } catch (e) {
+    console.error("호텔 요금 계산 실패", e);
+  }
+
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
     <p><strong>호텔 등급:</strong> ${d.hotelGrade}</p>
     <p><strong>룸 수:</strong> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
+    <p><strong>호텔 총 비용:</strong> $${hotelTotal}</p>
     <p><strong>차량:</strong> ${d.vehicle}</p>
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
     <p><strong>총 지상비:</strong> $${d.totalGroundCost}</p>
