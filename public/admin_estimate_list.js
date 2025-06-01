@@ -56,11 +56,14 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  // courseOnly: 국가 제거하고 박수 포함 코스명 추출
   const courseOnly = d.courseName.split(' ').slice(1).join(' ').trim(); // "루앙프라방 일반 3박"
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const people = parseInt(d.peopleCount || 0);
+
+  // 디버깅 로그
+  console.log("📌 견적 courseName:", d.courseName);
+  console.log("➡️ 비교용 courseOnly:", courseOnly);
 
   // 호텔 요금 계산
   let hotelTotal = 0;
@@ -68,20 +71,21 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "hotel_prices"));
     snap.forEach(doc => {
       const data = doc.data();
+      console.log("🏨 호텔코스:", data.course, "등급:", data.grade);
       if (data.course === courseOnly && data.grade === d.hotelGrade) {
         const single = data.single || 0;
         const twin = data.twin_double || 0;
         const triple = data.triple || 0;
-
         hotelTotal = (
           (parseInt(d.roomSingle || 0) * single) +
           (parseInt(d.roomTwinDouble || 0) * twin) +
           (parseInt(d.roomTriple || 0) * triple)
         ) * nights;
+        console.log("✅ 호텔 요금 계산 완료:", hotelTotal);
       }
     });
   } catch (e) {
-    console.error("호텔 요금 계산 실패", e);
+    console.error("❌ 호텔 요금 계산 실패", e);
   }
 
   // 식사 요금 계산
@@ -90,14 +94,16 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "meal_prices"));
     snap.forEach(doc => {
       const data = doc.data();
+      console.log("🍽️ 식사코스:", data.course);
       if (data.course === courseOnly) {
         const base = (data.totalLunch || 0) + (data.totalDinner || 0);
         const addDinner = d.includeDinner ? (data.firstDinnerValue || 0) : 0;
         mealTotal = (base + addDinner) * people;
+        console.log("✅ 식사 요금 계산 완료:", mealTotal);
       }
     });
   } catch (e) {
-    console.error("식사 요금 계산 실패", e);
+    console.error("❌ 식사 요금 계산 실패", e);
   }
 
   detailBox.innerHTML = `
