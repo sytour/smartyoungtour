@@ -99,6 +99,7 @@
       <label id="mealLabel">식사 구성</label>
       <div id="mealInfo" class="checkbox-line"></div>
     </div>
+
     <!-- 옵션 및 쇼핑 -->
     <div class="section">
       <label>선택관광 포함 여부</label>
@@ -255,5 +256,14 @@
       alert("PDF 견적서 출력은 준비 중입니다.");
     };
   </script>
+
+  <!-- ✅ 자동입력 코드 추가 -->
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('clientName').value = localStorage.getItem('storedClientName') || '';
+      document.getElementById('clientPhone').value = localStorage.getItem('storedClientPhone') || '';
+    });
+  </script>
+
 </body>
 </html>
