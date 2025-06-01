@@ -93,17 +93,17 @@ try {
   const snap = await getDocs(collection(db, "meal_prices"));
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
-    const courseMatched = data.course?.trim() === courseOnly;
-    const dinnerMatched = data.includeFirstDinner === (d.includeDinner || d.includeFirstDinner);
+    const courseMatch = (data.course || "").trim() === courseOnly;
+    const includeMatch = !!data.includeFirstDinner === !!d.includeFirstDinner;
 
-    if (courseMatched && dinnerMatched) {
+    if (courseMatch && includeMatch) {
       const lunch = data.totalLunch || 0;
       const dinner = data.totalDinner || 0;
       const firstDinner = data.includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
       const perPerson = lunch + dinner + firstDinner;
       mealTotal = perPerson * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
-      break;
+      break; // 정확히 일치하는 항목 1개만 사용
     }
   }
 } catch (e) {
