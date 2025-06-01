@@ -57,7 +57,7 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  // 🔹 호텔 요금 계산
+  // 호텔 요금 계산
   let hotelTotal = 0;
   try {
     const snap = await getDocs(collection(db, "hotel_prices"));
@@ -81,11 +81,37 @@ window.showDetail = async function(index) {
     console.error("호텔 요금 계산 실패", e);
   }
 
+  // 식사 요금 계산
+  let mealTotal = 0;
+  try {
+    const snap = await getDocs(collection(db, "meal_prices"));
+    let perPersonMeal = 0;
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (data.course === d.courseName) {
+        const day = parseInt(data.day);
+        const type = data.type;
+        const price = parseFloat(data.price || 0);
+        const includeDinner = d.includeDinner || false;
+
+        // 조건: 낮 도착 석식 포함 체크 여부
+        if (day === 1 && type === "석식" && !includeDinner) {
+          return;
+        }
+        perPersonMeal += price;
+      }
+    });
+    mealTotal = perPersonMeal * parseInt(d.peopleCount || 0);
+  } catch (e) {
+    console.error("식사 요금 계산 실패", e);
+  }
+
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
     <p><strong>호텔 등급:</strong> ${d.hotelGrade}</p>
     <p><strong>룸 수:</strong> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
     <p><strong>호텔 총 비용:</strong> $${hotelTotal}</p>
+    <p><strong>식사 총 비용:</strong> $${mealTotal}</p>
     <p><strong>차량:</strong> ${d.vehicle}</p>
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
     <p><strong>총 지상비:</strong> $${d.totalGroundCost}</p>
