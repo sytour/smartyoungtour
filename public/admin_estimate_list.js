@@ -87,22 +87,20 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-  // 🍽️ 식사 요금 계산
+ // 🍽️ 식사 요금 계산
 let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
   const firstDinnerIncluded = !!d.includeDinner || !!d.includeFirstDinner;
+
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
     const courseMatch = (data.course || '').trim() === courseOnly;
-    const dinnerMatch = !!data.includeFirstDinner === firstDinnerIncluded;
+    const dinnerFlagMatch = !!data.includeFirstDinner === firstDinnerIncluded;
 
-    if (courseMatch && dinnerMatch) {
-      const lunch = data.totalLunch || 0;
-      const dinner = data.totalDinner || 0;
-      const firstDinner = firstDinnerIncluded ? (data.firstDinnerValue || 0) : 0;
-      const perPerson = lunch + dinner + firstDinner;
-      mealTotal = perPerson * people;
+    if (courseMatch && dinnerFlagMatch) {
+      const mealSum = (data.totalLunch || 0) + (data.totalDinner || 0) + (firstDinnerIncluded ? (data.firstDinnerValue || 0) : 0);
+      mealTotal = mealSum * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
       break;
     }
