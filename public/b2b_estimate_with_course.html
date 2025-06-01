@@ -86,7 +86,7 @@
       </table>
     </div>
 
-    <!-- 차량 종류 -->
+    <!-- 차량 -->
     <div class="section">
       <label>차량 종류</label>
       <div id="vehicleResult">자동 선택됨</div>
@@ -98,7 +98,7 @@
       <div id="mealInfo"></div>
     </div>
 
-    <!-- 선택 관광 및 쇼핑 -->
+    <!-- 옵션 및 쇼핑 -->
     <div class="section">
       <label>선택관광 포함 여부</label>
       <div class="radio-group">
@@ -182,22 +182,22 @@
     if (course.includes("골프")) {
       mealLabel.innerText = "골프 투어 식사 설정";
       mealInfo.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <input type="checkbox" id="golfLunch">
-          <label for="golfLunch" style="margin: 0;">중식 포함</label>
-          <input type="checkbox" id="golfDinner">
-          <label for="golfDinner" style="margin: 0;">석식 포함</label>
-        </div>
-        <div style="display: flex; align-items: center; gap: 8px; margin-top: 10px;">
-          <input type="checkbox" id="lateArrivalDinnerGolf">
-          <label for="lateArrivalDinnerGolf" style="margin: 0;">낮 비행기 도착 시 석식 포함</label>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="golfLunch"> 중식 포함
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="golfDinner"> 석식 포함
+          </label>
+          <label style="display: flex; align-items: center; gap: 6px;">
+            <input type="checkbox" id="lateArrivalDinnerGolf"> 낮 비행기 도착 시 석식 포함
+          </label>
         </div>`;
     } else {
       mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
       mealInfo.innerHTML = `
-        <label style="display: flex; align-items: center; gap: 8px; font-weight: normal;">
-          <input type="checkbox" id="lateArrivalDinner">
-          낮 비행기 도착 시 석식 포함
+        <label style="display: flex; align-items: center; gap: 6px;">
+          <input type="checkbox" id="lateArrivalDinner"> 낮 비행기 도착 시 석식 포함
         </label>`;
     }
 
