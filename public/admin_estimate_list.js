@@ -56,13 +56,12 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  // ✅ 국가 제거하고 코스명만 남김 (예: "라오스 루앙프라방 일반 3박" → "루앙프라방 일반 3박")
+  // ✅ 국가명을 제거하고 코스명만 남김 ("라오스 루앙프라방 일반 3박" → "루앙프라방 일반 3박")
   const courseOnly = d.courseName.replace(/^[^\s]+\s/, '').trim();
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const people = parseInt(d.peopleCount || 0);
 
-  // 🔍 콘솔 디버깅
   console.log("📌 견적 courseName:", d.courseName);
   console.log("➡️ 비교용 courseOnly:", courseOnly);
 
