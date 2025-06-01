@@ -12,7 +12,7 @@
       padding: 40px;
     }
     .container {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: auto;
       background: white;
       border-radius: 12px;
@@ -25,6 +25,7 @@
     }
     .filters {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       margin-bottom: 20px;
     }
@@ -33,6 +34,7 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       flex: 1;
+      min-width: 150px;
     }
     .filters button {
       padding: 8px 14px;
@@ -73,6 +75,9 @@
       font-weight: bold;
       color: #333;
     }
+    .toggle-paid {
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -84,6 +89,8 @@
       <input type="text" id="filterPhone" placeholder="연락처 입력">
       <button onclick="applyFilter()">검색</button>
       <button onclick="resetFilter()">초기화</button>
+      <button onclick="toggleViewFilter(true)">결제 완료만 보기</button>
+      <button onclick="toggleViewFilter(false)">전체 보기</button>
     </div>
 
     <table id="estimateTable">
@@ -93,7 +100,9 @@
           <th>연락처</th>
           <th>국가 + 코스</th>
           <th>출발일</th>
+          <th>결제완료</th>
           <th>보기</th>
+          <th>삭제</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -101,78 +110,7 @@
 
     <div id="estimateDetails" class="details"></div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyDEoEvrhfTLtaqqtR1Bva_IPbKsW15AhcE",
-        authDomain: "smartyoungtour.firebaseapp.com",
-        projectId: "smartyoungtour",
-        storageBucket: "smartyoungtour.appspot.com",
-        messagingSenderId: "615207664322",
-        appId: "1:615207664322:web:ea2d05fefa56e81c43595b"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      const tableBody = document.querySelector("#estimateTable tbody");
-      const detailBox = document.getElementById("estimateDetails");
-      let allData = [];
-
-      async function loadEstimates() {
-        const snapshot = await getDocs(collection(db, "estimates_admin"));
-        allData = snapshot.docs.map(doc => doc.data());
-        allData.sort((a, b) => (b.departureDate || '').localeCompare(a.departureDate || ''));
-        renderTable(allData);
-      }
-
-      function renderTable(data) {
-        tableBody.innerHTML = '';
-        data.forEach((item, idx) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${item.name || ''}</td>
-            <td>${item.phone || ''}</td>
-            <td>${item.courseName || ''}</td>
-            <td>${item.departureDate || ''}</td>
-            <td><button onclick="showDetail(${idx})">보기</button></td>
-          `;
-          tableBody.appendChild(row);
-        });
-      }
-
-      window.showDetail = function(index) {
-        const d = allData[index];
-        detailBox.style.display = 'block';
-        detailBox.innerHTML = `
-          <h3>견적 상세 정보</h3>
-          <p><span class="highlight">호텔 등급:</span> ${d.hotelGrade}</p>
-          <p><span class="highlight">룸 수:</span> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
-          <p><span class="highlight">차량:</span> ${d.vehicle}</p>
-          <p><span class="highlight">선택관광:</span> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
-          <p><span class="highlight">총 지상비:</span> $${d.totalGroundCost}</p>
-          <p><span class="highlight">1인 지상비:</span> $${d.perPersonCost}</p>
-        `;
-        detailBox.scrollIntoView({ behavior: 'smooth' });
-      }
-
-      window.applyFilter = function() {
-        const name = document.getElementById('filterName').value.trim();
-        const phone = document.getElementById('filterPhone').value.trim();
-        const filtered = allData.filter(d => {
-          return (!name || (d.name || '').includes(name)) &&
-                 (!phone || (d.phone || '').includes(phone));
-        });
-        renderTable(filtered);
-      }
-
-      window.resetFilter = function() {
-        location.reload();
-      }
-
-      loadEstimates();
-    </script>
+    <script type="module" src="estimate_admin_script.js"></script>
   </div>
 </body>
 </html>
