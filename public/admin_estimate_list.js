@@ -99,8 +99,11 @@ try {
     const dinnerFlagMatch = !!data.includeFirstDinner === firstDinnerIncluded;
 
     if (courseMatch && dinnerFlagMatch) {
-      const total = (data.totalLunch || 0) + (data.totalDinner || 0) + (firstDinnerIncluded ? (data.firstDinnerValue || 0) : 0);
-      mealTotal = total * people;
+      const lunch = data.totalLunch || 0;
+      const dinner = data.totalDinner || 0;
+      const firstDinner = firstDinnerIncluded ? (data.firstDinnerValue || 0) : 0;
+      const perPerson = lunch + dinner + firstDinner;
+      mealTotal = perPerson * people;
       console.log("✅ 식사 요금 계산 완료:", mealTotal);
       break;
     }
