@@ -157,6 +157,24 @@
     document.getElementById('courseName').value = course;
     document.getElementById('itinerary').innerText = itinerary;
 
+    const mealLabel = document.getElementById('mealLabel');
+    const mealInfo = document.getElementById('mealInfo');
+    if (course.includes("골프")) {
+      mealLabel.innerText = "골프 투어 식사 설정";
+      mealInfo.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="golfLunch"> 중식 포함</label>
+          <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="golfDinner"> 석식 포함</label>
+          <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="lateArrivalDinnerGolf"> 낮 도착 시 석식 포함</label>
+        </div>`;
+    } else {
+      mealLabel.innerText = "식사 구성 (일반 투어 - 자동 포함)";
+      mealInfo.innerHTML = `
+        <div style="display: flex; align-items: center;">
+          <label style="display: flex; align-items: center; gap: 6px;"><input type="checkbox" id="lateArrivalDinner"> 낮 도착 시 석식 포함</label>
+        </div>`;
+    }
+
     const updateRoomSummary = () => {
       const s = parseInt(document.getElementById('roomSingle').value) || 0;
       const td = parseInt(document.getElementById('roomTwinDouble').value) || 0;
@@ -176,35 +194,6 @@
     ['roomSingle', 'roomTwinDouble', 'roomTriple', 'totalPeople'].forEach(id => {
       document.getElementById(id).addEventListener('input', updateRoomSummary);
     });
-
-    const mealLabel = document.getElementById('mealLabel');
-    const mealInfo = document.getElementById('mealInfo');
-    if (course.includes("골프")) {
-      mealLabel.innerText = "골프 투어 식사 설정";
-      mealInfo.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-          <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-            <input type="checkbox" id="golfLunch"> 중식 포함
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-            <input type="checkbox" id="golfDinner"> 석식 포함
-          </label>
-          <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-            <input type="checkbox" id="lateArrivalDinnerGolf"> 낮 비행기 도착 시 석식 포함
-          </label>
-        </div>`;
-    } else {
-     <div class="section" id="mealSection">
-  <label id="mealLabel">식사 구성 (일반 투어 - 자동 포함)</label>
-  <div id="mealInfo">
-    <div style="display: flex; align-items: center;">
-      <label style="display: flex; align-items: center; gap: 6px; white-space: nowrap;">
-        <input type="checkbox" id="lateArrivalDinner"> 낮 비행기 도착 시 석식 포함
-      </label>
-    </div>
-  </div>
-</div>
-    }
 
     window.submitEstimate = async () => {
       const name = document.getElementById('clientName').value.trim();
