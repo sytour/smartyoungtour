@@ -56,13 +56,13 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  const courseOnly = d.courseName.trim();
+  const courseOnly = (d.courseName || '').trim();
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const people = parseInt(d.peopleCount || 0);
 
-  console.log("📌 견적 courseName:", d.courseName);
-  console.log("➡️ 비교용 courseOnly:", courseOnly);
+  console.log("🎯 견적 courseName:", d.courseName);
+  console.log("🎯 비교용 courseOnly:", courseOnly);
 
   // 🏨 호텔 요금 계산
   let hotelTotal = 0;
@@ -70,8 +70,8 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "hotel_prices"));
     snap.forEach(doc => {
       const data = doc.data();
-      console.log("🏨 호텔코스:", data.course, "등급:", data.grade);
-      if (data.course === courseOnly && data.grade === d.hotelGrade) {
+      const courseTrimmed = (data.course || '').trim();
+      if (courseTrimmed === courseOnly && data.grade === d.hotelGrade) {
         const single = data.single || 0;
         const twin = data.twin_double || 0;
         const triple = data.triple || 0;
@@ -87,29 +87,28 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-// 🍽️ 식사 요금 계산
-let mealTotal = 0;
-try {
-  const snap = await getDocs(collection(db, "meal_prices"));
-  snap.forEach(doc => {
-    const data = doc.data();
-    console.log("🍽️ 식사코스:", data.course);
-    if (data.course === courseOnly) {
-      const lunch = Number(data.totalLunch || 0);
-      const dinner = Number(data.totalDinner || 0);
+  // 🍽️ 식사 요금 계산
+  let mealTotal = 0;
+  try {
+    const snap = await getDocs(collection(db, "meal_prices"));
+    snap.forEach(doc => {
+      const data = doc.data();
+      const courseTrimmed = (data.course || '').trim();
+      if (courseTrimmed === courseOnly) {
+        const lunch = Number(data.totalLunch || 0);
+        const dinner = Number(data.totalDinner || 0);
 
-      // 강제 boolean 변환
-      const toBool = v => v === true || v === "true";
-      const firstDinner = (toBool(d.includeDinner) || toBool(d.includeFirstDinner)) ? Number(data.firstDinnerValue || 0) : 0;
+        const toBool = v => v === true || v === "true";
+        const firstDinner = (toBool(d.includeDinner) || toBool(d.includeFirstDinner)) ? Number(data.firstDinnerValue || 0) : 0;
 
-      const perPerson = lunch + dinner + firstDinner;
-      mealTotal = perPerson * people;
-      console.log("✅ 식사 요금 계산 완료:", mealTotal);
-    }
-  });
-} catch (e) {
-  console.error("❌ 식사 요금 계산 실패", e);
-}
+        const perPerson = lunch + dinner + firstDinner;
+        mealTotal = perPerson * people;
+        console.log("✅ 식사 요금 계산 완료:", mealTotal);
+      }
+    });
+  } catch (e) {
+    console.error("❌ 식사 요금 계산 실패", e);
+  }
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
