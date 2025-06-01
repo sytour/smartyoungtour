@@ -106,12 +106,12 @@
       import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
       const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyDEoEvrhfTLtaqqtR1Bva_IPbKsW15AhcE",
+        authDomain: "smartyoungtour.firebaseapp.com",
+        projectId: "smartyoungtour",
+        storageBucket: "smartyoungtour.appspot.com",
+        messagingSenderId: "615207664322",
+        appId: "1:615207664322:web:ea2d05fefa56e81c43595b"
       };
 
       const app = initializeApp(firebaseConfig);
@@ -134,7 +134,7 @@
           row.innerHTML = `
             <td>${item.name || ''}</td>
             <td>${item.phone || ''}</td>
-            <td>${item.country || ''} - ${item.course || ''}</td>
+            <td>${item.courseName || ''}</td>
             <td>${item.departureDate || ''}</td>
             <td><button onclick="showDetail(${idx})">보기</button></td>
           `;
@@ -150,11 +150,7 @@
           <p><span class="highlight">호텔 등급:</span> ${d.hotelGrade}</p>
           <p><span class="highlight">룸 수:</span> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
           <p><span class="highlight">차량:</span> ${d.vehicle}</p>
-          <p><span class="highlight">식사 구성:</span> ${d.mealDesc}</p>
           <p><span class="highlight">선택관광:</span> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
-          <p><span class="highlight">입장료:</span> $${d.entryFee}</p>
-          <p><span class="highlight">가이드요금:</span> $${d.guideCost}</p>
-          <p><span class="highlight">기타요금:</span> $${d.etcCost}</p>
           <p><span class="highlight">총 지상비:</span> $${d.totalGroundCost}</p>
           <p><span class="highlight">1인 지상비:</span> $${d.perPersonCost}</p>
         `;
@@ -172,8 +168,8 @@
       }
 
       window.resetFilter = function() {
-  location.reload();
-}
+        location.reload();
+      }
 
       loadEstimates();
     </script>
