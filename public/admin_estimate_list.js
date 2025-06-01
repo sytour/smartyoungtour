@@ -56,8 +56,8 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  // ✅ 국가명을 제거하고 코스명만 남김 ("라오스 루앙프라방 일반 3박" → "루앙프라방 일반 3박")
-  const courseOnly = d.courseName.replace(/^[^\s]+\s/, '').trim();
+  // ✅ 더 이상 잘라내지 않고 그대로 사용
+  const courseOnly = d.courseName.trim();
   const nightsMatch = courseOnly.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const people = parseInt(d.peopleCount || 0);
