@@ -84,8 +84,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   addBtn.addEventListener("click", async () => {
     const country = countrySelect.value;
-    const course = courseSelect.value;
     const days = parseInt(daysSelect.value);
+    const course = `${courseSelect.value} ${days}박`; // ✅ 수정된 부분
     const includeFirstDinner = firstDinner.checked;
 
     if (!country || !course) {
