@@ -15,7 +15,6 @@
     .row-group { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
     .room-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     .room-table th, .room-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    .summary-right { text-align: right; font-size: 14px; color: #555; margin-top: 10px; }
     .radio-group { display: flex; gap: 20px; margin-top: 8px; }
     .radio-group label { font-weight: normal; }
     .room-table input { width: 100%; box-sizing: border-box; }
@@ -118,13 +117,14 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
+    // ✅ 실제 Firebase 설정값 반영
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyDEoEvrhfTLtaqqtR1Bva_IPbKsW15AhcE",
+      authDomain: "smartyoungtour.firebaseapp.com",
+      projectId: "smartyoungtour",
+      storageBucket: "smartyoungtour.appspot.com",
+      messagingSenderId: "615207664322",
+      appId: "1:615207664322:web:ea2d05fefa56e81c43595b"
     };
 
     const app = initializeApp(firebaseConfig);
