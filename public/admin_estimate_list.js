@@ -55,18 +55,21 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
-  // ✅ 정제된 courseName 만들기 (앞에 # 이 있으면 제거)
   const rawCourse = d.courseName || '';
-  const cleanCourseName = rawCourse.replace(/^#\s*/, '').trim();  // '# ' 제거 + trim
+  const cleanCourseName = rawCourse.replace(/^#\s*/, '').trim();
   const nightsMatch = cleanCourseName.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
   const includeFirstDinner = String(d.includeFirstDinner || "false");
+  const includeGolfLunch = d.includeGolfLunch === true;
+  const includeGolfDinner = d.includeGolfDinner === true;
 
   console.log("🎯 견적 courseName:", rawCourse);
   console.log("🎯 정제된 courseOnly:", cleanCourseName);
   console.log("🎯 인원 수:", totalPeople);
   console.log("🎯 1일차 석식 포함 여부:", includeFirstDinner);
+  console.log("🎯 골프 중식 포함:", includeGolfLunch);
+  console.log("🎯 골프 석식 포함:", includeGolfDinner);
 
   let hotelTotal = 0;
   try {
@@ -95,17 +98,22 @@ window.showDetail = async function(index) {
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
       const matchedCourse = (data.course || "").trim() === cleanCourseName;
-      const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
+      if (!matchedCourse) continue;
 
-      if (matchedCourse && matchedOption) {
+      if (cleanCourseName.includes("골프")) {
+        const lunch = includeGolfLunch ? (data.totalLunch || 0) : 0;
+        const dinner = includeGolfDinner ? (data.totalDinner || 0) : 0;
+        mealTotal = (lunch + dinner) * totalPeople;
+        console.log("✅ 골프 식사 요금 계산 완료:", mealTotal);
+      } else {
         let total = (data.totalLunch || 0) + (data.totalDinner || 0);
         if (includeFirstDinner === "true") {
           total += (data.firstDinnerValue || 0);
         }
         mealTotal = total * totalPeople;
-        console.log("✅ 식사 요금 계산 완료:", mealTotal);
-        break;
+        console.log("✅ 일반 식사 요금 계산 완료:", mealTotal);
       }
+      break;
     }
   } catch (e) {
     console.error("❌ 식사 요금 계산 실패", e);
