@@ -36,9 +36,15 @@ function renderTable(data) {
       <td>${item.departureDate || ''}</td>
       <td>${paidLabel}</td>
       <td>
-        <button onclick="showDetail(${idx})">상세보기</button>
-        <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
-        <button onclick="deleteEstimate('${item.id}')">삭제</button>
+        ${
+          idx === 0
+            ? ''
+            : `
+          <button onclick="showDetail(${idx})">상세보기</button>
+          <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
+          <button onclick="deleteEstimate('${item.id}')">삭제</button>
+        `
+        }
       </td>
     `;
     tableBody.appendChild(row);
@@ -55,9 +61,17 @@ window.showDetail = async function(index) {
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
 
-  const includeFirstDinner = d.includeFirstDinner === true || d.includeFirstDinner === "true";
-  const includeGolfLunch = d.includeGolfLunch === true || d.includeGolfLunch === "true";
-  const includeGolfDinner = d.includeGolfDinner === true || d.includeGolfDinner === "true";
+  const isGolfCourse = cleanCourseName.includes("골프");
+  const includeLunch = d.includeLunch === true;
+  const includeDinner = d.includeDinner === true;
+  const includeFirstDinner = d.includeFirstDinner === true;
+  const includeGolfLunch = d.includeGolfLunch === true;
+  const includeGolfDinner = d.includeGolfDinner === true;
+
+  console.log("✅ 코스명:", cleanCourseName);
+  console.log("✅ 골프코스 여부:", isGolfCourse);
+  console.log("✅ includeLunch:", includeLunch, "includeDinner:", includeDinner, "낮도착 석식:", includeFirstDinner);
+  console.log("✅ includeGolfLunch:", includeGolfLunch, "includeGolfDinner:", includeGolfDinner);
 
   let hotelTotal = 0;
   try {
@@ -76,48 +90,49 @@ window.showDetail = async function(index) {
       }
     });
   } catch (e) {
-    console.error("❌ 호텔 요금 오류", e);
+    console.error("❌ 호텔 요금 계산 실패", e);
   }
 
   let mealTotal = 0;
-  let mealCheckLabels = [];
   try {
     const snap = await getDocs(collection(db, "meal_prices"));
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
-      if ((data.course || '').trim() !== cleanCourseName) continue;
+      const matchedCourse = (data.course || "").trim() === cleanCourseName;
 
-      if (cleanCourseName.includes("골프")) {
-        const lunch = includeGolfLunch ? (data.totalLunch || 0) : 0;
-        const dinner = includeGolfDinner ? (data.totalDinner || 0) : 0;
-        mealTotal = (lunch + dinner) * totalPeople;
-        if (includeGolfLunch) mealCheckLabels.push("✓ 중식");
-        if (includeGolfDinner) mealCheckLabels.push("✓ 석식");
+      if (!matchedCourse) continue;
+
+      if (isGolfCourse) {
+        let total = 0;
+        if (includeGolfLunch) total += data.totalLunch || 0;
+        if (includeGolfDinner) total += data.totalDinner || 0;
+        mealTotal = total * totalPeople;
       } else {
-        const lunch = data.totalLunch || 0;
-        const dinner = data.totalDinner || 0;
-        const firstDinner = includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
-        mealTotal = (lunch + dinner) * totalPeople + firstDinner * totalPeople;
-        if (lunch > 0) mealCheckLabels.push("✓ 중식");
-        if (dinner > 0) mealCheckLabels.push("✓ 석식");
-        if (includeFirstDinner && firstDinner > 0) mealCheckLabels.push("✓ 낮비행기");
+        let total = 0;
+        if (includeLunch) total += data.totalLunch || 0;
+        if (includeDinner) total += data.totalDinner || 0;
+        if (includeFirstDinner) total += data.firstDinnerValue || 0;
+        mealTotal = total * totalPeople;
       }
       break;
     }
   } catch (e) {
-    console.error("❌ 식사 요금 오류", e);
+    console.error("❌ 식사 요금 계산 실패", e);
   }
 
-  const mealLabel = mealCheckLabels.length > 0 ? ` (${mealCheckLabels.join(" ")})` : "";
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
+
+  const mealText = isGolfCourse
+    ? `ㅁ중식 ${includeGolfLunch ? "✅" : "❌"} ㅁ석식 ${includeGolfDinner ? "✅" : "❌"}`
+    : `ㅁ중식 ${includeLunch ? "✅" : "❌"} ㅁ석식 ${includeDinner ? "✅" : "❌"} ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`;
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
     <p><strong>호텔 등급:</strong> ${d.hotelGrade}</p>
     <p><strong>룸 수:</strong> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
     <p><strong>호텔 총 비용:</strong> $${hotelTotal}</p>
-    <p><strong>식사 총 비용:</strong> $${mealTotal}${mealLabel}</p>
+    <p><strong>식사 총 비용:</strong> $${mealTotal} (${mealText})</p>
     <p><strong>차량:</strong> ${d.vehicle}</p>
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
     <p><strong>총 지상비:</strong> $${totalGroundCost}</p>
