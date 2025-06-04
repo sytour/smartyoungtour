@@ -36,15 +36,9 @@ function renderTable(data) {
       <td>${item.departureDate || ''}</td>
       <td>${paidLabel}</td>
       <td>
-        ${
-          idx === 0
-            ? ''
-            : `
-          <button onclick="showDetail(${idx})">상세보기</button>
-          <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
-          <button onclick="deleteEstimate('${item.id}')">삭제</button>
-        `
-        }
+        <button onclick="showDetail(${idx})">상세보기</button>
+        <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
+        <button onclick="deleteEstimate('${item.id}')">삭제</button>
       </td>
     `;
     tableBody.appendChild(row);
@@ -64,12 +58,12 @@ window.showDetail = async function(index) {
   const includeGolfLunch = d.includeGolfLunch === true;
   const includeGolfDinner = d.includeGolfDinner === true;
 
-  console.log("🎯 견적 courseName:", rawCourse);
-  console.log("🎯 정제된 courseOnly:", cleanCourseName);
-  console.log("🎯 인원 수:", totalPeople);
-  console.log("🎯 1일차 석식 포함 여부:", includeFirstDinner);
-  console.log("🎯 골프 중식 포함:", includeGolfLunch);
-  console.log("🎯 골프 석식 포함:", includeGolfDinner);
+  console.log("🎯 courseName:", rawCourse);
+  console.log("🎯 cleanCourseName:", cleanCourseName);
+  console.log("🎯 totalPeople:", totalPeople);
+  console.log("🎯 includeFirstDinner:", includeFirstDinner);
+  console.log("🎯 includeGolfLunch:", includeGolfLunch);
+  console.log("🎯 includeGolfDinner:", includeGolfDinner);
 
   let hotelTotal = 0;
   try {
@@ -85,11 +79,11 @@ window.showDetail = async function(index) {
           (parseInt(d.roomTwinDouble || 0) * twin) +
           (parseInt(d.roomTriple || 0) * triple)
         ) * nights;
-        console.log("✅ 호텔 요금 계산 완료:", hotelTotal);
+        console.log("✅ 호텔 요금:", hotelTotal);
       }
     });
   } catch (e) {
-    console.error("❌ 호텔 요금 계산 실패", e);
+    console.error("❌ 호텔 요금 계산 오류:", e);
   }
 
   let mealTotal = 0;
@@ -97,26 +91,24 @@ window.showDetail = async function(index) {
     const snap = await getDocs(collection(db, "meal_prices"));
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
-      const matchedCourse = (data.course || "").trim() === cleanCourseName;
-      if (!matchedCourse) continue;
+      if ((data.course || '').trim() !== cleanCourseName) continue;
 
       if (cleanCourseName.includes("골프")) {
         const lunch = includeGolfLunch ? (data.totalLunch || 0) : 0;
         const dinner = includeGolfDinner ? (data.totalDinner || 0) : 0;
         mealTotal = (lunch + dinner) * totalPeople;
-        console.log("✅ 골프 식사 요금 계산 완료:", mealTotal);
+        console.log("✅ 골프 식사 계산 완료:", mealTotal);
       } else {
-        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-        if (includeFirstDinner === "true") {
-          total += (data.firstDinnerValue || 0);
-        }
-        mealTotal = total * totalPeople;
-        console.log("✅ 일반 식사 요금 계산 완료:", mealTotal);
+        const lunch = data.totalLunch || 0;
+        const dinner = data.totalDinner || 0;
+        const firstDinner = includeFirstDinner === "true" ? (data.firstDinnerValue || 0) : 0;
+        mealTotal = (lunch + dinner) * totalPeople + firstDinner * totalPeople;
+        console.log("✅ 일반 식사 계산 완료:", mealTotal);
       }
       break;
     }
   } catch (e) {
-    console.error("❌ 식사 요금 계산 실패", e);
+    console.error("❌ 식사 요금 계산 오류:", e);
   }
 
   const totalGroundCost = hotelTotal + mealTotal;
