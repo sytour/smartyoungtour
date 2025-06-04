@@ -62,16 +62,10 @@ window.showDetail = async function(index) {
   const totalPeople = parseInt(d.totalPeople || 0);
 
   const isGolfCourse = cleanCourseName.includes("골프");
-  const includeLunch = d.includeLunch === true;
-  const includeDinner = d.includeDinner === true;
+
   const includeFirstDinner = d.includeFirstDinner === true;
   const includeGolfLunch = d.includeGolfLunch === true;
   const includeGolfDinner = d.includeGolfDinner === true;
-
-  console.log("✅ 코스명:", cleanCourseName);
-  console.log("✅ 골프코스 여부:", isGolfCourse);
-  console.log("✅ includeLunch:", includeLunch, "includeDinner:", includeDinner, "낮도착 석식:", includeFirstDinner);
-  console.log("✅ includeGolfLunch:", includeGolfLunch, "includeGolfDinner:", includeGolfDinner);
 
   let hotelTotal = 0;
   try {
@@ -99,18 +93,16 @@ window.showDetail = async function(index) {
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
       const matchedCourse = (data.course || "").trim() === cleanCourseName;
-
       if (!matchedCourse) continue;
 
       if (isGolfCourse) {
         let total = 0;
         if (includeGolfLunch) total += data.totalLunch || 0;
         if (includeGolfDinner) total += data.totalDinner || 0;
+        if (includeFirstDinner) total += data.firstDinnerValue || 0;
         mealTotal = total * totalPeople;
       } else {
-        let total = 0;
-        if (includeLunch) total += data.totalLunch || 0;
-        if (includeDinner) total += data.totalDinner || 0;
+        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
         if (includeFirstDinner) total += data.firstDinnerValue || 0;
         mealTotal = total * totalPeople;
       }
@@ -124,8 +116,8 @@ window.showDetail = async function(index) {
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
 
   const mealText = isGolfCourse
-    ? `ㅁ중식 ${includeGolfLunch ? "✅" : "❌"} ㅁ석식 ${includeGolfDinner ? "✅" : "❌"}`
-    : `ㅁ중식 ${includeLunch ? "✅" : "❌"} ㅁ석식 ${includeDinner ? "✅" : "❌"} ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`;
+    ? `ㅁ중식 ${includeGolfLunch ? "✅" : "❌"} ㅁ석식 ${includeGolfDinner ? "✅" : "❌"} ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`
+    : `중식 ✅ 석식 ✅ ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`;
 
   detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
