@@ -54,9 +54,10 @@ window.showDetail = async function(index) {
   const nightsMatch = cleanCourseName.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
-  const includeFirstDinner = !!d.includeFirstDinner;
-  const includeGolfLunch = !!d.includeGolfLunch;
-  const includeGolfDinner = !!d.includeGolfDinner;
+
+  const includeFirstDinner = d.includeFirstDinner === true || d.includeFirstDinner === "true";
+  const includeGolfLunch = d.includeGolfLunch === true || d.includeGolfLunch === "true";
+  const includeGolfDinner = d.includeGolfDinner === true || d.includeGolfDinner === "true";
 
   let hotelTotal = 0;
   try {
@@ -97,7 +98,9 @@ window.showDetail = async function(index) {
         const dinner = data.totalDinner || 0;
         const firstDinner = includeFirstDinner ? (data.firstDinnerValue || 0) : 0;
         mealTotal = (lunch + dinner) * totalPeople + firstDinner * totalPeople;
-        if (firstDinner > 0) mealCheckLabels.push("✓ 낮비행기(석식)");
+        if (lunch > 0) mealCheckLabels.push("✓ 중식");
+        if (dinner > 0) mealCheckLabels.push("✓ 석식");
+        if (includeFirstDinner && firstDinner > 0) mealCheckLabels.push("✓ 낮비행기");
       }
       break;
     }
