@@ -1,3 +1,4 @@
+나의 말:
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -29,7 +30,7 @@ function renderTable(data) {
   data.forEach((item, idx) => {
     const row = document.createElement('tr');
     const paidLabel = item.isPaid ? "✅" : "❌";
-    row.innerHTML = `
+    row.innerHTML = 
       <td>${item.name || ''}</td>
       <td>${item.phone || ''}</td>
       <td>${item.courseName || ''}</td>
@@ -39,14 +40,14 @@ function renderTable(data) {
         ${
           idx === 0
             ? ''
-            : `
+            : 
           <button onclick="showDetail(${idx})">상세보기</button>
           <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
           <button onclick="deleteEstimate('${item.id}')">삭제</button>
-        `
+        
         }
       </td>
-    `;
+    ;
     tableBody.appendChild(row);
   });
 }
@@ -55,17 +56,18 @@ window.showDetail = async function(index) {
   const d = allData[index];
   detailBox.style.display = 'block';
 
+  // ✅ 정제된 courseName 만들기 (앞에 # 이 있으면 제거)
   const rawCourse = d.courseName || '';
-  const cleanCourseName = rawCourse.replace(/^#\s*/, '').trim();
+  const cleanCourseName = rawCourse.replace(/^#\s*/, '').trim();  // '# ' 제거 + trim
   const nightsMatch = cleanCourseName.match(/(\d)박/);
   const nights = nightsMatch ? parseInt(nightsMatch[1]) : 1;
   const totalPeople = parseInt(d.totalPeople || 0);
+  const includeFirstDinner = String(d.includeFirstDinner || "false");
 
-  const isGolfCourse = cleanCourseName.includes("골프");
-
-  const includeFirstDinner = d.includeFirstDinner === true;
-  const includeGolfLunch = d.includeGolfLunch === true;
-  const includeGolfDinner = d.includeGolfDinner === true;
+  console.log("🎯 견적 courseName:", rawCourse);
+  console.log("🎯 정제된 courseOnly:", cleanCourseName);
+  console.log("🎯 인원 수:", totalPeople);
+  console.log("🎯 1일차 석식 포함 여부:", includeFirstDinner);
 
   let hotelTotal = 0;
   try {
@@ -81,6 +83,7 @@ window.showDetail = async function(index) {
           (parseInt(d.roomTwinDouble || 0) * twin) +
           (parseInt(d.roomTriple || 0) * triple)
         ) * nights;
+        console.log("✅ 호텔 요금 계산 완료:", hotelTotal);
       }
     });
   } catch (e) {
@@ -93,20 +96,17 @@ window.showDetail = async function(index) {
     for (const docSnap of snap.docs) {
       const data = docSnap.data();
       const matchedCourse = (data.course || "").trim() === cleanCourseName;
-      if (!matchedCourse) continue;
+      const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
 
-      if (isGolfCourse) {
-        let total = 0;
-        if (includeGolfLunch) total += data.totalLunch || 0;
-        if (includeGolfDinner) total += data.totalDinner || 0;
-        if (includeFirstDinner) total += data.firstDinnerValue || 0;
-        mealTotal = total * totalPeople;
-      } else {
+      if (matchedCourse && matchedOption) {
         let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-        if (includeFirstDinner) total += data.firstDinnerValue || 0;
+        if (includeFirstDinner === "true") {
+          total += (data.firstDinnerValue || 0);
+        }
         mealTotal = total * totalPeople;
+        console.log("✅ 식사 요금 계산 완료:", mealTotal);
+        break;
       }
-      break;
     }
   } catch (e) {
     console.error("❌ 식사 요금 계산 실패", e);
@@ -115,21 +115,17 @@ window.showDetail = async function(index) {
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
 
-  const mealText = isGolfCourse
-    ? `ㅁ중식 ${includeGolfLunch ? "✅" : "❌"} ㅁ석식 ${includeGolfDinner ? "✅" : "❌"} ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`
-    : `중식 ✅ 석식 ✅ ㅁ낮비행기 ${includeFirstDinner ? "✅" : "❌"}`;
-
-  detailBox.innerHTML = `
+  detailBox.innerHTML = 
     <h3>견적 상세 정보</h3>
     <p><strong>호텔 등급:</strong> ${d.hotelGrade}</p>
     <p><strong>룸 수:</strong> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
     <p><strong>호텔 총 비용:</strong> $${hotelTotal}</p>
-    <p><strong>식사 총 비용:</strong> $${mealTotal} (${mealText})</p>
+    <p><strong>식사 총 비용:</strong> $${mealTotal}</p>
     <p><strong>차량:</strong> ${d.vehicle}</p>
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
     <p><strong>총 지상비:</strong> $${totalGroundCost}</p>
     <p><strong>1인 지상비:</strong> $${perPersonCost}</p>
-  `;
+  ;
   detailBox.scrollIntoView({ behavior: 'smooth' });
 };
 
