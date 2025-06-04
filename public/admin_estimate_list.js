@@ -1,4 +1,3 @@
-나의 말:
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
@@ -30,7 +29,7 @@ function renderTable(data) {
   data.forEach((item, idx) => {
     const row = document.createElement('tr');
     const paidLabel = item.isPaid ? "✅" : "❌";
-    row.innerHTML = 
+    row.innerHTML = `
       <td>${item.name || ''}</td>
       <td>${item.phone || ''}</td>
       <td>${item.courseName || ''}</td>
@@ -40,14 +39,14 @@ function renderTable(data) {
         ${
           idx === 0
             ? ''
-            : 
+            : `
           <button onclick="showDetail(${idx})">상세보기</button>
           <button onclick="togglePaid('${item.id}', ${idx})">결제표시</button>
           <button onclick="deleteEstimate('${item.id}')">삭제</button>
-        
+        `
         }
       </td>
-    ;
+    `;
     tableBody.appendChild(row);
   });
 }
@@ -115,7 +114,7 @@ window.showDetail = async function(index) {
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
 
-  detailBox.innerHTML = 
+  detailBox.innerHTML = `
     <h3>견적 상세 정보</h3>
     <p><strong>호텔 등급:</strong> ${d.hotelGrade}</p>
     <p><strong>룸 수:</strong> 싱글 ${d.roomSingle}, 트윈 ${d.roomTwinDouble}, 트리플 ${d.roomTriple}</p>
@@ -125,7 +124,7 @@ window.showDetail = async function(index) {
     <p><strong>선택관광:</strong> ${d.optionalTour}, 쇼핑 ${d.shoppingCount}회</p>
     <p><strong>총 지상비:</strong> $${totalGroundCost}</p>
     <p><strong>1인 지상비:</strong> $${perPersonCost}</p>
-  ;
+  `;
   detailBox.scrollIntoView({ behavior: 'smooth' });
 };
 
