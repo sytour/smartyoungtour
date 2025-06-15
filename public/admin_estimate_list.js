@@ -89,22 +89,35 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-   let mealTotal = 0;
+  let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
-    const courseNameInDB = (data.course || "").trim();
-    const isMatchedCourse = cleanCourseName.startsWith(courseNameInDB);
+    const courseInDB = (data.course || "").trim();
 
-    if (!isMatchedCourse) continue;
+    console.log("🔍 DB 코스명:", courseInDB);
+    console.log("🔍 견적 코스명:", cleanCourseName);
+
+    if (cleanCourseName !== courseInDB) {
+      console.log("❌ 코스명 매칭 실패");
+      continue;
+    }
+
+    console.log("✅ 코스명 매칭 성공");
 
     if (cleanCourseName.includes("골프")) {
       let golfMeal = 0;
 
-      if (d.includeGolfLunch) golfMeal += (data.totalLunch || 0);
-      if (d.includeGolfDinner) golfMeal += (data.totalDinner || 0);
-      if (d.includeFirstDinner === "true" || d.includeFirstDinner === true) {
+      if (String(d.includeGolfLunch) === "true") {
+        golfMeal += (data.totalLunch || 0);
+      }
+
+      if (String(d.includeGolfDinner) === "true") {
+        golfMeal += (data.totalDinner || 0);
+      }
+
+      if (String(d.includeFirstDinner) === "true") {
         golfMeal += (data.firstDinnerValue || 0);
       }
 
