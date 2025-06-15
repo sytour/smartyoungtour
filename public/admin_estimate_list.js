@@ -90,41 +90,51 @@ window.showDetail = async function(index) {
   }
 
    let mealTotal = 0;
-  try {
-    const snap = await getDocs(collection(db, "meal_prices"));
-    for (const docSnap of snap.docs) {
-      const data = docSnap.data();
-      const matchedCourse = (data.course || "").trim() === cleanCourseName;
+try {
+  const snap = await getDocs(collection(db, "meal_prices"));
+  for (const docSnap of snap.docs) {
+    const data = docSnap.data();
+    const matchedCourse = (data.course || "").trim() === cleanCourseName;
 
-      if (!matchedCourse) continue;
+    if (!matchedCourse) continue;
 
-      if (cleanCourseName.includes("골프")) {
-        // 골프일 경우: 체크박스 상태에 따라 중식/석식 포함 여부 결정
-        let golfMeal = 0;
-        if (d.golfLunchChecked === true) golfMeal += (data.totalLunch || 0);
-        if (d.golfDinnerChecked === true) golfMeal += (data.totalDinner || 0);
-        if (d.includeFirstDinner === "true") golfMeal += (data.firstDinnerValue || 0);
+    if (cleanCourseName.includes("골프")) {
+      // ✅ 골프 식사 계산 (체크박스에 따라 포함)
+      let golfMeal = 0;
 
-        mealTotal = golfMeal * totalPeople;
-        console.log("✅ 골프 식사 요금 계산 완료:", mealTotal);
-        break;
-      } else {
-        // 일반 투어 계산 (기존 방식 유지)
-        const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
-        if (!matchedOption) continue;
-
-        let total = (data.totalLunch || 0) + (data.totalDinner || 0);
-        if (includeFirstDinner === "true") {
-          total += (data.firstDinnerValue || 0);
-        }
-        mealTotal = total * totalPeople;
-        console.log("✅ 일반 식사 요금 계산 완료:", mealTotal);
-        break;
+      if (d.includeGolfLunch === true) {
+        golfMeal += (data.totalLunch || 0);
       }
+
+      if (d.includeGolfDinner === true) {
+        golfMeal += (data.totalDinner || 0);
+      }
+
+      if (d.includeFirstDinner === "true") {
+        golfMeal += (data.firstDinnerValue || 0);
+      }
+
+      mealTotal = golfMeal * totalPeople;
+      console.log("✅ 골프 식사 요금 계산 완료:", mealTotal);
+      break;
+
+    } else {
+      // ✅ 일반 투어 식사 계산 (기존 그대로 유지)
+      const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
+      if (!matchedOption) continue;
+
+      let total = (data.totalLunch || 0) + (data.totalDinner || 0);
+      if (includeFirstDinner === "true") {
+        total += (data.firstDinnerValue || 0);
+      }
+      mealTotal = total * totalPeople;
+      console.log("✅ 일반 식사 요금 계산 완료:", mealTotal);
+      break;
     }
-  } catch (e) {
-    console.error("❌ 식사 요금 계산 실패", e);
   }
+} catch (e) {
+  console.error("❌ 식사 요금 계산 실패", e);
+}
 
   const totalGroundCost = hotelTotal + mealTotal;
   const perPersonCost = totalPeople > 0 ? Math.round(totalGroundCost / totalPeople) : 0;
