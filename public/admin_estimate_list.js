@@ -99,18 +99,18 @@ try {
     if (!matchedCourse) continue;
 
     if (cleanCourseName.includes("골프")) {
-      // ✅ 골프 식사 계산 (체크박스에 따라 포함)
+      // ✅ 골프 식사 계산 (모두 문자열로 강제 변환하여 비교)
       let golfMeal = 0;
 
-      if (d.includeGolfLunch === true) {
+      if (String(d.includeGolfLunch) === "true") {
         golfMeal += (data.totalLunch || 0);
       }
 
-      if (d.includeGolfDinner === true) {
+      if (String(d.includeGolfDinner) === "true") {
         golfMeal += (data.totalDinner || 0);
       }
 
-      if (d.includeFirstDinner === "true") {
+      if (String(d.includeFirstDinner) === "true") {
         golfMeal += (data.firstDinnerValue || 0);
       }
 
