@@ -89,36 +89,52 @@ window.showDetail = async function(index) {
     console.error("❌ 호텔 요금 계산 실패", e);
   }
 
-  let mealTotal = 0;
+ let mealTotal = 0;
 try {
   const snap = await getDocs(collection(db, "meal_prices"));
   for (const docSnap of snap.docs) {
     const data = docSnap.data();
     const courseInDB = (data.course || "").trim();
+    const estimateCourse = (cleanCourseName || "").trim();
 
     console.log("🔍 DB 코스명:", courseInDB);
-    console.log("🔍 견적 코스명:", cleanCourseName);
+    console.log("🔍 견적 코스명:", estimateCourse);
 
-    if (cleanCourseName !== courseInDB) {
+    if (estimateCourse !== courseInDB) {
       console.log("❌ 코스명 매칭 실패");
       continue;
     }
 
     console.log("✅ 코스명 매칭 성공");
 
-    if (cleanCourseName.includes("골프")) {
+    if (estimateCourse.includes("골프")) {
+      console.log("🎯 골프 코스 조건 진입");
+
       let golfMeal = 0;
+
+      console.log("🔍 includeGolfLunch:", d.includeGolfLunch);
+      console.log("🔍 includeGolfDinner:", d.includeGolfDinner);
+      console.log("🔍 includeFirstDinner:", d.includeFirstDinner);
 
       if (String(d.includeGolfLunch) === "true") {
         golfMeal += (data.totalLunch || 0);
+        console.log("✅ 중식 포함:", data.totalLunch);
+      } else {
+        console.log("❌ 중식 미포함");
       }
 
       if (String(d.includeGolfDinner) === "true") {
         golfMeal += (data.totalDinner || 0);
+        console.log("✅ 석식 포함:", data.totalDinner);
+      } else {
+        console.log("❌ 석식 미포함");
       }
 
       if (String(d.includeFirstDinner) === "true") {
         golfMeal += (data.firstDinnerValue || 0);
+        console.log("✅ 낮도착 석식 포함:", data.firstDinnerValue);
+      } else {
+        console.log("❌ 낮도착 석식 미포함");
       }
 
       mealTotal = golfMeal * totalPeople;
@@ -127,11 +143,15 @@ try {
 
     } else {
       const matchedOption = String(data.includeFirstDinner || "false") === includeFirstDinner;
-      if (!matchedOption) continue;
+      if (!matchedOption) {
+        console.log("❌ 일반식 matchedOption 불일치, includeFirstDinner:", data.includeFirstDinner);
+        continue;
+      }
 
       let total = (data.totalLunch || 0) + (data.totalDinner || 0);
       if (includeFirstDinner === "true") {
         total += (data.firstDinnerValue || 0);
+        console.log("✅ 일반식 1일차 석식 포함:", data.firstDinnerValue);
       }
       mealTotal = total * totalPeople;
       console.log("✅ 일반 식사 요금 계산 완료:", mealTotal);
